@@ -28,7 +28,6 @@
 #include <config.h>
 #endif // HAVE_CONFIG_H
 
-#include "safe_string/safe_string.h"
 #include "common_int.h"
 #include "types_int.h"
 

@@ -1,4 +1,4 @@
-// Copyright(c) 2018, Intel Corporation
+// Copyright(c) 2018-2020, Intel Corporation
 //
 // Redistribution  and  use  in source  and  binary  forms,  with  or  without
 // modification, are permitted provided that the following conditions are met:
@@ -28,7 +28,6 @@
 #include <iostream>
 
 #include <opae/utils.h>
-#include <safe_string/safe_string.h>
 
 #include <opae/cxx/core/except.h>
 

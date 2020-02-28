@@ -1,4 +1,4 @@
-// Copyright(c) 2019, Intel Corporation
+// Copyright(c) 2019-2020, Intel Corporation
 //
 // Redistribution  and  use  in source  and  binary  forms,  with  or  without
 // modification, are permitted provided that the following conditions are met:
@@ -39,7 +39,6 @@
 #include <opae/log.h>
 
 #include "bits_utils.h"
-#include "safe_string/safe_string.h"
 
 fpga_result opae_bitstream_get_json_string(json_object *parent,
 					   const char *name,

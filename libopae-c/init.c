@@ -1,4 +1,4 @@
-// Copyright(c) 2017-2018, Intel Corporation
+// Copyright(c) 2017-2020, Intel Corporation
 //
 // Redistribution  and  use  in source  and  binary  forms,  with  or  without
 // modification, are permitted provided that the following conditions are met:
@@ -45,8 +45,6 @@
 #include <opae/utils.h>
 #include "pluginmgr.h"
 #include "opae_int.h"
-
-#include "safe_string/safe_string.h"
 
 /* global loglevel */
 static int g_loglevel = OPAE_DEFAULT_LOGLEVEL;
@@ -98,14 +96,15 @@ void opae_print(int loglevel, const char *fmt, ...)
    was not found. Otherwise, it's the first configuration file found from a
    list of possible paths. Note: The char * returned is allocated here, caller
    must free. */
-STATIC char *find_ase_cfg()
+STATIC char *find_ase_cfg(void)
 {
 	int i = 0;
 	char *file_name = NULL;
 	char *opae_path = NULL;
-	char cfg_path[PATH_MAX];
-	char home_cfg[PATH_MAX] = {0};
-	char *home_cfg_ptr = &home_cfg[0];
+	char cfg_path[PATH_MAX] = { 0, };
+	char home_cfg[PATH_MAX] = { 0, };
+	char *home_cfg_ptr = NULL;
+
 	// get the user's home directory
 	struct passwd *user_passwd = getpwuid(getuid());
 
@@ -122,48 +121,39 @@ STATIC char *find_ase_cfg()
 	// third look in the release directory
 	opae_path = getenv("OPAE_PLATFORM_ROOT");
 	if (opae_path) {
-		if (strcpy_s(cfg_path, PATH_MAX, opae_path) != EOK) {
-			OPAE_ERR("error copying opae platform root string: %s", opae_path);
-				return NULL;
-		}
-		if (strcat_s(cfg_path, PATH_MAX, "/share/opae/ase/opae_ase.cfg") != EOK) {
-			OPAE_ERR("error string concatenation : %s", cfg_path);
-				return NULL;
-		}
-
+		strncpy(cfg_path, opae_path, sizeof(cfg_path) - 1);
+		strncat(cfg_path, "/share/opae/ase/opae_ase.cfg", 29);
 		file_name = canonicalize_file_name(cfg_path);
 		if (file_name)
 			return file_name;
 	}
+
 	// fourth look in possible paths in the users home directory
 	if (user_passwd != NULL) {
 		for (i = 0; i < HOME_CFG_PATHS; ++i) {
-			if (strcpy_s(home_cfg, PATH_MAX, user_passwd->pw_dir)) {
-				OPAE_ERR("error copying pw_dir string");
-				return NULL;
-			}
+			strncpy(home_cfg, user_passwd->pw_dir, sizeof(home_cfg) - 1);
+
 			home_cfg_ptr = home_cfg + strlen(home_cfg);
-			if (strcpy_s(home_cfg_ptr, PATH_MAX, _ase_home_cfg_files[i])) {
-				OPAE_ERR("error copying opae cfg dir string: %s",
-					 _ase_home_cfg_files[i]);
-				return NULL;
-			}
+
+			strncpy(home_cfg_ptr, _ase_home_cfg_files[i],
+				sizeof(home_cfg) - (home_cfg_ptr - home_cfg) - 1);
+
 			file_name = canonicalize_file_name(home_cfg);
-			if (file_name) {
+			if (file_name)
 				return file_name;
-			} else {
-				home_cfg[0] = '\0';
-			}
+
+			memset(home_cfg, 0, sizeof(home_cfg));
 		}
 	}
+
 	// now look in possible system paths
 	for (i = 0; i < SYS_CFG_PATHS; ++i) {
-		strcpy_s(home_cfg, PATH_MAX, _ase_sys_cfg_files[i]);
+		strncpy(home_cfg, _ase_sys_cfg_files[i], sizeof(home_cfg) - 1);
 		file_name = canonicalize_file_name(home_cfg);
-		if (file_name) {
+		if (file_name)
 			return file_name;
-		}
 	}
+
 	return NULL;
 }
 

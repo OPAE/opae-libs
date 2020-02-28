@@ -39,7 +39,6 @@
 #include "bits_utils.h"
 #include "metadatav1.h"
 
-#include "safe_string/safe_string.h"
 #include <opae/log.h>
 #include <opae/properties.h>
 #include <opae/sysobject.h>

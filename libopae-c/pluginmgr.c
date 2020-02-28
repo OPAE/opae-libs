@@ -30,6 +30,7 @@
 #define _GNU_SOURCE
 #include <stdio.h>
 #include <stdlib.h>
+#include <string.h>
 #include <stdint.h>
 #include <dlfcn.h>
 #include <sys/types.h>
@@ -40,7 +41,6 @@
 #include <unistd.h>
 
 #include <json-c/json.h>
-#include "safe_string/safe_string.h"
 
 #include "pluginmgr.h"
 #include "opae_int.h"
@@ -100,38 +100,37 @@ STATIC char *find_cfg()
 {
 	int i = 0;
 	char *file_name = NULL;
-	char home_cfg[PATH_MAX] = {0};
+	char home_cfg[PATH_MAX] = { 0, };
 	char *home_cfg_ptr = &home_cfg[0];
+
 	// get the user's home directory
 	struct passwd *user_passwd = getpwuid(getuid());
 
 	// first look in possible paths in the users home directory
 	for (i = 0; i < HOME_CFG_PATHS; ++i) {
-		if (strcpy_s(home_cfg, PATH_MAX, user_passwd->pw_dir)) {
-			OPAE_ERR("error copying pw_dir string");
-			return NULL;
-		}
+		strncpy(home_cfg, user_passwd->pw_dir, sizeof(home_cfg)-1);
+
 		home_cfg_ptr = home_cfg + strlen(home_cfg);
-		if (strcpy_s(home_cfg_ptr, PATH_MAX, _opae_home_cfg_files[i])) {
-			OPAE_ERR("error copying opae cfg dir string: %s",
-				 _opae_home_cfg_files[i]);
-			return NULL;
-		}
+
+		strncpy(home_cfg_ptr, _opae_home_cfg_files[i],
+			sizeof(home_cfg) - (home_cfg_ptr - home_cfg));
+
 		file_name = canonicalize_file_name(home_cfg);
-		if (file_name) {
+		if (file_name)
 			return file_name;
-		} else {
-			home_cfg[0] = '\0';
-		}
+
+		home_cfg[0] = '\0';
 	}
+
 	// now look in possible system paths
 	for (i = 0; i < SYS_CFG_PATHS; ++i) {
-		strcpy_s(home_cfg, PATH_MAX, _opae_sys_cfg_files[i]);
+		strncpy(home_cfg, _opae_sys_cfg_files[i], sizeof(home_cfg)-1);
+
 		file_name = canonicalize_file_name(home_cfg);
-		if (file_name) {
+		if (file_name)
 			return file_name;
-		}
 	}
+
 	return NULL;
 }
 
@@ -145,8 +144,8 @@ STATIC void *opae_plugin_mgr_find_plugin(const char *lib_path)
 	for (i = 0 ;
 		i < sizeof(search_paths) / sizeof(search_paths[0]) ; ++i) {
 
-		snprintf_s_ss(plugin_path, sizeof(plugin_path),
-				"%s%s", search_paths[i], lib_path);
+		snprintf(plugin_path, sizeof(plugin_path),
+			 "%s%s", search_paths[i], lib_path);
 
 		dl_handle = dlopen(plugin_path, RTLD_LAZY | RTLD_LOCAL);
 
@@ -357,31 +356,14 @@ STATIC int process_plugin(const char *name, json_object *j_config)
 		return 1;
 	}
 
-	if (strncpy_s(cfg->cfg, MAX_PLUGIN_CFG_SIZE, stringified, cfg->cfg_size)) {
-		OPAE_ERR("error copying plugin configuration");
-		goto out_err;
-	}
-
-	if (strcpy_s(cfg->name, PLUGIN_NAME_MAX, name)) {
-		OPAE_ERR("error copying plugin name");
-		goto out_err;
-	}
-
-	if (strcpy_s(cfg->plugin, PLUGIN_NAME_MAX, json_object_get_string(j_plugin))) {
-		OPAE_ERR("error copying plugin file name");
-		goto out_err;
-	}
-
+	strncpy(cfg->cfg, stringified, MAX_PLUGIN_CFG_SIZE);
+	strncpy(cfg->name, name, PLUGIN_NAME_MAX);
+	strncpy(cfg->plugin, json_object_get_string(j_plugin), PLUGIN_NAME_MAX);
 	cfg->enabled = json_object_get_boolean(j_enabled);
+
 	opae_plugin_mgr_add_plugin(cfg);
+
 	return 0;
-out_err:
-	if (cfg->cfg) {
-		free(cfg->cfg);
-		cfg->cfg = NULL;
-	}
-	free(cfg);
-	return 1;
 }
 
 STATIC int process_cfg_buffer(const char *buffer, const char *filename)
@@ -526,15 +508,13 @@ STATIC int opae_plugin_mgr_detect_platforms(void)
 	char base_dir[PATH_MAX];
 	char file_path[PATH_MAX];
 	struct dirent *dirent;
-	int res;
 	int errors = 0;
 
 	// Iterate over the directories in /sys/bus/pci/devices.
 	// This directory contains symbolic links to device directories
 	// where 'vendor' and 'device' files exist.
 
-	strncpy_s(base_dir, sizeof(base_dir),
-			"/sys/bus/pci/devices", 21);
+	strncpy(base_dir, "/sys/bus/pci/devices", 21);
 
 	dir = opendir(base_dir);
 	if (!dir) {
@@ -547,29 +527,13 @@ STATIC int opae_plugin_mgr_detect_platforms(void)
 		unsigned vendor = 0;
 		unsigned device = 0;
 
-		if (EOK != strcmp_s(dirent->d_name, sizeof(dirent->d_name),
-					".", &res)) {
-			OPAE_ERR("strcmp_s failed");
-			++errors;
-			goto out_close;
-		}
-
-		if (0 == res) // don't process .
-			continue;
-
-		if (EOK != strcmp_s(dirent->d_name, sizeof(dirent->d_name),
-					"..", &res)) {
-			OPAE_ERR("strcmp_s failed");
-			++errors;
-			goto out_close;
-		}
-
-		if (0 == res) // don't process ..
+		if (!strcmp(dirent->d_name, ".") ||
+		    !strcmp(dirent->d_name, ".."))
 			continue;
 
 		// Read the 'vendor' file.
-		snprintf_s_ss(file_path, sizeof(file_path),
-				"%s/%s/vendor", base_dir, dirent->d_name);
+		snprintf(file_path, sizeof(file_path),
+			 "%s/%s/vendor", base_dir, dirent->d_name);
 
 		fp = fopen(file_path, "r");
 		if (!fp) {
@@ -588,8 +552,8 @@ STATIC int opae_plugin_mgr_detect_platforms(void)
 		fclose(fp);
 
 		// Read the 'device' file.
-		snprintf_s_ss(file_path, sizeof(file_path),
-				"%s/%s/device", base_dir, dirent->d_name);
+		snprintf(file_path, sizeof(file_path),
+			 "%s/%s/device", base_dir, dirent->d_name);
 
 		fp = fopen(file_path, "r");
 		if (!fp) {
@@ -684,17 +648,12 @@ STATIC int opae_plugin_mgr_load_dflt_plugins(int *platforms_detected)
 		already_loaded = 0;
 		for (j = 0 ; platform_data_table[j].native_plugin ; ++j) {
 
-			if (EOK != strcmp_s(native_plugin, strnlen_s(native_plugin, 256),
-						platform_data_table[j].native_plugin, &res)) {
-				OPAE_ERR("strcmp_s failed");
-				return ++errors;
-			}
-
-			if (!res &&
+			if (!strcmp(native_plugin, platform_data_table[j].native_plugin) &&
 			    (platform_data_table[j].flags & OPAE_PLATFORM_DATA_LOADED)) {
 				already_loaded = 1;
 				break;
 			}
+
 		}
 
 		if (already_loaded)

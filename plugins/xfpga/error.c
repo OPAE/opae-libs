@@ -28,8 +28,6 @@
 #include <config.h>
 #endif // HAVE_CONFIG_H
 
-#include "safe_string/safe_string.h"
-
 #include <sys/stat.h>
 #include <unistd.h>
 #include <dirent.h>

@@ -51,7 +51,6 @@ set(PYBIND11_INCLUDE_DIR ${CMAKE_CURRENT_SOURCE_DIR}/pybind11/include)
 opae_add_module_library(TARGET _opae
     SOURCE ${PYOPAE_SRC}
     LIBS
-        safestr
         opae-c
         opae-cxx-core
 )

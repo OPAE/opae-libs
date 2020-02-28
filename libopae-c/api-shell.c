@@ -32,10 +32,10 @@
 #define _GNU_SOURCE
 #endif // _GNU_SOURCE
 
+#include <stdio.h>
+
 #include <opae/properties.h>
 #include <opae/types_enum.h>
-
-#include "safe_string/safe_string.h"
 
 #include "pluginmgr.h"
 #include "opae_int.h"
@@ -881,37 +881,27 @@ fpga_result __OPAE_API__ fpgaGetOPAECVersion(fpga_version *version)
 fpga_result __OPAE_API__ fpgaGetOPAECVersionString(char *version_str,
 						   size_t len)
 {
-	errno_t err;
-
 	ASSERT_NOT_NULL(version_str);
+	if (!len)
+		return FPGA_INVALID_PARAM;
 
-	err = strncpy_s(version_str, len, OPAE_VERSION,
-			sizeof(OPAE_VERSION));
-
-	if (err) {
-		OPAE_ERR("strncpy_s failed with error %d", err);
-		return FPGA_EXCEPTION;
-	}
+	strncpy(version_str, OPAE_VERSION, len);
+	version_str[len - 1] = '\0';
 
 	return FPGA_OK;
 }
 
 fpga_result __OPAE_API__ fpgaGetOPAECBuildString(char *build_str, size_t len)
 {
-	int err;
-
 	ASSERT_NOT_NULL(build_str);
+	if (!len)
+		return FPGA_INVALID_PARAM;
 
-	err = snprintf_s_ss(build_str,
-			    len,
-			    "%s%s",
-			    OPAE_GIT_COMMIT_HASH,
-			    OPAE_GIT_SRC_TREE_DIRTY ? "*" : "");
-
-	if (err < 0) {
-		OPAE_ERR("snprintf_s_ss failed with error %d", err);
-		return FPGA_EXCEPTION;
-	}
+	snprintf(build_str, len,
+		 "%s%s",
+		 OPAE_GIT_COMMIT_HASH,
+		 OPAE_GIT_SRC_TREE_DIRTY ? "*" : "");
+	build_str[len - 1] = '\0';
 
 	return FPGA_OK;
 }

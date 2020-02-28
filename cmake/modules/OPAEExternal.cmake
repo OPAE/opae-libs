@@ -24,7 +24,8 @@
 ## CONTRACT,  STRICT LIABILITY,  OR TORT  (INCLUDING NEGLIGENCE  OR OTHERWISE)
 ## ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,  EVEN IF ADVISED OF THE
 ## POSSIBILITY OF SUCH DAMAGE
-cmake_minimum_required (VERSION 2.8)
+
+cmake_minimum_required (VERSION 2.8.12)
 
 macro(opae_external_project_add)
     set(options EXCLUDE_FROM_ALL NO_ADD_SUBDIRECTORY)
@@ -32,9 +33,9 @@ macro(opae_external_project_add)
     set(multiValueArgs)
     cmake_parse_arguments(OPAE_EXTERNAL_PROJECT_ADD "${options}"
         "${oneValueArgs}" "${multiValueArgs}" ${ARGN})
-    if(NOT OPAE_EXTERNAL_PROJECT_ADD_GIT_BRANCH)
-        set(OPAE_EXTERNAL_PROJECT_ADD_GIT_BRANCH "master")
-    endif(NOT OPAE_EXTERNAL_PROJECT_ADD_GIT_BRANCH)
+    if(NOT OPAE_EXTERNAL_PROJECT_ADD_GIT_TAG)
+        set(OPAE_EXTERNAL_PROJECT_ADD_GIT_TAG "master")
+    endif(NOT OPAE_EXTERNAL_PROJECT_ADD_GIT_TAG)
 
     set(${OPAE_EXTERNAL_PROJECT_ADD_PROJECT_NAME}_ROOT
         ${CMAKE_SOURCE_DIR}/external/${OPAE_EXTERNAL_PROJECT_ADD_PROJECT_NAME}
