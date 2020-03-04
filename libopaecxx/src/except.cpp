@@ -78,6 +78,7 @@ const char *except::what() const noexcept {
 
   if (msg_) {
     strncpy(buf_, msg_, MAX_EXCEPT - len - 1);
+    len += strlen(msg_);
   } else {
     strncpy(buf_, "failed with error ", MAX_EXCEPT - len - 1);
     len += 18;
