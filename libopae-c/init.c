@@ -104,6 +104,7 @@ STATIC char *find_ase_cfg(void)
 	char cfg_path[PATH_MAX] = { 0, };
 	char home_cfg[PATH_MAX] = { 0, };
 	char *home_cfg_ptr = NULL;
+	size_t len;
 
 	// get the user's home directory
 	struct passwd *user_passwd = getpwuid(getuid());
@@ -122,7 +123,9 @@ STATIC char *find_ase_cfg(void)
 	opae_path = getenv("OPAE_PLATFORM_ROOT");
 	if (opae_path) {
 		strncpy(cfg_path, opae_path, sizeof(cfg_path) - 1);
-		strncat(cfg_path, "/share/opae/ase/opae_ase.cfg", 29);
+		len = strnlen(cfg_path, sizeof(cfg_path));
+		strncat(cfg_path, "/share/opae/ase/opae_ase.cfg",
+			sizeof(cfg_path) - len - 1);
 		file_name = canonicalize_file_name(cfg_path);
 		if (file_name)
 			return file_name;

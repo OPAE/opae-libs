@@ -74,42 +74,35 @@ except::except(fpga_result res, src_location loc) noexcept
     : res_(res), msg_(0), loc_(loc) {}
 
 const char *except::what() const noexcept {
-  errno_t err;
-  bool buf_ok = false;
+  size_t len = 0;
+
   if (msg_) {
-    err = strncpy_s(buf_, MAX_EXCEPT - 64, msg_, 64);
+    strncpy(buf_, msg_, MAX_EXCEPT - len - 1);
   } else {
-    err = strncpy_s(buf_, MAX_EXCEPT - 64, "failed with error ", 64);
-    if (err) goto log_err;
-    err = strcat_s(buf_, MAX_EXCEPT - 64, fpgaErrStr(res_));
+    strncpy(buf_, "failed with error ", MAX_EXCEPT - len - 1);
+    len += 18;
+    strncat(buf_, fpgaErrStr(res_), MAX_EXCEPT - 64);
+    len += strlen(fpgaErrStr(res_));
   }
-  if (err) goto log_err;
-  buf_ok = true;
 
-  err = strcat_s(buf_, MAX_EXCEPT - 64, " at: ");
-  if (err) goto log_err;
+  strncat(buf_, " at: ", MAX_EXCEPT - len - 1);
+  len += 5;
 
-  err = strcat_s(buf_, MAX_EXCEPT - 64, loc_.file());
-  if (err) goto log_err;
+  strncat(buf_, loc_.file(), MAX_EXCEPT - len - 1);
+  len += strlen(loc_.file());
 
-  err = strcat_s(buf_, MAX_EXCEPT - 64, ":");
-  if (err) goto log_err;
+  strncat(buf_, ":", MAX_EXCEPT - len - 1);
+  len += 1;
 
-  err = strcat_s(buf_, MAX_EXCEPT - 64, loc_.fn());
-  if (err) goto log_err;
+  strncat(buf_, loc_.fn(), MAX_EXCEPT - len - 1);
+  len += strlen(loc_.fn());
 
-  err = strcat_s(buf_, MAX_EXCEPT - 64, "():");
-  if (err) goto log_err;
+  strncat(buf_, "():", MAX_EXCEPT - len - 1);
+  len += 3;
 
-  snprintf_s_i(buf_ + strlen(buf_), 64, "%d", loc_.line());
+  snprintf(buf_ + len, 12, "%d", loc_.line());
 
   return const_cast<const char *>(buf_);
-
-log_err:
-  std::cerr << "[except::what()] error with safestr operation: " << err << "\n";
-
-  buf_[sizeof(buf_) - 1] = '\0';
-  return buf_ok ? const_cast<const char *>(buf_) : msg_;
 }
 
 }  // end of namespace types

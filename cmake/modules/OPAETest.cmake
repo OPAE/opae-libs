@@ -133,7 +133,6 @@ function(opae_test_add)
 
     target_link_libraries(${OPAE_TEST_ADD_TARGET}
         ${CMAKE_THREAD_LIBS_INIT}
-        opae-c
         ${OPAE_TEST_LIBRARIES}
         ${libjson-c_LIBRARIES}
         ${libuuid_LIBRARIES}

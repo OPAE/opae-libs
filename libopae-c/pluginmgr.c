@@ -71,6 +71,7 @@ static platform_data platform_data_table[] = {
 };
 
 static int initialized;
+static int finalizing;
 
 STATIC opae_api_adapter_table *adapter_list = (void *)0;
 static pthread_mutex_t adapter_list_lock =
@@ -277,6 +278,11 @@ int opae_plugin_mgr_finalize_all(void)
 
 	opae_mutex_lock(res, &adapter_list_lock);
 
+	if (finalizing)
+		return 0;
+
+	finalizing = 1;
+
 	for (aptr = adapter_list; aptr;) {
 		opae_api_adapter_table *trash;
 
@@ -303,8 +309,9 @@ int opae_plugin_mgr_finalize_all(void)
 		platform_data_table[i].flags = 0;
 	}
 
-	initialized = 0;
 	opae_plugin_mgr_reset_cfg();
+	initialized = 0;
+	finalizing = 0;
 	opae_mutex_unlock(res, &adapter_list_lock);
 
 	return errors;
@@ -318,7 +325,7 @@ int opae_plugin_mgr_finalize_all(void)
 		}                                                              \
 	} while (0)
 
-#define MAX_PLUGIN_CFG_SIZE 1024
+#define MAX_PLUGIN_CFG_SIZE 8192
 STATIC int process_plugin(const char *name, json_object *j_config)
 {
 	json_object *j_plugin = NULL;
@@ -348,6 +355,13 @@ STATIC int process_plugin(const char *name, json_object *j_config)
 	}
 
 	cfg->cfg_size = strlen(stringified) + 1;
+
+	if (cfg->cfg_size >= MAX_PLUGIN_CFG_SIZE) {
+		OPAE_ERR("plugin config too large");
+		free(cfg);
+		return 1;
+	}
+
 	cfg->cfg = malloc(cfg->cfg_size);
 	if (!cfg->cfg) {
 		OPAE_ERR("error allocating memory for plugin configuration");
@@ -356,9 +370,9 @@ STATIC int process_plugin(const char *name, json_object *j_config)
 		return 1;
 	}
 
-	strncpy(cfg->cfg, stringified, MAX_PLUGIN_CFG_SIZE);
-	strncpy(cfg->name, name, PLUGIN_NAME_MAX);
-	strncpy(cfg->plugin, json_object_get_string(j_plugin), PLUGIN_NAME_MAX);
+	strncpy(cfg->cfg, stringified, cfg->cfg_size);
+	strncpy(cfg->name, name, PLUGIN_NAME_MAX - 1);
+	strncpy(cfg->plugin, json_object_get_string(j_plugin), PLUGIN_NAME_MAX - 1);
 	cfg->enabled = json_object_get_boolean(j_enabled);
 
 	opae_plugin_mgr_add_plugin(cfg);
@@ -416,9 +430,9 @@ STATIC int process_cfg_buffer(const char *buffer, const char *filename)
 	}
 	res = num_errors;
 
-
 out_free:
-	json_object_put(root);
+	if (root)
+		json_object_put(root);
 	return res;
 }
 
