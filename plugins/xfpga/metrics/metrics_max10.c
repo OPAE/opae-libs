@@ -178,7 +178,7 @@ fpga_result  enum_max10_metrics_info(struct _fpga_handle *_handle,
 	}
 
 	// metrics group
-	
+
 	strncpy(sysfspath, _token->sysfspath, sizeof(sysfspath) - 1);
 	strncat(sysfspath, "/", 2);
 	len = strnlen(sysfspath, sizeof(sysfspath));

@@ -129,7 +129,7 @@ fpga_result __XFPGA_API__ xfpga_fpgaUpdateProperties(fpga_token token,
 	strncpy(idpath, _token->sysfspath, sizeof(idpath) - 1);
 	len = strnlen(idpath, sizeof(idpath));
 	strncat(idpath, "/../device/vendor", sizeof(idpath) - len - 1);
-	
+
 	x = 0;
 	result = sysfs_read_u32(idpath, &x);
 	if (result != FPGA_OK)
