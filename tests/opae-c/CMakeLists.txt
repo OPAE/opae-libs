@@ -31,6 +31,7 @@ opae_test_add_static_lib(TARGET opae-c-static
         ${OPAE_LIBS_ROOT}/libopae-c/pluginmgr.c
         ${OPAE_LIBS_ROOT}/libopae-c/props.c
     LIBS
+        ${CMAKE_THREAD_LIBS_INIT}
 	${libjson-c_LIBRARIES}
 )
 
