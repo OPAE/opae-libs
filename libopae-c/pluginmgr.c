@@ -523,6 +523,7 @@ STATIC int opae_plugin_mgr_detect_platforms(void)
 	char file_path[PATH_MAX];
 	struct dirent *dirent;
 	int errors = 0;
+	size_t len;
 
 	// Iterate over the directories in /sys/bus/pci/devices.
 	// This directory contains symbolic links to device directories
@@ -546,8 +547,11 @@ STATIC int opae_plugin_mgr_detect_platforms(void)
 			continue;
 
 		// Read the 'vendor' file.
-		snprintf(file_path, sizeof(file_path),
-			 "%s/%s/vendor", base_dir, dirent->d_name);
+		strncpy(file_path, base_dir, sizeof(file_path) - 1);
+		strncat(file_path, "/", 2);
+		len = strnlen(file_path, sizeof(file_path));
+		strncat(file_path, dirent->d_name, sizeof(file_path) - len - 1);
+		strncat(file_path, "/vendor", 8);
 
 		fp = fopen(file_path, "r");
 		if (!fp) {
@@ -566,8 +570,11 @@ STATIC int opae_plugin_mgr_detect_platforms(void)
 		fclose(fp);
 
 		// Read the 'device' file.
-		snprintf(file_path, sizeof(file_path),
-			 "%s/%s/device", base_dir, dirent->d_name);
+		strncpy(file_path, base_dir, sizeof(file_path) - 1);
+		strncat(file_path, "/", 2);
+		len = strnlen(file_path, sizeof(file_path));
+		strncat(file_path, dirent->d_name, sizeof(file_path) - len - 1);
+		strncat(file_path, "/device", 8);
 
 		fp = fopen(file_path, "r");
 		if (!fp) {
