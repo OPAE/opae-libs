@@ -1,4 +1,4 @@
-// Copyright(c) 2018-2019, Intel Corporation
+// Copyright(c) 2018-2020, Intel Corporation
 //
 // Redistribution  and  use  in source  and  binary  forms,  with  or  without
 // modification, are permitted provided that the following conditions are met:
@@ -254,7 +254,7 @@ class init_ase_cfg_p : public ::testing::TestWithParam<const char*> {
     if (stat(cfg_dir_, &st)) {
       std::string dir = cfg_dir_;
       // find the first '/' after $HOME
-      int pos = dir.find('/', home.size());
+      size_t pos = dir.find('/', home.size());
       while (pos != std::string::npos) {
         std::string sub = dir.substr(0, pos);
         // sub is $HOME/<dir1>, then $HOME/<dir1>/<dir2>, ...
