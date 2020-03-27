@@ -882,7 +882,7 @@ fpga_result __OPAE_API__ fpgaGetOPAECVersionString(char *version_str,
 						   size_t len)
 {
 	ASSERT_NOT_NULL(version_str);
-	if (!len || len < sizeof(OPAE_VERSION))
+	if (len < sizeof(OPAE_VERSION))
 		return FPGA_INVALID_PARAM;
 
 	len = strnlen(OPAE_VERSION, len);
