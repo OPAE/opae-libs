@@ -386,7 +386,7 @@ TEST_P(sysfs_c_p, sysfs_invalid_tests) {
   fpga_result res;
 
   char invalid_string[] = "...";
-  strncpy(t->sysfspath, invalid_string, sizeof(t->sysfspath));
+  strncpy(t->sysfspath, invalid_string, 4);
   res = get_port_sysfs(handle_, spath);
   EXPECT_EQ(FPGA_INVALID_PARAM, res);
 

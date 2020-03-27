@@ -156,11 +156,10 @@ TEST_P(metrics_utils_c_p, test_metric_utils_101) {
   std::string sysclass_path =
               system_->get_sysfs_path(std::string("/sys/class/fpga/intel-fpga-dev.0"));
 
-  strncpy(metric_sysfs, sysclass_path.c_str(), sizeof(metric_sysfs) - 1);
+  strncpy(metric_sysfs, sysclass_path.c_str(), sysclass_path.size() + 1);
   strncat(metric_sysfs, "/", 2);
-  len = strnlen(metric_sysfs, sizeof(metric_sysfs));
-  strncat(metric_sysfs, "intel-fpga-fme.0/bitstream_id",
-          sizeof(metric_sysfs) - len - 1);
+  len = strnlen("intel-fpga-fme.0/bitstream_id", sizeof(metric_sysfs) - (sysclass_path.size() + 1));
+  strncat(metric_sysfs, "intel-fpga-fme.0/bitstream_id", len + 1);
 
   printf("sysclass_path %s \n", sysclass_path.c_str());
   printf("metric_sysfs %s \n", metric_sysfs);
@@ -271,10 +270,10 @@ TEST_P(metrics_utils_c_p, test_metric_utils_103) {
   std::string sysclass_path =
               system_->get_sysfs_path(std::string("/sys/class/fpga/intel-fpga-dev.0"));
 
-  strncpy(group_sysfs, sysclass_path.c_str(), sizeof(group_sysfs) - 1);
+  strncpy(group_sysfs, sysclass_path.c_str(), sysclass_path.size() + 1);
   strncat(group_sysfs, "/", 2);
-  len = strnlen(group_sysfs, sizeof(group_sysfs));
-  strncat(group_sysfs, "intel-fpga-fme.0/thermal_mgmt/*", sizeof(group_sysfs) - len - 1);
+  len = strnlen("intel-fpga-fme.0/thermal_mgmt/*", sizeof(group_sysfs) - (sysclass_path.size() + 1));
+  strncat(group_sysfs, "intel-fpga-fme.0/thermal_mgmt/*", len + 1);
 
   printf("sysclass_path %s \n", sysclass_path.c_str());
   printf("metric_sysfs %s \n", group_sysfs);
@@ -317,10 +316,10 @@ TEST_P(metrics_utils_c_p, test_metric_utils_104) {
   std::string sysclass_path =
               system_->get_sysfs_path(std::string("/sys/class/fpga/intel-fpga-dev.0"));
 
-  strncpy(group_sysfs, sysclass_path.c_str(), sizeof(group_sysfs) - 1);
+  strncpy(group_sysfs, sysclass_path.c_str(), sysclass_path.size() + 1);
   strncat(group_sysfs, "/", 2);
-  len = strnlen(group_sysfs, sizeof(group_sysfs));
-  strncat(group_sysfs, "intel-fpga-fme.0/power_mgmt/*", sizeof(group_sysfs) - len - 1);
+  len = strnlen("intel-fpga-fme.0/power_mgmt/*", sizeof(group_sysfs) - (sysclass_path.size() + 1));
+  strncat(group_sysfs, "intel-fpga-fme.0/power_mgmt/*", len + 1);
 
   printf("sysclass_path %s \n", sysclass_path.c_str());
   printf("metric_sysfs %s \n", group_sysfs);
@@ -380,10 +379,10 @@ TEST_P(metrics_utils_c_p, test_metric_utils_105) {
   std::string sysclass_path =
               system_->get_sysfs_path(std::string("/sys/class/fpga/intel-fpga-dev.0"));
 
-  strncpy(group_sysfs, sysclass_path.c_str(), sizeof(group_sysfs) - 1);
+  strncpy(group_sysfs, sysclass_path.c_str(), sysclass_path.size() + 1);
   strncat(group_sysfs, "/", 2);
-  len = strnlen(group_sysfs, sizeof(group_sysfs));
-  strncat(group_sysfs, "intel-fpga-fme.0/iperf/", sizeof(group_sysfs) - len - 1);
+  len = strnlen("intel-fpga-fme.0/iperf/", sizeof(group_sysfs) - (sysclass_path.size() + 1));
+  strncat(group_sysfs, "intel-fpga-fme.0/iperf/", len + 1);
 
   printf("sysclass_path %s \n", sysclass_path.c_str());
   printf("metric_sysfs %s \n", group_sysfs);
@@ -393,10 +392,10 @@ TEST_P(metrics_utils_c_p, test_metric_utils_105) {
                          (char *)group_sysfs, (char *)"fabric",
                          FPGA_METRIC_TYPE_PERFORMANCE_CTR, FPGA_HW_MCP));
 
-  strncpy(group_sysfs, sysclass_path.c_str(), sizeof(group_sysfs) - 1);
+  strncpy(group_sysfs, sysclass_path.c_str(), sysclass_path.size() + 1);
   strncat(group_sysfs, "/", 2);
-  len = strnlen(group_sysfs, sizeof(group_sysfs));
-  strncat(group_sysfs, "intel-fpga-fme.0/perf/", sizeof(group_sysfs) - len - 1);
+  len = strnlen("intel-fpga-fme.0/perf/", sizeof(group_sysfs) - (sysclass_path.size() + 1));
+  strncat(group_sysfs, "intel-fpga-fme.0/perf/", len + 1);
 
   printf("sysclass_path %s \n", sysclass_path.c_str());
   printf("metric_sysfs %s \n", group_sysfs);
@@ -434,10 +433,10 @@ TEST_P(metrics_utils_c_p, test_metric_utils_106) {
   std::string sysclass_path =
               system_->get_sysfs_path(std::string("/sys/class/fpga/intel-fpga-dev.0"));
 
-  strncpy(group_sysfs, sysclass_path.c_str(), sizeof(group_sysfs) - 1);
+  strncpy(group_sysfs, sysclass_path.c_str(), sysclass_path.size() + 1);
   strncat(group_sysfs, "/", 2);
-  len = strnlen(group_sysfs, sizeof(group_sysfs));
-  strncat(group_sysfs, "intel-fpga-fme.0/", sizeof(group_sysfs) - len - 1);
+  len = strnlen("intel-fpga-fme.0/", sizeof(group_sysfs) - (sysclass_path.size() + 1));
+  strncat(group_sysfs, "intel-fpga-fme.0/", len + 1);
 
   printf("sysclass_path %s \n", sysclass_path.c_str());
   printf("metric_sysfs %s \n", group_sysfs);
@@ -624,22 +623,20 @@ TEST_P(metrics_utils_c_p, test_metric_utils_13) {
   std::string sysclass_path =
               system_->get_sysfs_path(std::string("/sys/class/fpga/intel-fpga-dev.0"));
 
-  strncpy(group_sysfs, sysclass_path.c_str(), sizeof(group_sysfs) - 1);
+  strncpy(group_sysfs, sysclass_path.c_str(), sysclass_path.size() + 1);
   strncat(group_sysfs, "/", 2);
-  len = strnlen(group_sysfs, sizeof(group_sysfs));
-  strncat(group_sysfs, "intel-fpga-fme.0/power_mgmt/fpga_limit",
-          sizeof(group_sysfs) - len - 1);
+  len = strnlen("intel-fpga-fme.0/power_mgmt/fpga_limit", sizeof(group_sysfs) - (sysclass_path.size() + 1));
+  strncat(group_sysfs, "intel-fpga-fme.0/power_mgmt/fpga_limit", len + 1);
 
   printf("sysclass_path %s \n", sysclass_path.c_str());
   printf("metric_sysfs %s \n", group_sysfs);
 
   EXPECT_EQ(FPGA_OK, get_pwr_thermal_value(group_sysfs, &value));
 
-  strncpy(group_sysfs, sysclass_path.c_str(), sizeof(group_sysfs) - 1);
+  strncpy(group_sysfs, sysclass_path.c_str(), sysclass_path.size() + 1);
   strncat(group_sysfs, "/", 2);
-  len = strnlen(group_sysfs, sizeof(group_sysfs));
-  strncat(group_sysfs, "intel-fpga-fme.0/power_mgmt/xeon_limit",
-          sizeof(group_sysfs) - len - 1);
+  len = strnlen("intel-fpga-fme.0/power_mgmt/xeon_limit", sizeof(group_sysfs) - (sysclass_path.size() + 1));
+  strncat(group_sysfs, "intel-fpga-fme.0/power_mgmt/xeon_limit", len + 1);
 
   printf("sysclass_path %s \n", sysclass_path.c_str());
   printf("metric_sysfs %s \n", group_sysfs);
@@ -666,20 +663,20 @@ TEST_P(metrics_utils_c_p, test_metric_utils_14) {
   std::string sysclass_path =
               system_->get_sysfs_path(std::string("/sys/class/fpga/intel-fpga-dev.0"));
 
-  strncpy(group_sysfs, sysclass_path.c_str(), sizeof(group_sysfs) - 1);
+  strncpy(group_sysfs, sysclass_path.c_str(), sysclass_path.size() + 1);
   strncat(group_sysfs, "/", 2);
-  len = strnlen(group_sysfs, sizeof(group_sysfs));
-  strncat(group_sysfs, "intel-fpga-fme.0/power_mgmt/iperf/cache",
-          sizeof(group_sysfs) - len - 1);
+  len = strnlen("intel-fpga-fme.0/power_mgmt/iperf/cache",
+		  sizeof(group_sysfs) - (sysclass_path.size() + 1));
+  strncat(group_sysfs, "intel-fpga-fme.0/power_mgmt/iperf/cache", len + 1);
 
   printf("sysclass_path %s \n", sysclass_path.c_str());
   printf("metric_sysfs %s \n", group_sysfs);
 
-  strncpy(group_sysfs, sysclass_path.c_str(), sizeof(group_sysfs) - 1);
+  strncpy(group_sysfs, sysclass_path.c_str(), sysclass_path.size() + 1);
   strncat(group_sysfs, "/", 2);
-  len = strnlen(group_sysfs, sizeof(group_sysfs));
-  strncat(group_sysfs, "intel-fpga-fme.0/power_mgmt/iperf/cache/read_miss1",
-          sizeof(group_sysfs) - len - 1);
+  len = strnlen("intel-fpga-fme.0/power_mgmt/iperf/cache/read_miss1",
+		  sizeof(group_sysfs) - (sysclass_path.size() + 1));
+  strncat(group_sysfs, "intel-fpga-fme.0/power_mgmt/iperf/cache/read_miss1", len + 1);
 
   printf("metric_sysfs %s \n", metric_sysfs);
 

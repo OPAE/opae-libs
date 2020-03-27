@@ -124,10 +124,11 @@ fpga_result bmc_c_p::write_sysfs_file(fpga_token token, const char *file,
     return FPGA_INVALID_PARAM;
   }
 
-  strncpy(sysfspath, tok->sysfspath, sizeof(sysfspath) - 1);
+  len = strnlen(tok->sysfspath, sizeof(sysfspath) - 1);
+  strncpy(sysfspath, tok->sysfspath, len + 1);
   strncat(sysfspath, "/", 2);
-  len = strnlen(sysfspath, sizeof(sysfspath));
-  strncat(sysfspath, file, sizeof(sysfspath) - len - 1);
+  len = strnlen(file, sizeof(sysfspath) - (len + 1));
+  strncat(sysfspath, file, len + 1);
 
   glob_t pglob;
   int gres = glob(sysfspath, GLOB_NOSORT, NULL, &pglob);
