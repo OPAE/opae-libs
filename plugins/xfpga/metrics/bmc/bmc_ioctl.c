@@ -221,10 +221,11 @@ fpga_result bmcSetHWThresholds(bmc_sdr_handle sdr_h, uint32_t sensor,
 		return FPGA_INVALID_PARAM;
 	}
 
-	strncpy(sysfspath, sdr->sysfs_path, sizeof(sysfspath) - 1);
+	len = strnlen(sdr->sysfs_path, sizeof(sysfspath) - 1);
+	strncpy(sysfspath, sdr->sysfs_path, len + 1);
 	strncat(sysfspath, "/", 2);
-	len = strnlen(sysfspath, sizeof(sysfspath));
-	strncat(sysfspath, SYSFS_AVMMI_DIR, sizeof(sysfspath) - len - 1);
+	len = strnlen(SYSFS_AVMMI_DIR, sizeof(sysfspath) - (len + 1));
+	strncat(sysfspath, SYSFS_AVMMI_DIR, len + 1);
 
 	glob_t pglob;
 	int gres = glob(sysfspath, GLOB_NOSORT, NULL, &pglob);
@@ -240,7 +241,8 @@ fpga_result bmcSetHWThresholds(bmc_sdr_handle sdr_h, uint32_t sensor,
 	}
 
 	strncpy(sysfspath, "/dev/", 6);
-	strncat(sysfspath, &avmmi[1], sizeof(sysfspath) - 5 - 1);
+	len = strnlen(&avmmi[1], sizeof(sysfspath) - 6);
+	strncat(sysfspath, &avmmi[1], len + 1);
 
 	fd = open(sysfspath, O_RDWR);
 	globfree(&pglob);

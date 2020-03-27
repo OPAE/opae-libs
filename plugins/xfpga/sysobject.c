@@ -380,10 +380,8 @@ fpga_result __XFPGA_API__ xfpga_fpgaObjectGetName(fpga_object obj, char *name,
 		return FPGA_INVALID_PARAM;
 	}
 
-	len = strlen(_obj->name);
-	if (max_len < len)
-		len = max_len;
-	strncpy(name, _obj->name, len - 1);
+	len = strnlen(_obj->name, max_len - 1);
+	strncpy(name, _obj->name, len + 1);
 
 	if (pthread_mutex_unlock(&_obj->lock)) {
 		OPAE_ERR("pthread_mutex_unlock() failed");

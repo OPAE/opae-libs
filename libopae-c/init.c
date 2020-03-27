@@ -122,10 +122,9 @@ STATIC char *find_ase_cfg(void)
 	// third look in the release directory
 	opae_path = getenv("OPAE_PLATFORM_ROOT");
 	if (opae_path) {
-		strncpy(cfg_path, opae_path, sizeof(cfg_path) - 1);
-		len = strnlen(cfg_path, sizeof(cfg_path));
-		strncat(cfg_path, "/share/opae/ase/opae_ase.cfg",
-			sizeof(cfg_path) - len - 1);
+		len = strnlen(opae_path, sizeof(cfg_path) - 1);
+		strncpy(cfg_path, opae_path, len + 1);
+		strncat(cfg_path, "/share/opae/ase/opae_ase.cfg", 29);
 		file_name = canonicalize_file_name(cfg_path);
 		if (file_name)
 			return file_name;
@@ -134,12 +133,14 @@ STATIC char *find_ase_cfg(void)
 	// fourth look in possible paths in the users home directory
 	if (user_passwd != NULL) {
 		for (i = 0; i < HOME_CFG_PATHS; ++i) {
-			strncpy(home_cfg, user_passwd->pw_dir, sizeof(home_cfg) - 1);
+			len = strnlen(user_passwd->pw_dir,
+				      sizeof(user_passwd->pw_dir) - 1);
+			strncpy(home_cfg, user_passwd->pw_dir, len + 1);
 
 			home_cfg_ptr = home_cfg + strlen(home_cfg);
 
-			strncpy(home_cfg_ptr, _ase_home_cfg_files[i],
-				sizeof(home_cfg) - (home_cfg_ptr - home_cfg) - 1);
+			len = strnlen(_ase_home_cfg_files[i], 32);
+			strncpy(home_cfg_ptr, _ase_home_cfg_files[i], len + 1);
 
 			file_name = canonicalize_file_name(home_cfg);
 			if (file_name)
@@ -151,7 +152,8 @@ STATIC char *find_ase_cfg(void)
 
 	// now look in possible system paths
 	for (i = 0; i < SYS_CFG_PATHS; ++i) {
-		strncpy(home_cfg, _ase_sys_cfg_files[i], sizeof(home_cfg) - 1);
+		len = strnlen(_ase_sys_cfg_files[i], 32);
+		strncpy(home_cfg, _ase_sys_cfg_files[i], len + 1);
 		file_name = canonicalize_file_name(home_cfg);
 		if (file_name)
 			return file_name;

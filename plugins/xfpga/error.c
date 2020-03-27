@@ -224,11 +224,13 @@ build_error_list(const char *path, struct error_list **list)
 	DIR *dir;
 	struct stat st;
 	char basedir[FILENAME_MAX] = { 0, };
-	int len = strlen(path);
+	int len;
 	int subpath_len = 0;
 	uint32_t n = 0;
 	unsigned int i;
 	struct error_list **el = list;
+
+	len = strnlen(path, FILENAME_MAX - 1);
 
 	// add 3 to the len
 	// 1 for the '/' char
@@ -240,7 +242,7 @@ build_error_list(const char *path, struct error_list **list)
 		return 0;
 	}
 
-	strncpy(basedir, path, len);
+	strncpy(basedir, path, len + 1);
 	basedir[len++] = '/';
 	// now we've added one to length
 
@@ -251,6 +253,9 @@ build_error_list(const char *path, struct error_list **list)
 	}
 
 	while ((de = readdir(dir))) {
+		size_t blen;
+		size_t dlen;
+
 		// skip hidden ('.*') files (includes "." and "..")
 		if (de->d_name[0] == '.')
 			continue;
@@ -264,7 +269,7 @@ build_error_list(const char *path, struct error_list **list)
 		if (i < NUM_ERRORS_EXCLUDE)
 			continue;
 
-		subpath_len = strlen(de->d_name);
+		subpath_len = strnlen(de->d_name, sizeof(de->d_name) - 1);
 
 		// check if the result abs path is longer than  our max
 		if (len + subpath_len > FILENAME_MAX) {
@@ -305,8 +310,13 @@ build_error_list(const char *path, struct error_list **list)
 			n--;
 			break;
 		}
-		strncpy(new_entry->info.name, de->d_name, FPGA_ERROR_NAME_MAX - 1);
-		strncpy(new_entry->error_file, basedir, SYSFS_PATH_MAX - 1);
+
+		dlen = strnlen(de->d_name, sizeof(de->d_name) - 1);
+		strncpy(new_entry->info.name, de->d_name, dlen + 1);
+
+		blen = strnlen(basedir, sizeof(basedir) - 1);
+		strncpy(new_entry->error_file, basedir, blen + 1);
+
 		new_entry->next = NULL;
 		// Errors can be cleared:
 		//   * if the name is "errors" and there is a file called "clear" (generic case), OR
@@ -314,20 +324,20 @@ build_error_list(const char *path, struct error_list **list)
 		new_entry->info.can_clear = false;
 		if (strcmp(de->d_name, "errors") == 0 &&
 			!stat(FPGA_SYSFS_CLASS_PATH_INTEL, &st)) {
-			strncpy(basedir + len, "clear", FILENAME_MAX - len - 1);
+			strncpy(basedir + len, "clear", 6);
 			// try accessing clear file
 			if (lstat(basedir, &st) != -1) {
 				new_entry->info.can_clear = true;
-				strncpy(new_entry->clear_file, basedir, SYSFS_PATH_MAX - 1);
+				strncpy(new_entry->clear_file, basedir, blen + 1);
 			}
 		} else {
 			for (i = 0; i < NUM_ERRORS_CLEARABLE; i++) {
 				if (strcmp(de->d_name, errors_clearable[i]) == 0) {
-					strncpy(basedir + len, de->d_name, FILENAME_MAX - len - 1);
+					strncpy(basedir + len, de->d_name, dlen + 1);
 					// try accessing clear file
 					if (lstat(basedir, &st) != -1) {
 						new_entry->info.can_clear = true;
-						strncpy(new_entry->clear_file, basedir, SYSFS_PATH_MAX - 1);
+						strncpy(new_entry->clear_file, basedir, blen + 1);
 					}
 				}
 			}

@@ -22,7 +22,7 @@
 // INTERRUPTION)  HOWEVER CAUSED  AND ON ANY THEORY  OF LIABILITY,  WHETHER IN
 // CONTRACT,  STRICT LIABILITY,  OR TORT  (INCLUDING NEGLIGENCE  OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,  EVEN IF ADVISED OF THE
-// POSSIBILITY OF SUCH DAMAG
+// POSSIBILITY OF SUCH DAMAGE.
 
 
 /**
@@ -87,10 +87,11 @@ fpga_result read_sensor_sysfs_file(const char *sysfs, const char *file,
 	*buf = NULL;
 	*tot_bytes_ret = 0;
 
-	strncpy(sysfspath, sysfs, sizeof(sysfspath) - 1);
+	len = strnlen(sysfs, SYSFS_PATH_MAX - 1);
+	strncpy(sysfspath, sysfs, len + 1);
 	strncat(sysfspath, "/", 2);
-	len = strnlen(sysfspath, sizeof(sysfspath));
-	strncat(sysfspath, file, sizeof(sysfspath) - len - 1);
+	len = strnlen(file, SYSFS_PATH_MAX - 1);
+	strncat(sysfspath, file, len + 1);
 
 	glob_t pglob;
 	int gres = glob(sysfspath, GLOB_NOSORT, NULL, &pglob);
@@ -178,11 +179,11 @@ fpga_result  enum_max10_metrics_info(struct _fpga_handle *_handle,
 	}
 
 	// metrics group
-
-	strncpy(sysfspath, _token->sysfspath, sizeof(sysfspath) - 1);
+	len = strnlen(_token->sysfspath, SYSFS_PATH_MAX - 1);
+	strncpy(sysfspath, _token->sysfspath, len + 1);
 	strncat(sysfspath, "/", 2);
-	len = strnlen(sysfspath, sizeof(sysfspath));
-	strncat(sysfspath, MAX10_SYSFS_PATH, sizeof(sysfspath) - len - 1);
+	len = strnlen(MAX10_SYSFS_PATH, sizeof(sysfspath) - (len + 1));
+	strncat(sysfspath, MAX10_SYSFS_PATH, len + 1);
 
 	int gres = glob(sysfspath, GLOB_NOSORT, NULL, &pglob);
 	if ((gres) || (1 != pglob.gl_pathc)) {
@@ -191,15 +192,17 @@ fpga_result  enum_max10_metrics_info(struct _fpga_handle *_handle,
 		return FPGA_NOT_FOUND;
 	}
 
-	strncpy(group_sysfs, pglob.gl_pathv[0], sizeof(group_sysfs) - 1);
+	len = strnlen(pglob.gl_pathv[0], sizeof(group_sysfs) - 1);
+	strncpy(group_sysfs, pglob.gl_pathv[0], len + 1);
 	globfree(&pglob);
 
 	// Enum sensors
 
-	strncpy(sysfspath, _token->sysfspath, sizeof(sysfspath) - 1);
+	len = strnlen(_token->sysfspath, sizeof(sysfspath) - 1);
+	strncpy(sysfspath, _token->sysfspath, len + 1);
 	strncat(sysfspath, "/", 2);
-	len = strnlen(sysfspath, sizeof(sysfspath));
-	strncat(sysfspath, MAX10_SENSOR_SYSFS_PATH, sizeof(sysfspath) - len - 1);
+	len = strnlen(MAX10_SENSOR_SYSFS_PATH, sizeof(sysfspath) - (len + 1));
+	strncat(sysfspath, MAX10_SENSOR_SYSFS_PATH, len + 1);
 
 	gres = glob(sysfspath, GLOB_NOSORT, NULL, &pglob);
 	if (gres) {
@@ -223,7 +226,8 @@ fpga_result  enum_max10_metrics_info(struct _fpga_handle *_handle,
 
 		memset(&metric_name, 0, sizeof(metric_name));
 
-		strncpy(metric_name, (char *)tmp, sizeof(metric_name) - 1);
+		len = strnlen(tmp, sizeof(metric_name) - 1);
+		strncpy(metric_name, tmp, len + 1);
 
 		if (tmp) {
 			free(tmp);
@@ -244,25 +248,29 @@ fpga_result  enum_max10_metrics_info(struct _fpga_handle *_handle,
 			metric_type = FPGA_METRIC_TYPE_POWER;
 
 			// group name
-			strncpy(group_name, PWRMGMT, sizeof(group_name) - 1);
+			len = strnlen(PWRMGMT, sizeof(group_name) - 1);
+			strncpy(group_name, PWRMGMT, len + 1);
 
 			//qualifier name
-			strncpy(qualifier_name, PWRMGMT, sizeof(qualifier_name) - 1);
+			len = strnlen(PWRMGMT, sizeof(qualifier_name) - 1);
+			strncpy(qualifier_name, PWRMGMT, len + 1);
 			strncat(qualifier_name, ":", 2);
-			len = strnlen(qualifier_name, sizeof(qualifier_name));
-			strncat(qualifier_name, metric_name, sizeof(qualifier_name) - len - 1);
+			len = strnlen(metric_name, sizeof(qualifier_name) - (len + 1));
+			strncat(qualifier_name, metric_name, len + 1);
 
 		} else if (tmp && strstr(tmp, TEMPERATURE)) {
 			metric_type = FPGA_METRIC_TYPE_THERMAL;
 
 			// group name
-			strncpy(group_name, THERLGMT, sizeof(group_name) - 1);
+			len = strnlen(THERLGMT, sizeof(group_name) - 1);
+			strncpy(group_name, THERLGMT, len + 1);
 
 			//qualifier name
-			strncpy(qualifier_name, THERLGMT, sizeof(qualifier_name) - 1);
+			len = strnlen(THERLGMT, sizeof(qualifier_name) - 1);
+			strncpy(qualifier_name, THERLGMT, len + 1);
 			strncat(qualifier_name, ":", 2);
-			len = strnlen(qualifier_name, sizeof(qualifier_name));
-			strncat(qualifier_name, metric_name, sizeof(qualifier_name) - len - 1);
+			len = strnlen(metric_name, sizeof(qualifier_name) - (len + 1));
+			strncat(qualifier_name, metric_name, len + 1);
 		} else {
 			printf("FPGA_METRIC_TYPE_UNKNOWN \n");
 			metric_type = FPGA_METRIC_TYPE_UNKNOWN;
@@ -275,38 +283,46 @@ fpga_result  enum_max10_metrics_info(struct _fpga_handle *_handle,
 		// Metric Units
 		if (strstr(metric_name, POWER)) {
 
-			strncpy(metric_units, POWER_UNITS, sizeof(metric_units) - 1);
+			len = strnlen(POWER_UNITS, sizeof(metric_units) - 1);
+			strncpy(metric_units, POWER_UNITS, len + 1);
 
 		} else if (strstr(metric_name, VOLTAGE)) {
 
-			strncpy(metric_units, VOLTAGE_UNITS, sizeof(metric_units) - 1);
+			len = strnlen(VOLTAGE_UNITS, sizeof(metric_units) - 1);
+			strncpy(metric_units, VOLTAGE_UNITS, len + 1);
 
 		} else if (strstr(metric_name, CURRENT)) {
 
-			strncpy(metric_units, CURRENT_UNITS, sizeof(metric_units) - 1);
+			len = strnlen(CURRENT_UNITS, sizeof(metric_units) - 1);
+			strncpy(metric_units, CURRENT_UNITS, len + 1);
 
 		} else if (strstr(metric_name, TEMPERATURE)) {
 
-			strncpy(metric_units, TEMPERATURE_UNITS, sizeof(metric_units) - 1);
+			len = strnlen(TEMPERATURE_UNITS, sizeof(metric_units) - 1);
+			strncpy(metric_units, TEMPERATURE_UNITS, len + 1);
 
 		} else if (strstr(metric_name, CLOCK)) {
 
-			strncpy(metric_units, CLOCK_UNITS, sizeof(metric_units) - 1);
+			len = strnlen(CLOCK_UNITS, sizeof(metric_units) - 1);
+			strncpy(metric_units, CLOCK_UNITS, len + 1);
 
 		} else {
 
-			strncpy(metric_units, "N/A", sizeof(metric_units) - 1);
+			strncpy(metric_units, "N/A", 4);
 
 		}
 
 		// value sysfs path
-		strncpy(metrics_sysfs_path, pglob.gl_pathv[i], sizeof(metrics_sysfs_path) - 1);
+		len = strnlen(pglob.gl_pathv[i], sizeof(metrics_sysfs_path) - 1);
+		strncpy(metrics_sysfs_path, pglob.gl_pathv[i], len + 1);
 		strncat(metrics_sysfs_path, "/", 2);
-		len = strnlen(metrics_sysfs_path, sizeof(metrics_sysfs_path));
-		strncat(metrics_sysfs_path, SENSOR_SYSFS_VALUE, sizeof(metrics_sysfs_path) - len - 1);
+		len = strnlen(SENSOR_SYSFS_VALUE, sizeof(metrics_sysfs_path) - (len + 1));
+		strncat(metrics_sysfs_path, SENSOR_SYSFS_VALUE, len + 1);
 
-		result = add_metric_vector(vector, *metric_num, qualifier_name, group_name, group_sysfs, metric_name, metrics_sysfs_path, metric_units,
-			FPGA_METRIC_DATATYPE_DOUBLE, metric_type, hw_type, 0);
+		result = add_metric_vector(vector, *metric_num, qualifier_name,
+				group_name, group_sysfs, metric_name,
+				metrics_sysfs_path, metric_units,
+				FPGA_METRIC_DATATYPE_DOUBLE, metric_type, hw_type, 0);
 		if (result != FPGA_OK) {
 			OPAE_ERR("Failed to add metrics");
 			goto out;

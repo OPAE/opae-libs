@@ -54,13 +54,13 @@ fpga_result __XFPGA_API__ xfpga_fpgaGetOPAECVersionString(char *version_str, siz
 		return FPGA_INVALID_PARAM;
 	}
 
-	// x.x.x\0
-	if (len < 6) {
+	if (len < sizeof(OPAE_VERSION)) {
 		OPAE_ERR("insufficient buffer size");
 		return FPGA_INVALID_PARAM;
 	}
 
-	strncpy(version_str, OPAE_VERSION, len);
+	len = strnlen(OPAE_VERSION, len - 1);
+	strncpy(version_str, OPAE_VERSION, len + 1);
 
 	return FPGA_OK;
 }
@@ -72,13 +72,13 @@ fpga_result __XFPGA_API__ xfpga_fpgaGetOPAECBuildString(char *build_str, size_t 
 		return FPGA_INVALID_PARAM;
 	}
 
-	// XXXXXXX\0
-	if (len < 8) {
+	if (len < sizeof(OPAE_GIT_COMMIT_HASH)) {
 		OPAE_ERR("insufficient buffer size");
 		return FPGA_INVALID_PARAM;
 	}
 
-	strncpy(build_str, OPAE_GIT_COMMIT_HASH, len);
+	len = strnlen(OPAE_GIT_COMMIT_HASH, len - 1);
+	strncpy(build_str, OPAE_GIT_COMMIT_HASH, len + 1);
 
 	return FPGA_OK;
 }
