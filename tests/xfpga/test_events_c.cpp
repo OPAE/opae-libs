@@ -482,7 +482,7 @@ TEST(events, event_04) {
   struct _fpga_token _t;
 
   // token setup
-  strncpy(_t.sysfspath, sysfs_port.c_str(), sysfa_port.size() + 1);
+  strncpy(_t.sysfspath, sysfs_port.c_str(), sysfs_port.size() + 1);
   strncpy(_t.devpath, dev_port.c_str(), dev_port.size() + 1);
   _t.magic = FPGA_TOKEN_MAGIC;
   _t.errors = nullptr;
