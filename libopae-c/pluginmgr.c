@@ -112,7 +112,7 @@ STATIC char *find_cfg()
 	// first look in possible paths in the users home directory
 	for (i = 0; i < HOME_CFG_PATHS; ++i) {
 		len = strnlen(user_passwd->pw_dir,
-			      sizeof(user_passwd->pw_dir) - 1);
+			      sizeof(home_cfg) - 1);
 		strncpy(home_cfg, user_passwd->pw_dir, len + 1);
 
 		home_cfg_ptr = home_cfg + strlen(home_cfg);
