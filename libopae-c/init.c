@@ -52,16 +52,17 @@ static FILE *g_logfile;
 /* mutex to protect against garbled log output */
 static pthread_mutex_t log_lock = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
 
+#define CFG_PATH_MAX 64
 #define HOME_CFG_PATHS 3
-STATIC const char *_ase_home_cfg_files[HOME_CFG_PATHS] = {
-	"/.local/opae_ase.cfg",
-	"/.local/opae/opae_ase.cfg",
-	"/.config/opae/opae_ase.cfg",
+STATIC const char _ase_home_cfg_files[HOME_CFG_PATHS][CFG_PATH_MAX] = {
+	{ "/.local/opae_ase.cfg" },
+	{ "/.local/opae/opae_ase.cfg" },
+	{ "/.config/opae/opae_ase.cfg" },
 };
 #define SYS_CFG_PATHS 2
-STATIC const char *_ase_sys_cfg_files[SYS_CFG_PATHS] = {
-	"/usr/local/etc/opae/opae_ase.cfg",
-	"/etc/opae/opae_ase.cfg",
+STATIC const char _ase_sys_cfg_files[SYS_CFG_PATHS][CFG_PATH_MAX] = {
+	{ "/usr/local/etc/opae/opae_ase.cfg" },
+	{ "/etc/opae/opae_ase.cfg" },
 };
 
 void opae_print(int loglevel, const char *fmt, ...)
@@ -139,7 +140,7 @@ STATIC char *find_ase_cfg(void)
 
 			home_cfg_ptr = home_cfg + strlen(home_cfg);
 
-			len = strnlen(_ase_home_cfg_files[i], 32);
+			len = strnlen(_ase_home_cfg_files[i], CFG_PATH_MAX);
 			strncpy(home_cfg_ptr, _ase_home_cfg_files[i], len + 1);
 
 			file_name = canonicalize_file_name(home_cfg);
@@ -152,7 +153,7 @@ STATIC char *find_ase_cfg(void)
 
 	// now look in possible system paths
 	for (i = 0; i < SYS_CFG_PATHS; ++i) {
-		len = strnlen(_ase_sys_cfg_files[i], 32);
+		len = strnlen(_ase_sys_cfg_files[i], CFG_PATH_MAX);
 		strncpy(home_cfg, _ase_sys_cfg_files[i], len + 1);
 		file_name = canonicalize_file_name(home_cfg);
 		if (file_name)

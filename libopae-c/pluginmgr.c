@@ -81,16 +81,17 @@ static pthread_mutex_t adapter_list_lock =
 STATIC plugin_cfg *opae_plugin_mgr_config_list;
 STATIC int opae_plugin_mgr_plugin_count;
 
+#define CFG_PATH_MAX 64
 #define HOME_CFG_PATHS 3
-STATIC const char *_opae_home_cfg_files[HOME_CFG_PATHS] = {
-	"/.local/opae.cfg",
-	"/.local/opae/opae.cfg",
-	"/.config/opae/opae.cfg",
+STATIC const char _opae_home_cfg_files[HOME_CFG_PATHS][CFG_PATH_MAX] = {
+	{ "/.local/opae.cfg" },
+	{ "/.local/opae/opae.cfg" },
+	{ "/.config/opae/opae.cfg" },
 };
 #define SYS_CFG_PATHS 2
-STATIC const char *_opae_sys_cfg_files[SYS_CFG_PATHS] = {
-	"/usr/local/etc/opae/opae.cfg",
-	"/etc/opae/opae.cfg",
+STATIC const char _opae_sys_cfg_files[SYS_CFG_PATHS][CFG_PATH_MAX] = {
+	{ "/usr/local/etc/opae/opae.cfg" },
+	{ "/etc/opae/opae.cfg" },
 };
 
 
@@ -116,7 +117,7 @@ STATIC char *find_cfg()
 
 		home_cfg_ptr = home_cfg + strlen(home_cfg);
 
-		len = strnlen(_opae_home_cfg_files[i], 32);
+		len = strnlen(_opae_home_cfg_files[i], CFG_PATH_MAX);
 		strncpy(home_cfg_ptr, _opae_home_cfg_files[i], len + 1);
 
 		file_name = canonicalize_file_name(home_cfg);
@@ -128,7 +129,7 @@ STATIC char *find_cfg()
 
 	// now look in possible system paths
 	for (i = 0; i < SYS_CFG_PATHS; ++i) {
-		len = strnlen(_opae_sys_cfg_files[i], 32);
+		len = strnlen(_opae_sys_cfg_files[i], CFG_PATH_MAX);
 		strncpy(home_cfg, _opae_sys_cfg_files[i], len + 1);
 
 		file_name = canonicalize_file_name(home_cfg);
