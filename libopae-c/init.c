@@ -134,7 +134,7 @@ STATIC char *find_ase_cfg(void)
 	if (user_passwd != NULL) {
 		for (i = 0; i < HOME_CFG_PATHS; ++i) {
 			len = strnlen(user_passwd->pw_dir,
-				      sizeof(user_passwd->pw_dir) - 1);
+				      sizeof(home_cfg) - 1);
 			strncpy(home_cfg, user_passwd->pw_dir, len + 1);
 
 			home_cfg_ptr = home_cfg + strlen(home_cfg);
