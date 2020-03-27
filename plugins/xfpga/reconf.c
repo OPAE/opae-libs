@@ -298,10 +298,10 @@ fpga_result set_fpga_pwr_threshold(fpga_handle handle,
 	}
 
 	// set fpga threshold 1
-	strncpy(sysfs_path, _token->sysfspath, sizeof(sysfs_path) - 1);
-	len = strnlen(sysfs_path, sizeof(sysfs_path));
+	len = strnlen(_token->sysfspath, sizeof(_token->sysfspath) - 1);
+	strncpy(sysfs_path, _token->sysfspath, len + 1);
 	strncat(sysfs_path, "/" PWRMGMT_THRESHOLD1,
-		sizeof(sysfs_path) - len - 1);
+		2 + sizeof(PWRMGMT_THRESHOLD1));
 
 	OPAE_DBG(" FPGA Threshold1             :%ld watts\n", fpga_power);
 

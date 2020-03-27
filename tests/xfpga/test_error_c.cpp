@@ -83,9 +83,9 @@ class error_c_mock_p : public ::testing::TestWithParam<std::string> {
     }
     memset(&fake_port_token_, 0, sizeof(fake_port_token_));
     strncpy(fake_port_token_.sysfspath,
-              sysfs_port.c_str(), sysfs_port.size());
+              sysfs_port.c_str(), sysfs_port.size() + 1);
     strncpy(fake_port_token_.devpath,
-              dev_port.c_str(), dev_port.size());
+              dev_port.c_str(), dev_port.size() + 1);
     fake_port_token_.magic = FPGA_TOKEN_MAGIC;
     fake_port_token_.device_instance = 0;
     fake_port_token_.subdev_instance = 0;
@@ -93,9 +93,9 @@ class error_c_mock_p : public ::testing::TestWithParam<std::string> {
 
     memset(&fake_fme_token_, 0, sizeof(fake_fme_token_));
     strncpy(fake_fme_token_.sysfspath,
-              sysfs_fme.c_str(), sysfs_fme.size());
+              sysfs_fme.c_str(), sysfs_fme.size() + 1);
     strncpy(fake_fme_token_.devpath,
-              dev_fme.c_str(), dev_fme.size());
+              dev_fme.c_str(), dev_fme.size() + 1);
     fake_fme_token_.magic = FPGA_TOKEN_MAGIC;
     fake_fme_token_.device_instance = 0;
     fake_fme_token_.subdev_instance = 0;
@@ -707,8 +707,8 @@ TEST(error_c, error_01) {
  */
 TEST(error_c, error_06) {
   struct _fpga_token _t;
-  strncpy(_t.sysfspath, sysfs_port.c_str(), sysfs_port.size());
-  strncpy(_t.devpath, dev_port.c_str(), dev_port.size());
+  strncpy(_t.sysfspath, sysfs_port.c_str(), sysfs_port.size() + 1);
+  strncpy(_t.devpath, dev_port.c_str(), dev_port.size() + 1);
   _t.magic = FPGA_TOKEN_MAGIC;
   _t.errors = nullptr;
 

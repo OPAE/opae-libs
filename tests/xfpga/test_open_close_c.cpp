@@ -385,8 +385,8 @@ TEST_P(openclose_c_mock_p, invalid_open_close) {
   const std::string dev_port = "/dev/intel-fpga-port.0";
 
   // token setup
-  strncpy(_tok.sysfspath, sysfs_port.c_str(), sizeof(_tok.sysfspath) - 1);
-  strncpy(_tok.devpath, dev_port.c_str(),  sizeof(_tok.devpath) - 1);
+  strncpy(_tok.sysfspath, sysfs_port.c_str(), sysfs_port.size() + 1);
+  strncpy(_tok.devpath, dev_port.c_str(), dev_port.size() + 1);
   _tok.magic = FPGA_TOKEN_MAGIC;
   _tok.errors = nullptr;
   std::string errpath = sysfs_port + "/errors";

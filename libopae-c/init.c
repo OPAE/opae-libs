@@ -52,16 +52,17 @@ static FILE *g_logfile;
 /* mutex to protect against garbled log output */
 static pthread_mutex_t log_lock = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
 
+#define CFG_PATH_MAX 64
 #define HOME_CFG_PATHS 3
-STATIC const char *_ase_home_cfg_files[HOME_CFG_PATHS] = {
-	"/.local/opae_ase.cfg",
-	"/.local/opae/opae_ase.cfg",
-	"/.config/opae/opae_ase.cfg",
+STATIC const char _ase_home_cfg_files[HOME_CFG_PATHS][CFG_PATH_MAX] = {
+	{ "/.local/opae_ase.cfg" },
+	{ "/.local/opae/opae_ase.cfg" },
+	{ "/.config/opae/opae_ase.cfg" },
 };
 #define SYS_CFG_PATHS 2
-STATIC const char *_ase_sys_cfg_files[SYS_CFG_PATHS] = {
-	"/usr/local/etc/opae/opae_ase.cfg",
-	"/etc/opae/opae_ase.cfg",
+STATIC const char _ase_sys_cfg_files[SYS_CFG_PATHS][CFG_PATH_MAX] = {
+	{ "/usr/local/etc/opae/opae_ase.cfg" },
+	{ "/etc/opae/opae_ase.cfg" },
 };
 
 void opae_print(int loglevel, const char *fmt, ...)
@@ -122,10 +123,9 @@ STATIC char *find_ase_cfg(void)
 	// third look in the release directory
 	opae_path = getenv("OPAE_PLATFORM_ROOT");
 	if (opae_path) {
-		strncpy(cfg_path, opae_path, sizeof(cfg_path) - 1);
-		len = strnlen(cfg_path, sizeof(cfg_path));
-		strncat(cfg_path, "/share/opae/ase/opae_ase.cfg",
-			sizeof(cfg_path) - len - 1);
+		len = strnlen(opae_path, sizeof(cfg_path) - 1);
+		strncpy(cfg_path, opae_path, len + 1);
+		strncat(cfg_path, "/share/opae/ase/opae_ase.cfg", 29);
 		file_name = canonicalize_file_name(cfg_path);
 		if (file_name)
 			return file_name;
@@ -134,12 +134,14 @@ STATIC char *find_ase_cfg(void)
 	// fourth look in possible paths in the users home directory
 	if (user_passwd != NULL) {
 		for (i = 0; i < HOME_CFG_PATHS; ++i) {
-			strncpy(home_cfg, user_passwd->pw_dir, sizeof(home_cfg) - 1);
+			len = strnlen(user_passwd->pw_dir,
+				      sizeof(home_cfg) - 1);
+			strncpy(home_cfg, user_passwd->pw_dir, len + 1);
 
 			home_cfg_ptr = home_cfg + strlen(home_cfg);
 
-			strncpy(home_cfg_ptr, _ase_home_cfg_files[i],
-				sizeof(home_cfg) - (home_cfg_ptr - home_cfg) - 1);
+			len = strnlen(_ase_home_cfg_files[i], CFG_PATH_MAX);
+			strncpy(home_cfg_ptr, _ase_home_cfg_files[i], len + 1);
 
 			file_name = canonicalize_file_name(home_cfg);
 			if (file_name)
@@ -151,7 +153,8 @@ STATIC char *find_ase_cfg(void)
 
 	// now look in possible system paths
 	for (i = 0; i < SYS_CFG_PATHS; ++i) {
-		strncpy(home_cfg, _ase_sys_cfg_files[i], sizeof(home_cfg) - 1);
+		len = strnlen(_ase_sys_cfg_files[i], CFG_PATH_MAX);
+		strncpy(home_cfg, _ase_sys_cfg_files[i], len + 1);
 		file_name = canonicalize_file_name(home_cfg);
 		if (file_name)
 			return file_name;

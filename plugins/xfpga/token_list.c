@@ -61,6 +61,7 @@ struct _fpga_token *token_add(const char *sysfspath, const char *devpath)
 	uint32_t subdev_instance;
 	char *endptr = NULL;
 	const char *ptr;
+	size_t len;
 
 	/* get the device instance id */
 	ptr = strchr(sysfspath, '.');
@@ -123,8 +124,10 @@ struct _fpga_token *token_add(const char *sysfspath, const char *devpath)
 	tmp->_token.errors = NULL;
 	char errpath[SYSFS_PATH_MAX] = { 0, };
 
-	strncpy(errpath, sysfspath, sizeof(errpath) - 1);
-	strncat(errpath, "/errors", 8);
+	len = strnlen(sysfspath, sizeof(errpath) - 1);
+	strncpy(errpath, sysfspath, len + 1);
+	len = strnlen("/errors", sizeof(errpath) - len);
+	strncat(errpath, "/errors", len + 1);
 
 	build_error_list(errpath, &tmp->_token.errors);
 
@@ -136,8 +139,10 @@ struct _fpga_token *token_add(const char *sysfspath, const char *devpath)
 	tmp->_token.subdev_instance = subdev_instance;
 
 	/* deep copy token data */
-	strncpy(tmp->_token.sysfspath, sysfspath, SYSFS_PATH_MAX - 1);
-	strncpy(tmp->_token.devpath, devpath, DEV_PATH_MAX - 1);
+	len = strnlen(sysfspath, SYSFS_PATH_MAX - 1);
+	strncpy(tmp->_token.sysfspath, sysfspath, len + 1);
+	len = strnlen(devpath, DEV_PATH_MAX - 1);
+	strncpy(tmp->_token.devpath, devpath, len + 1);
 
 	tmp->next = token_root;
 	token_root = tmp;

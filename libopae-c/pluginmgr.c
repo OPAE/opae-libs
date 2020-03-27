@@ -81,16 +81,17 @@ static pthread_mutex_t adapter_list_lock =
 STATIC plugin_cfg *opae_plugin_mgr_config_list;
 STATIC int opae_plugin_mgr_plugin_count;
 
+#define CFG_PATH_MAX 64
 #define HOME_CFG_PATHS 3
-STATIC const char *_opae_home_cfg_files[HOME_CFG_PATHS] = {
-	"/.local/opae.cfg",
-	"/.local/opae/opae.cfg",
-	"/.config/opae/opae.cfg",
+STATIC const char _opae_home_cfg_files[HOME_CFG_PATHS][CFG_PATH_MAX] = {
+	{ "/.local/opae.cfg" },
+	{ "/.local/opae/opae.cfg" },
+	{ "/.config/opae/opae.cfg" },
 };
 #define SYS_CFG_PATHS 2
-STATIC const char *_opae_sys_cfg_files[SYS_CFG_PATHS] = {
-	"/usr/local/etc/opae/opae.cfg",
-	"/etc/opae/opae.cfg",
+STATIC const char _opae_sys_cfg_files[SYS_CFG_PATHS][CFG_PATH_MAX] = {
+	{ "/usr/local/etc/opae/opae.cfg" },
+	{ "/etc/opae/opae.cfg" },
 };
 
 
@@ -103,18 +104,21 @@ STATIC char *find_cfg()
 	char *file_name = NULL;
 	char home_cfg[PATH_MAX] = { 0, };
 	char *home_cfg_ptr = &home_cfg[0];
+	size_t len;
 
 	// get the user's home directory
 	struct passwd *user_passwd = getpwuid(getuid());
 
 	// first look in possible paths in the users home directory
 	for (i = 0; i < HOME_CFG_PATHS; ++i) {
-		strncpy(home_cfg, user_passwd->pw_dir, sizeof(home_cfg)-1);
+		len = strnlen(user_passwd->pw_dir,
+			      sizeof(home_cfg) - 1);
+		strncpy(home_cfg, user_passwd->pw_dir, len + 1);
 
 		home_cfg_ptr = home_cfg + strlen(home_cfg);
 
-		strncpy(home_cfg_ptr, _opae_home_cfg_files[i],
-			sizeof(home_cfg) - (home_cfg_ptr - home_cfg));
+		len = strnlen(_opae_home_cfg_files[i], CFG_PATH_MAX);
+		strncpy(home_cfg_ptr, _opae_home_cfg_files[i], len + 1);
 
 		file_name = canonicalize_file_name(home_cfg);
 		if (file_name)
@@ -125,7 +129,8 @@ STATIC char *find_cfg()
 
 	// now look in possible system paths
 	for (i = 0; i < SYS_CFG_PATHS; ++i) {
-		strncpy(home_cfg, _opae_sys_cfg_files[i], sizeof(home_cfg)-1);
+		len = strnlen(_opae_sys_cfg_files[i], CFG_PATH_MAX);
+		strncpy(home_cfg, _opae_sys_cfg_files[i], len + 1);
 
 		file_name = canonicalize_file_name(home_cfg);
 		if (file_name)
@@ -332,6 +337,7 @@ STATIC int process_plugin(const char *name, json_object *j_config)
 	json_object *j_plugin_cfg = NULL;
 	json_object *j_enabled = NULL;
 	const char *stringified = NULL;
+	size_t len;
 
 	JSON_GET(j_config, "plugin", &j_plugin);
 	JSON_GET(j_config, "configuration", &j_plugin_cfg);
@@ -370,9 +376,15 @@ STATIC int process_plugin(const char *name, json_object *j_config)
 		return 1;
 	}
 
-	strncpy(cfg->cfg, stringified, cfg->cfg_size);
-	strncpy(cfg->name, name, PLUGIN_NAME_MAX - 1);
-	strncpy(cfg->plugin, json_object_get_string(j_plugin), PLUGIN_NAME_MAX - 1);
+	len = strnlen(stringified, cfg->cfg_size - 1);
+	strncpy(cfg->cfg, stringified, len + 1);
+
+	len = strnlen(name, PLUGIN_NAME_MAX - 1);
+	strncpy(cfg->name, name, len + 1);
+
+	len = strnlen(json_object_get_string(j_plugin), PLUGIN_NAME_MAX - 1);
+	strncpy(cfg->plugin, json_object_get_string(j_plugin), len + 1);
+
 	cfg->enabled = json_object_get_boolean(j_enabled);
 
 	opae_plugin_mgr_add_plugin(cfg);
@@ -529,7 +541,8 @@ STATIC int opae_plugin_mgr_detect_platforms(void)
 	// This directory contains symbolic links to device directories
 	// where 'vendor' and 'device' files exist.
 
-	strncpy(base_dir, "/sys/bus/pci/devices", 21);
+	len = 21;
+	strncpy(base_dir, "/sys/bus/pci/devices", len);
 
 	dir = opendir(base_dir);
 	if (!dir) {
@@ -547,10 +560,12 @@ STATIC int opae_plugin_mgr_detect_platforms(void)
 			continue;
 
 		// Read the 'vendor' file.
-		strncpy(file_path, base_dir, sizeof(file_path) - 1);
+		len = 21;
+		strncpy(file_path, base_dir, len);
+		file_path[len] = '\0';
 		strncat(file_path, "/", 2);
-		len = strnlen(file_path, sizeof(file_path));
-		strncat(file_path, dirent->d_name, sizeof(file_path) - len - 1);
+		len = strnlen(dirent->d_name, sizeof(file_path) - 1);
+		strncat(file_path, dirent->d_name, len);
 		strncat(file_path, "/vendor", 8);
 
 		fp = fopen(file_path, "r");
@@ -570,10 +585,12 @@ STATIC int opae_plugin_mgr_detect_platforms(void)
 		fclose(fp);
 
 		// Read the 'device' file.
-		strncpy(file_path, base_dir, sizeof(file_path) - 1);
+		len = 21;
+		strncpy(file_path, base_dir, len);
+		file_path[len] = '\0';
 		strncat(file_path, "/", 2);
-		len = strnlen(file_path, sizeof(file_path));
-		strncat(file_path, dirent->d_name, sizeof(file_path) - len - 1);
+		len = strnlen(dirent->d_name, sizeof(file_path) - 1);
+		strncat(file_path, dirent->d_name, len);
 		strncat(file_path, "/device", 8);
 
 		fp = fopen(file_path, "r");

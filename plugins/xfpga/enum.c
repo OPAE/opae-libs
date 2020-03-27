@@ -191,9 +191,9 @@ STATIC bool matches_filter(const struct dev_list *attr, const fpga_properties fi
 		char errpath[SYSFS_PATH_MAX] = { 0, };
 		size_t len;
 
-		strncpy(errpath, attr->sysfspath, sizeof(errpath));
-		len = strnlen(errpath, sizeof(errpath));
-		strncat(errpath, "/errors", sizeof(errpath) - len - 1);
+		len = strnlen(attr->sysfspath, SYSFS_PATH_MAX - 1);
+		strncpy(errpath, attr->sysfspath, len + 1);
+		strncat(errpath, "/errors", 8);
 
 		errors = count_error_files(errpath);
 		if (errors != _filter->num_errors) {
@@ -295,13 +295,17 @@ STATIC struct dev_list *add_dev(const char *sysfspath, const char *devpath,
 				struct dev_list *parent)
 {
 	struct dev_list *pdev;
+	size_t len;
 
 	pdev = (struct dev_list *)calloc(1, sizeof(*pdev));
 	if (NULL == pdev)
 		return NULL;
 
-	strncpy(pdev->sysfspath, sysfspath, SYSFS_PATH_MAX - 1);
-	strncpy(pdev->devpath, devpath, DEV_PATH_MAX - 1);
+	len = strnlen(sysfspath, SYSFS_PATH_MAX - 1);
+	strncpy(pdev->sysfspath, sysfspath, len + 1);
+
+	len = strnlen(devpath, DEV_PATH_MAX - 1);
+	strncpy(pdev->devpath, devpath, len + 1);
 
 	pdev->next = parent->next;
 	parent->next = pdev;
@@ -640,6 +644,7 @@ fpga_result __XFPGA_API__ xfpga_fpgaCloneToken(fpga_token src, fpga_token *dst)
 {
 	struct _fpga_token *_src = (struct _fpga_token *)src;
 	struct _fpga_token *_dst;
+	size_t len;
 
 	if (NULL == src || NULL == dst) {
 		OPAE_MSG("src or dst in NULL");
@@ -661,8 +666,11 @@ fpga_result __XFPGA_API__ xfpga_fpgaCloneToken(fpga_token src, fpga_token *dst)
 	_dst->device_instance = _src->device_instance;
 	_dst->subdev_instance = _src->subdev_instance;
 
-	strncpy(_dst->sysfspath, _src->sysfspath, sizeof(_src->sysfspath) - 1);
-	strncpy(_dst->devpath, _src->devpath, sizeof(_src->devpath) - 1);
+	len = strnlen(_src->sysfspath, sizeof(_src->sysfspath) - 1);
+	strncpy(_dst->sysfspath, _src->sysfspath, len + 1);
+
+	len = strnlen(_src->devpath, sizeof(_src->devpath) - 1);
+	strncpy(_dst->devpath, _src->devpath, len + 1);
 
 	// shallow-copy error list
 	_dst->errors = _src->errors;

@@ -391,7 +391,7 @@ TEST_P(metadata_c, get_interface_id_03) {
   ASSERT_EQ(FPGA_OK, xfpga_fpgaOpen(tokens_[0], &handle_, 0));
 
   // invalid file
-  strncpy(_token->sysfspath, sysfs_fme.c_str(), SYSFS_PATH_MAX);
+  strncpy(_token->sysfspath, sysfs_fme.c_str(), sysfs_fme.size() + 1);
   auto res = get_interface_id(handle_, &id_l, &id_h);
   EXPECT_EQ(res, FPGA_EXCEPTION);
 }

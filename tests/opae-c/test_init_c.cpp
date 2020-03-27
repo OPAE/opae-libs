@@ -35,7 +35,11 @@ void opae_init(void);
 void opae_release(void);
 
 #define HOME_CFG_PATHS 3
-extern const char *_ase_home_cfg_files[HOME_CFG_PATHS];
+const char *_ase_home_configs[HOME_CFG_PATHS] = {
+	"/.local/opae_ase.cfg",
+	"/.local/opae/opae_ase.cfg",
+	"/.config/opae/opae_ase.cfg",
+};
 }
 
 #include <config.h>
@@ -523,4 +527,4 @@ TEST_P(init_ase_cfg_p, find_ase_cfg_4) {
 }
 
 INSTANTIATE_TEST_CASE_P(init_ase_cfg, init_ase_cfg_p,
-                        ::testing::ValuesIn(_ase_home_cfg_files));
+                        ::testing::ValuesIn(_ase_home_configs));

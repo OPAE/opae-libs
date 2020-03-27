@@ -126,9 +126,9 @@ fpga_result __XFPGA_API__ xfpga_fpgaUpdateProperties(fpga_token token,
 
 	// read the vendor and device ID from the 'device' path
 
-	strncpy(idpath, _token->sysfspath, sizeof(idpath) - 1);
-	len = strnlen(idpath, sizeof(idpath));
-	strncat(idpath, "/../device/vendor", sizeof(idpath) - len - 1);
+	len = strnlen(_token->sysfspath, sizeof(_token->sysfspath) - 1);
+	strncpy(idpath, _token->sysfspath, len + 1);
+	strncat(idpath, "/../device/vendor", 18);
 
 	x = 0;
 	result = sysfs_read_u32(idpath, &x);
@@ -137,9 +137,8 @@ fpga_result __XFPGA_API__ xfpga_fpgaUpdateProperties(fpga_token token,
 	_iprop.vendor_id = (uint16_t)x;
 	SET_FIELD_VALID(&_iprop, FPGA_PROPERTY_VENDORID);
 
-	strncpy(idpath, _token->sysfspath, sizeof(idpath) - 1);
-	len = strnlen(idpath, sizeof(idpath));
-	strncat(idpath, "/../device/device", sizeof(idpath) - len - 1);
+	strncpy(idpath, _token->sysfspath, len + 1);
+	strncat(idpath, "/../device/device", 18);
 
 	x = 0;
 	result = sysfs_read_u32(idpath, &x);
@@ -151,7 +150,7 @@ fpga_result __XFPGA_API__ xfpga_fpgaUpdateProperties(fpga_token token,
 	// The input token is either for an FME or an AFU.
 	// Go one level back to get to the dev.
 
-	strncpy(spath, _token->sysfspath, sizeof(_token->sysfspath) - 1);
+	strncpy(spath, _token->sysfspath, len + 1);
 
 	p = strrchr(spath, '/');
 	ASSERT_NOT_NULL_MSG(p, "Invalid token sysfs path");
@@ -259,9 +258,9 @@ fpga_result __XFPGA_API__ xfpga_fpgaUpdateProperties(fpga_token token,
 
 	char errpath[SYSFS_PATH_MAX] = { 0, };
 
-	strncpy(errpath, _token->sysfspath, sizeof(errpath) - 1);
-	len = strnlen(errpath, sizeof(errpath));
-	strncat(errpath, "/errors", sizeof(errpath) - len - 1);
+	strncpy(errpath, _token->sysfspath, len + 1);
+	errpath[len] = '\0';
+	strncat(errpath, "/errors", 8);
 
 	_iprop.num_errors = count_error_files(errpath);
 	SET_FIELD_VALID(&_iprop, FPGA_PROPERTY_NUM_ERRORS);

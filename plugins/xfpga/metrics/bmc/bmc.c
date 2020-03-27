@@ -65,16 +65,16 @@ fpga_result read_sysfs_file(fpga_token token, const char *file,
 	*buf = NULL;
 	*tot_bytes_ret = 0;
 
-	// TODO: Remove need for this
 	struct _fpga_token *tok = (struct _fpga_token *)token;
 	if (FPGA_TOKEN_MAGIC != tok->magic) {
 		return FPGA_INVALID_PARAM;
 	}
 
-	strncpy(sysfspath, tok->sysfspath, sizeof(sysfspath) - 1);
+	len = strnlen(tok->sysfspath, sizeof(sysfspath) - 1);
+	strncpy(sysfspath, tok->sysfspath, len + 1);
 	strncat(sysfspath, "/", 2);
-	len = strnlen(sysfspath, sizeof(sysfspath));
-	strncat(sysfspath, file, sizeof(sysfspath) - len - 1);
+	len = strnlen(file, sizeof(sysfspath) - (len + 1));
+	strncat(sysfspath, file, len + 1);
 
 	glob_t pglob;
 	int gres = glob(sysfspath, GLOB_NOSORT, NULL, &pglob);
@@ -130,6 +130,7 @@ fpga_result bmcLoadSDRs(fpga_token token, bmc_sdr_handle *records,
 			uint32_t *num_sensors)
 {
 	fpga_result res = FPGA_OK;
+	size_t len;
 
 	NULL_CHECK(token);
 	NULL_CHECK(num_sensors);
@@ -168,10 +169,10 @@ fpga_result bmcLoadSDRs(fpga_token token, bmc_sdr_handle *records,
 	recs->magic = BMC_SDR_MAGIC;
 	recs->num_records = num_of_sensors;
 
-	// TODO: Remove need for this
 	struct _fpga_token *tok = (struct _fpga_token *)token;
 
-	strncpy(recs->sysfs_path, tok->sysfspath, SYSFS_PATH_MAX - 1);
+	len = strnlen(tok->sysfspath, SYSFS_PATH_MAX - 1);
+	strncpy(recs->sysfs_path, tok->sysfspath, len + 1);
 	recs->token = token;
 
 out:
