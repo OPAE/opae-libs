@@ -220,7 +220,6 @@ int fi_RunInitz(const char* sysfs_path)
 	uint64_t u64i_AvmmAdr, u64i_AvmmDat;
 	int      i_ReturnErr;
 	char sysfs_usrpath[SYSFS_PATH_MAX];
-	size_t len;
 
 	gQUCPU_Uclock.i_InitzState = 0;
 	gQUCPU_Uclock.tInitz_InitialParams.u64i_Version = (uint64_t) 0;
@@ -242,8 +241,12 @@ int fi_RunInitz(const char* sysfs_path)
 		printf(" Invalid input sysfs path \n");
 		return -1;
 	}
-	len = strnlen(sysfs_path, SYSFS_PATH_MAX - 1);
-	strncpy(gQUCPU_Uclock.sysfs_path, sysfs_path, len + 1);
+
+	if (snprintf(gQUCPU_Uclock.sysfs_path, SYSFS_PATH_MAX,
+		"%s", sysfs_path) < 0) {
+		OPAE_ERR("snprintf failed");
+		return FPGA_EXCEPTION;
+	}
 
 	// Assume return error okay, for now
 	i_ReturnErr = 0;
@@ -272,11 +275,11 @@ int fi_RunInitz(const char* sysfs_path)
 	if (i_ReturnErr == 0) // This always true; added for future safety
 	{
 		// Verifying User Clock version number
-		len = strnlen(gQUCPU_Uclock.sysfs_path, SYSFS_PATH_MAX - 1);
-		strncpy(sysfs_usrpath, gQUCPU_Uclock.sysfs_path, len + 1);
-		strncat(sysfs_usrpath, "/", 2);
-		len = strnlen(USER_CLOCK_STS1, SYSFS_PATH_MAX - (len + 1));
-		strncat(sysfs_usrpath, USER_CLOCK_STS1, len + 1);
+		if (snprintf(sysfs_usrpath, SYSFS_PATH_MAX,
+			"%s/%s", gQUCPU_Uclock.sysfs_path, USER_CLOCK_STS1) < 0) {
+			OPAE_ERR("snprintf failed");
+			return FPGA_EXCEPTION;
+		}
 
 		sysfs_read_u64(sysfs_usrpath, &u64i_PrtData);
 		//printf(" fi_RunInitz u64i_PrtData %llx  \n", u64i_PrtData);
@@ -307,11 +310,11 @@ int fi_RunInitz(const char* sysfs_path)
 		gQUCPU_Uclock.u64i_cmd_reg_0 &= ~(QUCPU_UI64_CMD_0_MRN_b52);
 		u64i_PrtData = gQUCPU_Uclock.u64i_cmd_reg_0;
 
-		len = strnlen(gQUCPU_Uclock.sysfs_path, SYSFS_PATH_MAX - 1);
-		strncpy(sysfs_usrpath, gQUCPU_Uclock.sysfs_path, len + 1);
-		strncat(sysfs_usrpath, "/", 2);
-		len = strnlen(USER_CLOCK_CMD0, SYSFS_PATH_MAX - (len + 1));
-		strncat(sysfs_usrpath, USER_CLOCK_CMD0, len + 1);
+		if (snprintf(sysfs_usrpath, SYSFS_PATH_MAX,
+			"%s/%s", gQUCPU_Uclock.sysfs_path, USER_CLOCK_CMD0) < 0) {
+			OPAE_ERR("snprintf failed");
+			return FPGA_EXCEPTION;
+		}
 
 		sysfs_write_u64(sysfs_usrpath, u64i_PrtData);
 
@@ -378,7 +381,6 @@ int fi_AvmmRWcom(int i_CmdWrite,
 	long int li_sleep_nanoseconds;
 	int      i_ReturnErr;
 	char sysfs_usrpath[SYSFS_PATH_MAX] = { 0, };
-	size_t len;
 
 	// Assume return error okay, for now
 	i_ReturnErr = 0;
@@ -411,22 +413,22 @@ int fi_AvmmRWcom(int i_CmdWrite,
 
 	u64i_PrtData = gQUCPU_Uclock.u64i_cmd_reg_0;
 
-	len = strnlen(gQUCPU_Uclock.sysfs_path, SYSFS_PATH_MAX - 1);
-	strncpy(sysfs_usrpath, gQUCPU_Uclock.sysfs_path, len + 1);
-	strncat(sysfs_usrpath, "/", 2);
-	len = strnlen(USER_CLOCK_CMD0, SYSFS_PATH_MAX - (len + 1));
-	strncat(sysfs_usrpath, USER_CLOCK_CMD0, len + 1);
+	if (snprintf(sysfs_usrpath, SYSFS_PATH_MAX,
+		"%s/%s", gQUCPU_Uclock.sysfs_path, USER_CLOCK_CMD0) < 0) {
+		OPAE_ERR("snprintf failed");
+		return FPGA_EXCEPTION;
+	}
 
 	sysfs_write_u64(sysfs_usrpath, u64i_PrtData);
 
 	li_sleep_nanoseconds = USRCLK_SLEEEP_1MS;
 	fv_SleepShort(li_sleep_nanoseconds);
 
-	len = strnlen(gQUCPU_Uclock.sysfs_path, SYSFS_PATH_MAX - 1);
-	strncpy(sysfs_usrpath, gQUCPU_Uclock.sysfs_path, len + 1);
-	strncat(sysfs_usrpath, "/", 2);
-	len = strnlen(USER_CLOCK_STS0, SYSFS_PATH_MAX - (len + 1));
-	strncat(sysfs_usrpath, USER_CLOCK_STS0, len + 1);
+	if (snprintf(sysfs_usrpath, SYSFS_PATH_MAX,
+		"%s/%s", gQUCPU_Uclock.sysfs_path, USER_CLOCK_STS0) < 0) {
+		OPAE_ERR("snprintf failed");
+		return FPGA_EXCEPTION;
+	}
 
 	// Poll register 0 for completion.
 	// CCI is synchronous and needs only 1 read with matching sequence.
@@ -529,7 +531,6 @@ int fi_GetFreqs(QUCPU_tFreqs *ptFreqs_retFreqs)
 	long int li_sleep_nanoseconds         = 0;
 	int      res                          = 0;
 	char sysfs_usrpath[SYSFS_PATH_MAX]     = { 0, };
-	size_t len;
 
 	// Assume return error okay, for now
 	res                           = 0;
@@ -543,11 +544,11 @@ int fi_GetFreqs(QUCPU_tFreqs *ptFreqs_retFreqs)
 
 		u64i_PrtData = gQUCPU_Uclock.u64i_cmd_reg_1;
 
-		len = strnlen(gQUCPU_Uclock.sysfs_path, SYSFS_PATH_MAX - 1);
-		strncpy(sysfs_usrpath, gQUCPU_Uclock.sysfs_path, len + 1);
-		strncat(sysfs_usrpath, "/", 2);
-		len = strnlen(USER_CLOCK_CMD1, SYSFS_PATH_MAX - (len + 1));
-		strncat(sysfs_usrpath, USER_CLOCK_CMD1, len + 1);
+		if (snprintf(sysfs_usrpath, SYSFS_PATH_MAX,
+			"%s/%s", gQUCPU_Uclock.sysfs_path, USER_CLOCK_CMD1) < 0) {
+			OPAE_ERR("snprintf failed");
+			return FPGA_EXCEPTION;
+		}
 
 		sysfs_write_u64(sysfs_usrpath, u64i_PrtData);
 
@@ -555,11 +556,11 @@ int fi_GetFreqs(QUCPU_tFreqs *ptFreqs_retFreqs)
 		li_sleep_nanoseconds = USRCLK_SLEEEP_10MS;            // 10 ms for frequency counter
 		fv_SleepShort(li_sleep_nanoseconds);
 
-		len = strnlen(gQUCPU_Uclock.sysfs_path, SYSFS_PATH_MAX - 1);
-		strncpy(sysfs_usrpath, gQUCPU_Uclock.sysfs_path, len + 1);
-		strncat(sysfs_usrpath, "/", 2);
-		len = strnlen(USER_CLOCK_STS1, SYSFS_PATH_MAX - (len + 1));
-		strncat(sysfs_usrpath, USER_CLOCK_STS1, len + 1);
+		if (snprintf(sysfs_usrpath, SYSFS_PATH_MAX,
+			"%s/%s", gQUCPU_Uclock.sysfs_path, USER_CLOCK_STS1) < 0) {
+			OPAE_ERR("snprintf failed");
+			return FPGA_EXCEPTION;
+		}
 
 		sysfs_read_u64(sysfs_usrpath,  &u64i_PrtData);
 
@@ -574,22 +575,22 @@ int fi_GetFreqs(QUCPU_tFreqs *ptFreqs_retFreqs)
 
 		u64i_PrtData = gQUCPU_Uclock.u64i_cmd_reg_1;
 
-		len = strnlen(gQUCPU_Uclock.sysfs_path, SYSFS_PATH_MAX - 1);
-		strncpy(sysfs_usrpath, gQUCPU_Uclock.sysfs_path, len + 1);
-		strncat(sysfs_usrpath, "/", 2);
-		len = strnlen(USER_CLOCK_CMD1, SYSFS_PATH_MAX - (len + 1));
-		strncat(sysfs_usrpath, USER_CLOCK_CMD1, len + 1);
+		if (snprintf(sysfs_usrpath, SYSFS_PATH_MAX,
+			"%s/%s", gQUCPU_Uclock.sysfs_path, USER_CLOCK_CMD1) < 0) {
+			OPAE_ERR("snprintf failed");
+			return FPGA_EXCEPTION;
+		}
 
 		sysfs_write_u64(sysfs_usrpath,  u64i_PrtData);
 
 		li_sleep_nanoseconds = USRCLK_SLEEEP_10MS; // 10 ms for frequency counter
 		fv_SleepShort(li_sleep_nanoseconds);
 
-		len = strnlen(gQUCPU_Uclock.sysfs_path, SYSFS_PATH_MAX - 1);
-		strncpy(sysfs_usrpath, gQUCPU_Uclock.sysfs_path, len + 1);
-		strncat(sysfs_usrpath, "/", 2);
-		len = strnlen(USER_CLOCK_STS1, SYSFS_PATH_MAX - (len + 1));
-		strncat(sysfs_usrpath, USER_CLOCK_STS1, len + 1);
+		if (snprintf(sysfs_usrpath, SYSFS_PATH_MAX,
+			"%s/%s", gQUCPU_Uclock.sysfs_path, USER_CLOCK_STS1) < 0) {
+			OPAE_ERR("snprintf failed");
+			return FPGA_EXCEPTION;
+		}
 
 		sysfs_read_u64(sysfs_usrpath,  &u64i_PrtData);
 		ptFreqs_retFreqs->u64i_Frq_ClkUsr = (u64i_PrtData & QUCPU_UI64_STS_1_FRQ_b16t00) * 10000; // Hz
@@ -619,7 +620,6 @@ int fi_SetFreqs(uint64_t u64i_Refclk,
 	long int li_sleep_nanoseconds;
 	int      i_ReturnErr;
 	char sysfs_usrpath[SYSFS_PATH_MAX] = { 0, };
-	size_t len;
 
 	// Assume return error okay, for now
 	i_ReturnErr = 0;
@@ -674,11 +674,11 @@ int fi_SetFreqs(uint64_t u64i_Refclk,
 	if (i_ReturnErr == 0)
 	{ // Verifying fcr PLL not locking
 
-		len = strnlen(gQUCPU_Uclock.sysfs_path, SYSFS_PATH_MAX - 1);
-		strncpy(sysfs_usrpath, gQUCPU_Uclock.sysfs_path, len + 1);
-		strncat(sysfs_usrpath, "/", 2);
-		len = strnlen(USER_CLOCK_STS0, SYSFS_PATH_MAX - (len + 1));
-		strncat(sysfs_usrpath, USER_CLOCK_STS0, len + 1);
+		if (snprintf(sysfs_usrpath, SYSFS_PATH_MAX,
+			"%s/%s", gQUCPU_Uclock.sysfs_path, USER_CLOCK_STS0) < 0) {
+			OPAE_ERR("snprintf failed");
+			return FPGA_EXCEPTION;
+		}
 
 		sysfs_read_u64(sysfs_usrpath,  &u64i_PrtData);
 		//sysfs_read_uint64(gQUCPU_Uclock.sys_path, USER_CLOCK_STS0, &u64i_PrtData);
@@ -696,11 +696,11 @@ int fi_SetFreqs(uint64_t u64i_Refclk,
 		if (u64i_Refclk) gQUCPU_Uclock.u64i_cmd_reg_0 |= QUCPU_UI64_CMD_0_SR1_b58;
 		u64i_PrtData = gQUCPU_Uclock.u64i_cmd_reg_0;
 
-		len = strnlen(gQUCPU_Uclock.sysfs_path, SYSFS_PATH_MAX - 1);
-		strncpy(sysfs_usrpath, gQUCPU_Uclock.sysfs_path, len + 1);
-		strncat(sysfs_usrpath, "/", 2);
-		len = strnlen(USER_CLOCK_CMD0, SYSFS_PATH_MAX - (len + 1));
-		strncat(sysfs_usrpath, USER_CLOCK_CMD0, len + 1);
+		if (snprintf(sysfs_usrpath, SYSFS_PATH_MAX,
+			"%s/%s", gQUCPU_Uclock.sysfs_path, USER_CLOCK_CMD0) < 0) {
+			OPAE_ERR("snprintf failed");
+			return FPGA_EXCEPTION;
+		}
 
 		sysfs_write_u64(sysfs_usrpath,  u64i_PrtData);
 
@@ -789,11 +789,11 @@ int fi_SetFreqs(uint64_t u64i_Refclk,
 		for (u64i_I = 0; u64i_I<100; u64i_I++)
 		{ // Poll with 100 ms timeout
 
-			len = strnlen(gQUCPU_Uclock.sysfs_path, SYSFS_PATH_MAX - 1);
-			strncpy(sysfs_usrpath, gQUCPU_Uclock.sysfs_path, len + 1);
-			strncat(sysfs_usrpath, "/", 2);
-			len = strnlen(USER_CLOCK_STS0, SYSFS_PATH_MAX - (len + 1));
-			strncat(sysfs_usrpath, USER_CLOCK_STS0, len + 1);
+			if (snprintf(sysfs_usrpath, SYSFS_PATH_MAX,
+				"%s/%s", gQUCPU_Uclock.sysfs_path, USER_CLOCK_STS0) < 0) {
+				OPAE_ERR("snprintf failed");
+				return FPGA_EXCEPTION;
+			}
 
 			sysfs_read_u64(sysfs_usrpath,  &u64i_PrtData);
 
@@ -912,17 +912,16 @@ int fi_WaitCalDone(void)
 	long int li_sleep_nanoseconds        = 0;
 	int      res                         = 0;
 	char sysfs_usrpath[SYSFS_PATH_MAX]    = { 0, };
-	size_t len;
 
 	// Waiting for fcr PLL calibration not to be busy
 	for (u64i_I = 0; u64i_I<1000; u64i_I++)
 	{ // Poll with 1000 ms timeout
 
-		len = strnlen(gQUCPU_Uclock.sysfs_path, SYSFS_PATH_MAX - 1);
-		strncpy(sysfs_usrpath, gQUCPU_Uclock.sysfs_path, len + 1);
-		strncat(sysfs_usrpath, "/", 2);
-		len = strnlen(USER_CLOCK_STS0, SYSFS_PATH_MAX - (len + 1));
-		strncat(sysfs_usrpath, USER_CLOCK_STS0, len + 1);
+		if (snprintf(sysfs_usrpath, SYSFS_PATH_MAX,
+			"%s/%s", gQUCPU_Uclock.sysfs_path, USER_CLOCK_STS0) < 0) {
+			OPAE_ERR("snprintf failed");
+			return FPGA_EXCEPTION;
+		}
 
 		sysfs_read_u64(sysfs_usrpath,  &u64i_PrtData);
 
@@ -947,16 +946,15 @@ int fi_WaitCalDone(void)
 static int using_iopll(char* sysfs_usrpath, const char* sysfs_path)
 {
 	glob_t iopll_glob;
-	size_t len;
 
 	// Test for the existence of the userclk_frequency file
 	// which indicates an S10 driver
 
-	len = strnlen(sysfs_path, SYSFS_PATH_MAX - 1);	
-	strncpy(sysfs_usrpath, sysfs_path, len + 1);
-	strncat(sysfs_usrpath, "/", 2);
-	len = strnlen(IOPLL_CLOCK_FREQ, SYSFS_PATH_MAX - (len + 1));
-	strncat(sysfs_usrpath, IOPLL_CLOCK_FREQ, len + 1);
+	if (snprintf(sysfs_usrpath, SYSFS_PATH_MAX,
+		"%s/%s", sysfs_path, IOPLL_CLOCK_FREQ) < 0) {
+		OPAE_ERR("snprintf failed");
+		return FPGA_EXCEPTION;
+	}
 
 	if (glob(sysfs_usrpath, 0, NULL, &iopll_glob))
 		return FPGA_NOT_FOUND;
@@ -964,8 +962,12 @@ static int using_iopll(char* sysfs_usrpath, const char* sysfs_path)
 	if (iopll_glob.gl_pathc > 1)
 		OPAE_MSG("WARNING: Port has multiple sysfs frequency files");
 
-	len = strnlen(iopll_glob.gl_pathv[0], SYSFS_PATH_MAX - 1);
-	strncpy(sysfs_usrpath, iopll_glob.gl_pathv[0], len + 1);
+	if (snprintf(sysfs_usrpath, SYSFS_PATH_MAX,
+		"%s", iopll_glob.gl_pathv[0]) < 0) {
+		OPAE_ERR("snprintf failed");
+		globfree(&iopll_glob);
+		return FPGA_EXCEPTION;
+	}
 
 	globfree(&iopll_glob);
 
