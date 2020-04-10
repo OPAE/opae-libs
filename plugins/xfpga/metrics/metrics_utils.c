@@ -108,7 +108,6 @@ fpga_result add_metric_vector(fpga_metric_vector *vector,
 
 	fpga_result result                           = FPGA_OK;
 	struct _fpga_enum_metric *fpga_enum_metric   = NULL;
-	size_t len;
 
 	if (vector == NULL ||
 		group_name == NULL ||
@@ -127,18 +126,41 @@ fpga_result add_metric_vector(fpga_metric_vector *vector,
 		return FPGA_NO_MEMORY;
 	}
 
-	len = strnlen(group_name, SYSFS_PATH_MAX - 1);
-	strncpy(fpga_enum_metric->group_name, group_name, len + 1);
-	len = strnlen(group_sysfs, SYSFS_PATH_MAX - 1);
-	strncpy(fpga_enum_metric->group_sysfs, group_sysfs, len + 1);
-	len = strnlen(metric_name, SYSFS_PATH_MAX - 1);
-	strncpy(fpga_enum_metric->metric_name, metric_name, len + 1);
-	len = strnlen(metric_sysfs, SYSFS_PATH_MAX - 1);
-	strncpy(fpga_enum_metric->metric_sysfs, metric_sysfs, len + 1);
-	len = strnlen(qualifier_name, SYSFS_PATH_MAX - 1);
-	strncpy(fpga_enum_metric->qualifier_name, qualifier_name, len + 1);
-	len = strnlen(metric_units, SYSFS_PATH_MAX - 1);
-	strncpy(fpga_enum_metric->metric_units, metric_units, len + 1);
+	if (snprintf(fpga_enum_metric->group_name, SYSFS_PATH_MAX,
+		"%s", group_name) < 0) {
+		OPAE_ERR("snprintf failed");
+		goto out_free;
+	}
+
+	if (snprintf(fpga_enum_metric->group_sysfs, SYSFS_PATH_MAX,
+		"%s", group_sysfs) < 0) {
+		OPAE_ERR("snprintf failed");
+		goto out_free;
+	}
+
+	if (snprintf(fpga_enum_metric->metric_name, SYSFS_PATH_MAX,
+		"%s", metric_name) < 0) {
+		OPAE_ERR("snprintf failed");
+		goto out_free;
+	}
+
+	if (snprintf(fpga_enum_metric->metric_sysfs, SYSFS_PATH_MAX,
+		"%s", metric_sysfs) < 0) {
+		OPAE_ERR("snprintf failed");
+		goto out_free;
+	}
+
+	if (snprintf(fpga_enum_metric->qualifier_name, SYSFS_PATH_MAX,
+		"%s", qualifier_name) < 0) {
+		OPAE_ERR("snprintf failed");
+		goto out_free;
+	}
+
+	if (snprintf(fpga_enum_metric->metric_units, SYSFS_PATH_MAX,
+		"%s", metric_units) < 0) {
+		OPAE_ERR("snprintf failed");
+		goto out_free;
+	}
 
 	fpga_enum_metric->metric_type = metric_type;
 	fpga_enum_metric->metric_datatype = metric_datatype;
@@ -147,8 +169,12 @@ fpga_result add_metric_vector(fpga_metric_vector *vector,
 	fpga_enum_metric->mmio_offset = mmio_offset;
 
 	fpga_vector_push(vector, fpga_enum_metric);
-
 	return result;
+
+out_free:
+	if (fpga_enum_metric)
+		free(fpga_enum_metric);
+	return FPGA_EXCEPTION;
 }
 
 fpga_result get_metric_data_info(const char *group_name,
@@ -363,7 +389,6 @@ fpga_result enum_perf_counter_items(fpga_metric_vector *vector,
 	char sysfs_path[SYSFS_PATH_MAX]     = { 0, };
 	char metric_sysfs[SYSFS_PATH_MAX]   = { 0, };
 	char qname[SYSFS_PATH_MAX]          = { 0, };
-	size_t len;
 
 	if (vector == NULL ||
 		sysfspath == NULL ||
@@ -374,11 +399,11 @@ fpga_result enum_perf_counter_items(fpga_metric_vector *vector,
 		return FPGA_INVALID_PARAM;
 	}
 
-	len = strnlen(sysfspath, sizeof(sysfs_path) - 1);
-	strncpy(sysfs_path, sysfspath, len + 1);
-	strncat(sysfs_path, "/", 2);
-	len = strnlen(sysfs_name, sizeof(sysfs_path) - (len + 1));
-	strncat(sysfs_path, sysfs_name, len + 1);
+	if (snprintf(sysfs_path, SYSFS_PATH_MAX,
+		"%s/%s", sysfspath, sysfs_name) < 0) {
+		OPAE_ERR("snprintf failed");
+		return FPGA_EXCEPTION;
+	}
 
 	dir = opendir(sysfs_path);
 	if (NULL == dir) {
@@ -399,11 +424,10 @@ fpga_result enum_perf_counter_items(fpga_metric_vector *vector,
 
 		if (dirent->d_type == DT_DIR) {
 
-			len = strnlen(qualifier_name, sizeof(qname) - 1);
-			strncpy(qname, qualifier_name, len + 1);
-			strncat(qname, ":", 2);
-			len = strnlen(dirent->d_name, sizeof(qname) - (len + 1));
-			strncat(qname, dirent->d_name, len + 1);
+			if (snprintf(qname, SYSFS_PATH_MAX,
+				"%s:%s", qualifier_name, dirent->d_name) < 0) {
+				OPAE_MSG("snprintf failed");
+			}
 
 			result = enum_perf_counter_items(vector, metric_num, qname, sysfs_path, dirent->d_name, metric_type, hw_type);
 			if (result != FPGA_OK) {
@@ -413,11 +437,12 @@ fpga_result enum_perf_counter_items(fpga_metric_vector *vector,
 
 		}
 
-		len = strnlen(sysfs_path, sizeof(metric_sysfs) - 1);
-		strncpy(metric_sysfs, sysfs_path, len + 1);
-		strncat(metric_sysfs, "/", 2);
-		len = strnlen(dirent->d_name, sizeof(metric_sysfs) - (len + 1));
-		strncat(metric_sysfs, dirent->d_name, len + 1);
+		if (snprintf(metric_sysfs, SYSFS_PATH_MAX,
+			"%s/%s", sysfs_path, dirent->d_name) < 0) {
+			OPAE_MSG("snprintf failed");
+			closedir(dir);
+			return FPGA_EXCEPTION;
+		}
 
 		result = add_metric_vector(vector, *metric_num, qualifier_name, "performance", sysfs_path, dirent->d_name,
 			metric_sysfs, "", FPGA_METRIC_DATATYPE_INT, metric_type, hw_type, 0);
@@ -446,7 +471,6 @@ fpga_result enum_perf_counter_metrics(fpga_metric_vector *vector,
 	char sysfs_path[SYSFS_PATH_MAX]     = { 0, };
 	char qualifier_name[SYSFS_PATH_MAX] = { 0, };
 	glob_t pglob;
-	size_t len;
 
 	if (vector == NULL ||
 		sysfspath == NULL ||
@@ -464,8 +488,13 @@ fpga_result enum_perf_counter_metrics(fpga_metric_vector *vector,
 		return FPGA_NOT_FOUND;
 	}
 
-	len = strnlen(pglob.gl_pathv[0], sizeof(sysfs_path) - 1);
-	strncpy(sysfs_path, pglob.gl_pathv[0], len + 1);
+	if (snprintf(sysfs_path, SYSFS_PATH_MAX,
+		"%s", pglob.gl_pathv[0]) < 0) {
+		OPAE_ERR("snprintf failed");
+		globfree(&pglob);
+		return FPGA_EXCEPTION;
+	}
+
 	globfree(&pglob);
 
 	dir = opendir(sysfs_path);
@@ -486,11 +515,12 @@ fpga_result enum_perf_counter_metrics(fpga_metric_vector *vector,
 
 		if (strcmp(dirent->d_name, PERF_CACHE) == 0) {
 
-			len = strnlen(PERFORMANCE, sizeof(qualifier_name) - 1);
-			strncpy(qualifier_name, PERFORMANCE, len + 1);
-			strncat(qualifier_name, ":", 2);
-			len = strnlen(PERF_CACHE, sizeof(qualifier_name) - (len + 1));
-			strncat(qualifier_name, PERF_CACHE, len + 1);
+			if (snprintf(qualifier_name, SYSFS_PATH_MAX,
+				"%s:%s", PERFORMANCE, PERF_CACHE) < 0) {
+				OPAE_ERR("snprintf failed");
+				result= FPGA_EXCEPTION;
+				goto out_close;
+			}
 
 			result = enum_perf_counter_items(vector,
 					metric_num, qualifier_name,
@@ -504,11 +534,12 @@ fpga_result enum_perf_counter_metrics(fpga_metric_vector *vector,
 
 		if (strcmp(dirent->d_name, PERF_FABRIC) == 0) {
 
-			len = strnlen(PERFORMANCE, sizeof(qualifier_name) - 1);
-			strncpy(qualifier_name, PERFORMANCE, len + 1);
-			strncat(qualifier_name, ":", 2);
-			len = strnlen(PERF_FABRIC, sizeof(qualifier_name) - (len + 1));
-			strncat(qualifier_name, PERF_FABRIC, len + 1);
+			if (snprintf(qualifier_name, SYSFS_PATH_MAX,
+				"%s:%s", PERFORMANCE, PERF_FABRIC) < 0) {
+				OPAE_ERR("snprintf failed");
+				result = FPGA_EXCEPTION;
+				goto out_close;
+			}
 
 			result = enum_perf_counter_items(vector, metric_num,
 					qualifier_name, sysfs_path,
@@ -521,11 +552,12 @@ fpga_result enum_perf_counter_metrics(fpga_metric_vector *vector,
 
 		if (strcmp(dirent->d_name, PERF_IOMMU) == 0) {
 
-			len = strnlen(PERFORMANCE, sizeof(qualifier_name) - 1);
-			strncpy(qualifier_name, PERFORMANCE, len + 1);
-			strncat(qualifier_name, ":", 2);
-			len = strnlen(PERF_IOMMU, sizeof(qualifier_name) - (len + 1));
-			strncat(qualifier_name, PERF_IOMMU, len + 1);
+			if (snprintf(qualifier_name, SYSFS_PATH_MAX,
+				"%s:%s", PERFORMANCE, PERF_IOMMU) < 0) {
+				OPAE_ERR("snprintf failed");
+				result = FPGA_EXCEPTION;
+				goto out_close;
+			}
 
 			result = enum_perf_counter_items(vector, metric_num,
 					qualifier_name, sysfs_path, dirent->d_name,
@@ -537,6 +569,7 @@ fpga_result enum_perf_counter_metrics(fpga_metric_vector *vector,
 		}
 
 	}
+out_close:
 	closedir(dir);
 	return result;
 }
@@ -696,7 +729,7 @@ fpga_result  enum_bmc_metrics_info(struct _fpga_handle *_handle,
 	result = xfpga_bmcReadSensorValues(_handle, records, &values, &num_values);
 	if (result != FPGA_OK) {
 		OPAE_ERR("Failed to read BMC sensor values.");
-		return result;
+		goto out_destory_sdr;
 	}
 
 	for (x = 0; x < num_sensors; x++) {
@@ -707,16 +740,26 @@ fpga_result  enum_bmc_metrics_info(struct _fpga_handle *_handle,
 
 			metric_type = FPGA_METRIC_TYPE_THERMAL;
 
-			len = strnlen(THERLGMT, sizeof(group_name) - 1);
-			strncpy(group_name, THERLGMT, len + 1);
-			len = strnlen(TEMP, sizeof(units) - 1);
-			strncpy(units, TEMP, len + 1);
+			if (snprintf(group_name, SYSFS_PATH_MAX,
+				"%s", THERLGMT) < 0) {
+				OPAE_ERR("snprintf failed");
+				result = FPGA_EXCEPTION;
+				goto out_destory_sensor;
+			}
 
-			len = strnlen(THERLGMT, sizeof(qualifier_name) - 1);
-			strncpy(qualifier_name, THERLGMT, len + 1);
-			strncat(qualifier_name, ":", 2);
-			len = strnlen(details.name, sizeof(qualifier_name) - (len + 1));
-			strncat(qualifier_name, details.name, len + 1);
+			if (snprintf(units, SYSFS_PATH_MAX,
+				"%s", TEMP) < 0) {
+				OPAE_ERR("snprintf failed");
+				result = FPGA_EXCEPTION;
+				goto out_destory_sensor;
+			}
+
+			if (snprintf(qualifier_name, SYSFS_PATH_MAX,
+				"%s:%s", THERLGMT, details.name) < 0) {
+				OPAE_ERR("snprintf failed");
+				result = FPGA_EXCEPTION;
+				goto out_destory_sensor;
+			}
 
 		} else if (details.sensor_type == BMC_POWER) {
 
@@ -725,11 +768,19 @@ fpga_result  enum_bmc_metrics_info(struct _fpga_handle *_handle,
 			len = strnlen(PWRMGMT, sizeof(group_name) - 1);
 			strncpy(group_name, PWRMGMT, len + 1);
 
-			len = strnlen(PWRMGMT, sizeof(qualifier_name) - 1);
-			strncpy(qualifier_name, PWRMGMT, len + 1);
-			strncat(qualifier_name, ":", 2);
-			len = strnlen(details.name, sizeof(qualifier_name) - (len + 1));
-			strncat(qualifier_name, details.name, len + 1);
+			if (snprintf(group_name, SYSFS_PATH_MAX,
+				"%s", PWRMGMT) < 0) {
+				OPAE_ERR("snprintf failed");
+				result = FPGA_EXCEPTION;
+				goto out_destory_sensor;
+			}
+
+			if (snprintf(qualifier_name, SYSFS_PATH_MAX,
+				"%s:%s", PWRMGMT, details.name) < 0) {
+				OPAE_ERR("snprintf failed");
+				result = FPGA_EXCEPTION;
+				goto out_destory_sensor;
+			}
 
 			snprintf(units, sizeof(units), "%ls", details.units);
 		} else {
@@ -742,17 +793,19 @@ fpga_result  enum_bmc_metrics_info(struct _fpga_handle *_handle,
 				metric_type, hw_type, 0);
 		if (result != FPGA_OK) {
 			OPAE_MSG("Failed to add metrics");
-			return result;
+			goto out_destory_sensor;
 		}
 
 		*metric_num = *metric_num + 1;
 	}
 
+out_destory_sensor:
 	result = xfpga_bmcDestroySensorValues(_handle, &values);
 	if (result != FPGA_OK) {
 		OPAE_MSG("Failed to Destroy Sensor value.");
 	}
 
+out_destory_sdr:
 	result = xfpga_bmcDestroySDRs(_handle, &records);
 	if (result != FPGA_OK) {
 		OPAE_ERR("Failed to Destroy SDR.");
@@ -838,16 +891,16 @@ void *metrics_load_bmc_lib(void)
 	const char *search_paths[] = { OPAE_MODULE_SEARCH_PATHS };
 	unsigned i;
 	void *dl_handle;
-	size_t len;
 
 	for (i = 0 ;
 		i < sizeof(search_paths) / sizeof(search_paths[0]) ;
 		++i) {
 
-		len = strnlen(search_paths[i], sizeof(plugin_path) - 1);
-		strncpy(plugin_path, search_paths[i], len + 1);
-		len = strnlen(BMC_LIB, sizeof(plugin_path) - (len + 1));
-		strncat(plugin_path, BMC_LIB, len + 1);
+		if (snprintf(plugin_path, PATH_MAX,
+			"%s%s", search_paths[i], BMC_LIB) < 0) {
+			OPAE_ERR("snprintf failed");
+			return NULL;
+		}
 
 		dl_handle = dlopen(plugin_path, RTLD_LAZY | RTLD_LOCAL);
 		if (dl_handle)
@@ -1039,7 +1092,6 @@ fpga_result add_metric_info(struct _fpga_enum_metric *_enum_metrics,
 			struct fpga_metric_info *fpga_metric_info)
 {
 	fpga_result result = FPGA_OK;
-	size_t len;
 
 	if (_enum_metrics == NULL ||
 		fpga_metric_info == NULL) {
@@ -1048,17 +1100,29 @@ fpga_result add_metric_info(struct _fpga_enum_metric *_enum_metrics,
 		return FPGA_INVALID_PARAM;
 	}
 
-	len = strnlen(_enum_metrics->group_name, SYSFS_PATH_MAX - 1);
-	strncpy(fpga_metric_info->group_name, _enum_metrics->group_name, len + 1);
+	if (snprintf(fpga_metric_info->group_name, SYSFS_PATH_MAX,
+		"%s", _enum_metrics->group_name) < 0) {
+		OPAE_ERR("snprintf failed");
+		return FPGA_EXCEPTION;
+	}
 
-	len = strnlen(_enum_metrics->metric_name, SYSFS_PATH_MAX - 1);
-	strncpy(fpga_metric_info->metric_name, _enum_metrics->metric_name, len + 1);
+	if (snprintf(fpga_metric_info->metric_name, SYSFS_PATH_MAX,
+		"%s", _enum_metrics->metric_name) < 0) {
+		OPAE_ERR("snprintf failed");
+		return FPGA_EXCEPTION;
+	}
 
-	len = strnlen(_enum_metrics->qualifier_name, SYSFS_PATH_MAX - 1);
-	strncpy(fpga_metric_info->qualifier_name, _enum_metrics->qualifier_name, len + 1);
+	if (snprintf(fpga_metric_info->qualifier_name, SYSFS_PATH_MAX,
+		"%s", _enum_metrics->qualifier_name) < 0) {
+		OPAE_ERR("snprintf failed");
+		return FPGA_EXCEPTION;
+	}
 
-	len = strnlen(_enum_metrics->metric_units, SYSFS_PATH_MAX - 1);
-	strncpy(fpga_metric_info->metric_units, _enum_metrics->metric_units, len + 1);
+	if (snprintf(fpga_metric_info->metric_units, SYSFS_PATH_MAX,
+		"%s", _enum_metrics->metric_units) < 0) {
+		OPAE_ERR("snprintf failed");
+		return FPGA_EXCEPTION;
+	}
 
 	fpga_metric_info->metric_num = _enum_metrics->metric_num;
 	fpga_metric_info->metric_type = _enum_metrics->metric_type;
@@ -1083,7 +1147,6 @@ fpga_result get_bmc_metrics_values(fpga_handle handle,
 	bmc_sdr_handle records;
 	bmc_values_handle values;
 	sdr_details details;
-	size_t len;
 
 	struct _fpga_handle *_handle = (struct _fpga_handle *)handle;
 
@@ -1141,8 +1204,12 @@ fpga_result get_bmc_metrics_values(fpga_handle handle,
 			continue;
 		}
 
-		len = strnlen(details.name, sizeof(_handle->_bmc_metric_cache_value[x].metric_name) - 1);
-		strncpy(_handle->_bmc_metric_cache_value[x].metric_name, details.name, len + 1);
+		if (snprintf(_handle->_bmc_metric_cache_value[x].metric_name, SYSFS_PATH_MAX,
+			"%s", details.name) < 0) {
+			OPAE_ERR("snprintf failed");
+			result =  FPGA_EXCEPTION;
+			goto out_destroy_sensor;
+		}
 
 		_handle->_bmc_metric_cache_value[x].fpga_metric.value.dvalue = tmp;
 
@@ -1153,7 +1220,7 @@ fpga_result get_bmc_metrics_values(fpga_handle handle,
 
 	}
 
-
+out_destroy_sensor:
 	result = xfpga_bmcDestroySensorValues(_handle, &values);
 	if (result != FPGA_OK) {
 		OPAE_MSG("Failed to Destroy Sensor value.");
@@ -1233,7 +1300,6 @@ fpga_result get_performance_counter_value(const char *group_sysfs,
 	fpga_result result                  = FPGA_OK;
 	char sysfs_path[SYSFS_PATH_MAX]     = { 0, };
 	uint64_t val                        = 0;
-	size_t len;
 
 	if (group_sysfs == NULL ||
 		metric_sysfs == NULL ||
@@ -1242,11 +1308,11 @@ fpga_result get_performance_counter_value(const char *group_sysfs,
 		return FPGA_INVALID_PARAM;
 	}
 
-	len = strnlen(group_sysfs, sizeof(sysfs_path) - 1);
-	strncpy(sysfs_path, group_sysfs, len + 1);
-	strncat(sysfs_path, "/", 2);
-	len = strnlen(PERF_ENABLE, sizeof(sysfs_path) - (len + 1));
-	strncat(sysfs_path, PERF_ENABLE, len + 1);
+	if (snprintf(sysfs_path, SYSFS_PATH_MAX,
+		"%s/%s", group_sysfs, PERF_ENABLE) < 0) {
+		OPAE_ERR("snprintf failed");
+		return FPGA_EXCEPTION;
+	}
 
 	result = metric_sysfs_path_is_file(sysfs_path);
 	if (result == FPGA_OK) {
@@ -1265,11 +1331,12 @@ fpga_result get_performance_counter_value(const char *group_sysfs,
 		}
 	}
 
-	len = strnlen(group_sysfs, sizeof(sysfs_path) - 1);
-	strncpy(sysfs_path, group_sysfs, len + 1);
-	strncat(sysfs_path, "/", 2);
-	len = strnlen(PERF_FREEZE, sizeof(sysfs_path) - (len + 1));
-	strncat(sysfs_path, PERF_FREEZE, len + 1);
+
+	if (snprintf(sysfs_path, SYSFS_PATH_MAX,
+		"%s/%s", group_sysfs, PERF_FREEZE) < 0) {
+		OPAE_ERR("snprintf failed");
+		return FPGA_EXCEPTION;
+	}
 
 	result = metric_sysfs_path_is_file(sysfs_path);
 	if (result == FPGA_OK) {
@@ -1296,11 +1363,11 @@ fpga_result get_performance_counter_value(const char *group_sysfs,
 		return result;
 	}
 
-	len = strnlen(group_sysfs, sizeof(sysfs_path) - 1);
-	strncpy(sysfs_path, group_sysfs, len + 1);
-	strncat(sysfs_path, "/", 2);
-	len = strnlen(PERF_FREEZE, sizeof(sysfs_path) - (len + 1));
-	strncat(sysfs_path, PERF_FREEZE, len + 1);
+	if (snprintf(sysfs_path, SYSFS_PATH_MAX,
+		"%s/%s", group_sysfs, PERF_FREEZE) < 0) {
+		OPAE_ERR("snprintf failed");
+		return FPGA_EXCEPTION;
+	}
 
 	result = metric_sysfs_path_is_file(sysfs_path);
 	if (result == FPGA_OK) {
@@ -1447,7 +1514,6 @@ fpga_result  parse_metric_num_name(const char *search_string,
 	int qualifier_indicator                     = 0;
 	int metric_indicator                        = 0;
 	uint64_t num_enun_metrics                   = 0;
-	size_t len;
 
 	if (search_string == NULL ||
 		fpga_enum_metrics_vector == NULL ||
@@ -1463,8 +1529,11 @@ fpga_result  parse_metric_num_name(const char *search_string,
 	}
 
 	// Metric Name
-	len = strnlen(str + 1, FPGA_METRIC_STR_SIZE - 1);
-	strncpy(metrics_name, str + 1, len + 1);
+	if (snprintf(metrics_name, SYSFS_PATH_MAX,
+		"%s", str + 1) < 0) {
+		OPAE_ERR("snprintf failed");
+		return FPGA_EXCEPTION;
+	}
 
 	// qualifier_name
 	str_last = strrchr(search_string, ':');
@@ -1476,8 +1545,16 @@ fpga_result  parse_metric_num_name(const char *search_string,
 	init_size = strnlen(search_string, FPGA_METRIC_STR_SIZE - 1) -
 		strnlen(str_last, FPGA_METRIC_STR_SIZE - 1) + 1;
 
-	strncpy(qualifier_name, search_string, init_size);
-	qualifier_name[init_size - 1] = '\0';
+
+	if (snprintf(qualifier_name, init_size,
+		"%s", search_string) < 0) {
+		OPAE_ERR("snprintf failed");
+		return FPGA_EXCEPTION;
+	}
+
+	if (init_size < FPGA_METRIC_STR_SIZE)
+		qualifier_name[init_size - 1] = '\0';
+
 
 	result = fpga_vector_total(fpga_enum_metrics_vector, &num_enun_metrics);
 	if (result != FPGA_OK) {
