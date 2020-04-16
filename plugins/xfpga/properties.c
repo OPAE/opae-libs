@@ -186,7 +186,7 @@ fpga_result __XFPGA_API__ xfpga_fpgaUpdateProperties(fpga_token token,
 			_iprop.u.accelerator.num_mmio = 2;
 			_iprop.u.accelerator.num_interrupts = 0;
 		} else {
-			opae_port_info info;
+			opae_port_info info = { 0, };
 
 			_iprop.u.accelerator.num_mmio = 2;
 			_iprop.u.accelerator.num_interrupts = 0;
