@@ -36,6 +36,7 @@
 #include "common_int.h"
 #include "props.h"
 #include "error_int.h"
+#include "opae_drv.h"
 
 
 fpga_result __XFPGA_API__
@@ -182,17 +183,27 @@ fpga_result __XFPGA_API__ xfpga_fpgaUpdateProperties(fpga_token token,
 		res = open(_token->devpath, O_RDWR);
 		if (-1 == res) {
 			_iprop.u.accelerator.state = FPGA_ACCELERATOR_ASSIGNED;
+			_iprop.u.accelerator.num_mmio = 2;
+			_iprop.u.accelerator.num_interrupts = 0;
 		} else {
+			opae_port_info info;
+
+			_iprop.u.accelerator.num_mmio = 2;
+			_iprop.u.accelerator.num_interrupts = 0;
+
+			if (opae_get_port_info(res, &info) == FPGA_OK) {
+				_iprop.u.accelerator.num_mmio = info.num_regions;
+				if (info.capability & 0x2)
+					_iprop.u.accelerator.num_interrupts =
+						info.num_uafu_irqs;
+			}
+
 			close(res);
 			_iprop.u.accelerator.state =
 				FPGA_ACCELERATOR_UNASSIGNED;
 		}
 		SET_FIELD_VALID(&_iprop, FPGA_PROPERTY_ACCELERATOR_STATE);
-
-		_iprop.u.accelerator.num_mmio = 2;
 		SET_FIELD_VALID(&_iprop, FPGA_PROPERTY_NUM_MMIO);
-
-		_iprop.u.accelerator.num_interrupts = 0;
 		SET_FIELD_VALID(&_iprop, FPGA_PROPERTY_NUM_INTERRUPTS);
 	}
 
