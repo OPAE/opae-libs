@@ -326,8 +326,11 @@ STATIC fpga_result enum_fme(const char *sysfspath, const char *name,
 	char devpath[DEV_PATH_MAX];
 	struct dev_list *pdev;
 
-	snprintf(devpath, sizeof(devpath),
-		 FPGA_DEV_PATH "/%s", name);
+	if (snprintf(devpath, sizeof(devpath),
+		     FPGA_DEV_PATH "/%s", name) < 0) {
+		OPAE_ERR("snprintf buffer overflow");
+		return FPGA_EXCEPTION;
+	}
 
 	pdev = add_dev(sysfspath, devpath, parent);
 	if (!pdev) {
@@ -480,8 +483,11 @@ STATIC fpga_result enum_afu(const char *sysfspath, const char *name,
 	struct dev_list *pdev;
 	char devpath[DEV_PATH_MAX];
 
-	snprintf(devpath, sizeof(devpath),
-		 FPGA_DEV_PATH "/%s", name);
+	if (snprintf(devpath, sizeof(devpath),
+		     FPGA_DEV_PATH "/%s", name) < 0) {
+		OPAE_ERR("snprintf buffer overflow");
+		return FPGA_EXCEPTION;
+	}
 
 	pdev = add_dev(sysfspath, devpath, parent);
 	if (!pdev) {
