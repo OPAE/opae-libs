@@ -447,7 +447,7 @@ STATIC fpga_result sync_afu(struct dev_list *afu)
 		afu->accelerator_num_mmios = 2;
 		afu->accelerator_num_irqs = 0;
 	} else {
-		opae_port_info info;
+		opae_port_info info = { 0, };
 
 		if (opae_get_port_info(res, &info) == FPGA_OK) {
 			afu->accelerator_num_mmios = info.num_regions;
