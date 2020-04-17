@@ -180,22 +180,25 @@ fpga_result __XFPGA_API__ xfpga_fpgaUpdateProperties(fpga_token token,
 		_iprop.objtype = FPGA_ACCELERATOR;
 		SET_FIELD_VALID(&_iprop, FPGA_PROPERTY_OBJTYPE);
 
+		_iprop.u.accelerator.num_mmio = 0;
+		_iprop.u.accelerator.num_interrupts = 0;
+
 		res = open(_token->devpath, O_RDWR);
 		if (-1 == res) {
 			_iprop.u.accelerator.state = FPGA_ACCELERATOR_ASSIGNED;
-			_iprop.u.accelerator.num_mmio = 2;
-			_iprop.u.accelerator.num_interrupts = 0;
 		} else {
 			opae_port_info info = { 0, };
 
-			_iprop.u.accelerator.num_mmio = 2;
-			_iprop.u.accelerator.num_interrupts = 0;
-
 			if (opae_get_port_info(res, &info) == FPGA_OK) {
 				_iprop.u.accelerator.num_mmio = info.num_regions;
-				if (info.capability & 0x2)
+				SET_FIELD_VALID(&_iprop, FPGA_PROPERTY_NUM_MMIO);
+
+				if (info.capability & OPAE_PORT_CAP_UAFU_IRQS) {
 					_iprop.u.accelerator.num_interrupts =
 						info.num_uafu_irqs;
+					SET_FIELD_VALID(&_iprop,
+						FPGA_PROPERTY_NUM_INTERRUPTS);
+				}
 			}
 
 			close(res);
@@ -203,8 +206,6 @@ fpga_result __XFPGA_API__ xfpga_fpgaUpdateProperties(fpga_token token,
 				FPGA_ACCELERATOR_UNASSIGNED;
 		}
 		SET_FIELD_VALID(&_iprop, FPGA_PROPERTY_ACCELERATOR_STATE);
-		SET_FIELD_VALID(&_iprop, FPGA_PROPERTY_NUM_MMIO);
-		SET_FIELD_VALID(&_iprop, FPGA_PROPERTY_NUM_INTERRUPTS);
 	}
 
 	p = strstr(_token->sysfspath, FPGA_SYSFS_FME);

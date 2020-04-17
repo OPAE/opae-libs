@@ -441,18 +441,18 @@ STATIC fpga_result sync_afu(struct dev_list *afu)
 	if (afu->fme)
 		afu->socket_id = afu->fme->socket_id;
 
+	afu->accelerator_num_mmios = 0;
+	afu->accelerator_num_irqs = 0;
+
 	res = open(afu->devpath, O_RDWR);
 	if (-1 == res) {
 		afu->accelerator_state = FPGA_ACCELERATOR_ASSIGNED;
-		afu->accelerator_num_mmios = 2;
-		afu->accelerator_num_irqs = 0;
 	} else {
 		opae_port_info info = { 0, };
 
 		if (opae_get_port_info(res, &info) == FPGA_OK) {
 			afu->accelerator_num_mmios = info.num_regions;
-			afu->accelerator_num_irqs = 0;
-			if (info.capability & 0x2)
+			if (info.capability & OPAE_PORT_CAP_UAFU_IRQS)
 				afu->accelerator_num_irqs = info.num_uafu_irqs;
 		}
 
@@ -571,7 +571,6 @@ STATIC fpga_result enum_fpga_region_resources(struct dev_list *list,
 	return sysfs_foreach_device(enum_regions, &ctx);
 }
 
-
 /// Determine if filters require reading AFUs
 ///
 /// Return true if any of the following conditions are met:
@@ -670,7 +669,6 @@ fpga_result __XFPGA_API__ xfpga_fpgaEnumerate(const fpga_properties *filters,
 			goto out_free_trash;
 		}
 
-		// FIXME: should check contents of filter for token magic
 		if (matches_filters(lptr, filters, num_filters)) {
 			if (*num_matches < max_tokens) {
 				if (xfpga_fpgaCloneToken(_tok, &tokens[*num_matches])
@@ -684,7 +682,6 @@ fpga_result __XFPGA_API__ xfpga_fpgaEnumerate(const fpga_properties *filters,
 	}
 
 out_free_trash:
-	/* FIXME: should this live in a separate function? */
 	for (lptr = head.next; NULL != lptr;) {
 		struct dev_list *trash = lptr;
 		lptr = lptr->next;
