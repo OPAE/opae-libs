@@ -34,6 +34,7 @@ set(OPAE_VERSION ${OPAE_VERSION_MAJOR}.${OPAE_VERSION_MINOR}.${OPAE_VERSION_REVI
     CACHE STRING "OPAE version" FORCE)
 
 set(SYSFS_PATH_MAX 256 CACHE STRING "Maximum size of sysfs paths" FORCE)
+set(DEV_PATH_MAX 256 CACHE STRING "Maximum size of device paths" FORCE)
 
 set(OPAE_LIBS_ROOT ${CMAKE_CURRENT_SOURCE_DIR} CACHE PATH "Root directory of opae-libs project" FORCE)
 set(OPAE_INCLUDE_PATH ${OPAE_LIBS_ROOT}/include CACHE PATH "Include directory for opae-libs")
