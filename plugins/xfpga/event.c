@@ -205,7 +205,7 @@ STATIC fpga_result send_uafu_event_request(fpga_handle handle,
 			}
 			data = &fd;
 			// assigning irq uses flags as the irq num.
-			// set the bit it in the handle irq setr
+			// set the bit it in the handle irq set
 			// and stash the number in the event handle
 			_handle->irq_set |= (1 << flags);
 			_eh->flags = flags;
