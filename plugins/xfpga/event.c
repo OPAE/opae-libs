@@ -186,9 +186,13 @@ STATIC fpga_result send_uafu_event_request(fpga_handle handle,
 
 	if (!_handle->num_irqs) {
 		res = opae_dfl_port_get_user_irq(_handle->fddev, &num_irqs);
-		if (res || !num_irqs) {
-			OPAE_ERR("Port user interrupts not supported in hw");
+		if (res) {
+			OPAE_ERR("Invalid param or not supported");
 			return res;
+		}
+		if (!num_irqs) {
+			OPAE_ERR("Port user interrupts not supported in hw");
+			return FPGA_NOT_SUPPORTED;
 		}
 		_handle->num_irqs = num_irqs;
 	}
@@ -205,7 +209,7 @@ STATIC fpga_result send_uafu_event_request(fpga_handle handle,
 			}
 			data = &fd;
 			// assigning irq uses flags as the irq num.
-			// set the bit it in the handle irq set
+			// set the bit in the handle irq set
 			// and stash the number in the event handle
 			_handle->irq_set |= (1 << flags);
 			_eh->flags = flags;
