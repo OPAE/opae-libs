@@ -138,6 +138,27 @@ fpga_result fpgaWriteMMIO512(fpga_handle handle,
 			    uint32_t mmio_num, uint64_t offset,
 			    const void *value);
 
+
+/**
+ * Read 512 bit value from MMIO space
+ *
+ * 512 bit MMIO reads may not be supported on all platforms.
+ *
+ * This function will reads from MMIO space of the target object at a specified
+ * offset.
+ *
+ * @param[in]  handle   Handle to previously opened accelerator resource
+ * @param[in]  mmio_num Number of MMIO space to access
+ * @param[in]  offset   Byte offset into MMIO space
+ * @param[out]  value    Pointer to memory where read buffer is returned (512 bits)
+ * @returns FPGA_OK on success. FPGA_INVALID_PARAM if any of the supplied
+ * parameters is invalid. FPGA_EXCEPTION if an internal exception occurred
+ * while trying to access the handle.
+ */
+fpga_result fpgaReadMMIO512(fpga_handle handle,
+			    uint32_t mmio_num, uint64_t offset,
+			    const void *value);
+
 /**
  * Map MMIO space
  *

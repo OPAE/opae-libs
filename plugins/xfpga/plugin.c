@@ -94,6 +94,8 @@ int __XFPGA_API__ opae_plugin_configure(opae_api_adapter_table *adapter,
 		dlsym(adapter->plugin.dl_handle, "xfpga_fpgaReadMMIO32");
 	adapter->fpgaWriteMMIO512 =
 		dlsym(adapter->plugin.dl_handle, "xfpga_fpgaWriteMMIO512");
+	adapter->fpgaReadMMIO512 =
+		dlsym(adapter->plugin.dl_handle, "xfpga_fpgaReadMMIO512");
 	adapter->fpgaMapMMIO =
 		dlsym(adapter->plugin.dl_handle, "xfpga_fpgaMapMMIO");
 	adapter->fpgaUnmapMMIO =

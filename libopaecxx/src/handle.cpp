@@ -114,6 +114,13 @@ void handle::write_csr512(uint64_t offset, const void *value,
   ASSERT_FPGA_OK(fpgaWriteMMIO512(handle_, csr_space, offset, value));
 }
 
+uint8_t *handle::read_csr512(uint64_t offset, uint32_t csr_space ) {
+	uint8_t *base = nullptr;
+	auto res = fpgaReadMMIO512(handle_, csr_space, offset, reinterpret_cast<uint8_t **>(&base));
+	ASSERT_FPGA_OK(res);
+	return base;
+}
+
 uint8_t *handle::mmio_ptr(uint64_t offset, uint32_t csr_space) const {
   uint8_t *base = nullptr;
 

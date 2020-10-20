@@ -136,6 +136,18 @@ class handle {
    */
   void write_csr512(uint64_t offset, const void *value, uint32_t csr_space = 0);
 
+
+  /**
+ * @brief Reads 512 bits from a CSR belonging to a resource associated
+ * with a handle.
+ *
+ * @param[in] offset The register offset.
+ * @param[in] value Pointer to the 512-bit value to write to the register.
+ *
+ * @return The 64 byte buffer from the CSR
+ */
+  uint8_t *read_csr512(uint64_t offset, uint32_t csr_space = 0);
+
   /** Retrieve a pointer to the MMIO region.
    * @param[in] offset The byte offset to add to MMIO base.
    * @param[in] csr_space The desired CSR space. Default is 0.

@@ -371,6 +371,50 @@ out_unlock:
 	return result;
 }
 
+fpga_result __XFPGA_API__ xfpga_fpgaReadMMIO512(fpga_handle handle,
+				uint32_t mmio_num,
+				uint64_t offset,
+				const void *value)
+{
+	int err;
+	struct _fpga_handle *_handle = (struct _fpga_handle *) handle;
+	struct wsid_map *wm = NULL;
+	fpga_result result = FPGA_OK;
+
+	if (offset % 64 != 0) {
+		OPAE_MSG("Misaligned MMIO access");
+		return FPGA_INVALID_PARAM;
+	}
+
+	result = handle_check_and_lock(_handle);
+	if (result)
+		return result;
+
+	if (!(_handle->flags & OPAE_FLAG_HAS_MMX512)) {
+		result = FPGA_NOT_SUPPORTED;
+		goto out_unlock;
+	}
+
+	result = find_or_map_wm(handle, mmio_num, &wm);
+	if (result)
+		goto out_unlock;
+
+	if (offset > wm->len) {
+		OPAE_MSG("offset out of bounds");
+		result = FPGA_INVALID_PARAM;
+		goto out_unlock;
+	}
+
+	copy512((uint8_t *)wm->offset + offset, (uint8_t *)value);
+
+out_unlock:
+	err = pthread_mutex_unlock(&_handle->lock);
+	if (err) {
+		OPAE_ERR("pthread_mutex_unlock() failed: %s", strerror(err));
+	}
+	return result;
+}
+
 fpga_result __XFPGA_API__ xfpga_fpgaMapMMIO(fpga_handle handle,
 				     uint32_t mmio_num,
 				     uint64_t **mmio_ptr)
