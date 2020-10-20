@@ -235,6 +235,9 @@ int opae_vfio_region_get(struct opae_vfio *v,
  * sudo sh -c 'echo 8 > /sys/kernel/mm/hugepages/hugepages-2048kB/nr_hugepages'
  * sudo sh -c 'echo 2 > /sys/kernel/mm/hugepages/hugepages-1048576kB/nr_hugepages'
  *
+ * @note Be sure that the IOMMU is also enabled using the follow kernel
+ * boot command: intel_iommu=on
+ *
  * @param[in, out] v    The open OPAE VFIO device.
  * @param[in, out] size A pointer to the requested size. The size
  *                      may be rounded to the next page size prior
