@@ -50,7 +50,7 @@ set(PYOPAE_SRC
 file(READ "/etc/os-release" ver)
 string(REGEX MATCH "REDHAT_SUPPORT_PRODUCT_VERSION=.([0-9]*)" _ ${ver})
 set(os_dist "el${CMAKE_MATCH_1}")
-message("OS dist: ${os_dist}")
+message(STATUS "OS dist: ${os_dist}")
 
 
 # Add el7 guard 
@@ -64,7 +64,7 @@ else()
 # Otherwise, pull recent pybind11 tag to enable Python 3.9 support.
     set(PYBIND11_TAG "v2.6.0")
 endif()
-message("PYBIND11_TAG: ${PYBIND11_TAG}")
+message(STATUS "Using pybind11 ${PYBIND11_TAG}")
 
 
 opae_external_project_add(PROJECT_NAME pybind11
