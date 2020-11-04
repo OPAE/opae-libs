@@ -28,7 +28,7 @@
 cmake_minimum_required (VERSION 2.8.12)
 
 macro(opae_external_project_add)
-    set(options EXCLUDE_FROM_ALL NO_ADD_SUBDIRECTORY)
+    set(options EXCLUDE_FROM_ALL NO_ADD_SUBDIRECTORY DEFER)
     set(oneValueArgs PROJECT_NAME GIT_URL GIT_TAG PRESERVE_REPOS)
     set(multiValueArgs)
     cmake_parse_arguments(OPAE_EXTERNAL_PROJECT_ADD "${options}"
@@ -60,19 +60,39 @@ macro(opae_external_project_add)
         ")\n"
     )
 
-    set(timestamp ${download_dir}/timestamp)
-    add_custom_command(
-        OUTPUT ${timestamp}
-        COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
-        COMMAND ${CMAKE_COMMAND} --build .
-        COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" ${CMAKE_BINARY_DIR}
-        COMMAND ${CMAKE_COMMAND} -E touch ${timestamp}
-        COMMENT "fetching ${OPAE_EXTERNAL_PROJECT_ADD_PROJECT_NAME} ${download_dir}"
-        WORKING_DIRECTORY ${download_dir})
+    if (${OPAE_EXTERNAL_PROJECT_ADD_DEFER})
+        set(timestamp ${download_dir}/timestamp)
+        add_custom_command(
+            OUTPUT ${timestamp}
+            COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
+            COMMAND ${CMAKE_COMMAND} --build .
+            COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" ${CMAKE_BINARY_DIR}
+            COMMAND ${CMAKE_COMMAND} -E touch ${timestamp}
+            COMMENT "fetching ${OPAE_EXTERNAL_PROJECT_ADD_PROJECT_NAME} ${download_dir}"
+            WORKING_DIRECTORY ${download_dir})
 
-    add_custom_target(${OPAE_EXTERNAL_PROJECT_ADD_PROJECT_NAME}-fetch
-        ALL DEPENDS ${timestamp}
-    )
+        add_custom_target(${OPAE_EXTERNAL_PROJECT_ADD_PROJECT_NAME}-fetch
+            ALL DEPENDS ${timestamp}
+        )
+    else (${OPAE_EXTERNAL_PROJECT_ADD_DEFER})
+        if(NOT EXISTS ${CMAKE_SOURCE_DIR}/external/${OPAE_EXTERNAL_PROJECT_ADD_PROJECT_NAME} OR NOT ${OPAE_EXTERNAL_PROJECT_ADD_PRESERVE_REPOS})
+            execute_process(
+                COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
+                RESULT_VARIABLE result
+                WORKING_DIRECTORY ${download_dir})
+            if(result)
+                message(FATAL_ERROR "CMake step for ${OPAE_EXTERNAL_PROJECT_ADD_PROJECT_NAME} failed: ${result}")
+            endif(result)
+
+            execute_process(
+                COMMAND ${CMAKE_COMMAND} --build .
+                RESULT_VARIABLE result
+                WORKING_DIRECTORY ${download_dir})
+            if(result)
+                message(FATAL_ERROR "Build step for ${OPAE_EXTERNAL_PROJECT_ADD_PROJECT_NAME} failed: ${result}")
+            endif(result)
+        endif()
+    endif (${OPAE_EXTERNAL_PROJECT_ADD_DEFER})
 
     set(src_dir
         ${CMAKE_SOURCE_DIR}/external/${OPAE_EXTERNAL_PROJECT_ADD_PROJECT_NAME})

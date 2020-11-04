@@ -58,6 +58,7 @@ message(STATUS "Using pybind11 ${PYBIND11_TAG}")
 opae_external_project_add(PROJECT_NAME pybind11
                           GIT_URL https://github.com/pybind/pybind11.git
                           GIT_TAG "${PYBIND11_TAG}"
+                          DEFER
                           )
 
 opae_add_module_library(TARGET _opae
