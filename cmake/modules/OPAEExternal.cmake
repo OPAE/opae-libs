@@ -60,23 +60,19 @@ macro(opae_external_project_add)
         ")\n"
     )
 
-    if(NOT EXISTS ${CMAKE_SOURCE_DIR}/external/${OPAE_EXTERNAL_PROJECT_ADD_PROJECT_NAME} OR NOT ${OPAE_EXTERNAL_PROJECT_ADD_PRESERVE_REPOS})
-        execute_process(
-            COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
-            RESULT_VARIABLE result
-            WORKING_DIRECTORY ${download_dir})
-        if(result)
-            message(FATAL_ERROR "CMake step for ${OPAE_EXTERNAL_PROJECT_ADD_PROJECT_NAME} failed: ${result}")
-        endif(result)
+    set(timestamp ${download_dir}/timestamp)
+    add_custom_command(
+        OUTPUT ${timestamp}
+        COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" .
+        COMMAND ${CMAKE_COMMAND} --build .
+        COMMAND ${CMAKE_COMMAND} -G "${CMAKE_GENERATOR}" ${CMAKE_BINARY_DIR}
+        COMMAND ${CMAKE_COMMAND} -E touch ${timestamp}
+        COMMENT "fetching ${OPAE_EXTERNAL_PROJECT_ADD_PROJECT_NAME} ${download_dir}"
+        WORKING_DIRECTORY ${download_dir})
 
-        execute_process(
-            COMMAND ${CMAKE_COMMAND} --build .
-            RESULT_VARIABLE result
-            WORKING_DIRECTORY ${download_dir})
-        if(result)
-            message(FATAL_ERROR "Build step for ${OPAE_EXTERNAL_PROJECT_ADD_PROJECT_NAME} failed: ${result}")
-        endif(result)
-    endif()
+    add_custom_target(${OPAE_EXTERNAL_PROJECT_ADD_PROJECT_NAME}-fetch
+        ALL DEPENDS ${timestamp}
+    )
 
     set(src_dir
         ${CMAKE_SOURCE_DIR}/external/${OPAE_EXTERNAL_PROJECT_ADD_PROJECT_NAME})
@@ -84,11 +80,18 @@ macro(opae_external_project_add)
         ${CMAKE_BINARY_DIR}/external/${OPAE_EXTERNAL_PROJECT_ADD_PROJECT_NAME})
 
     if(NOT ${OPAE_EXTERNAL_PROJECT_ADD_NO_ADD_SUBDIRECTORY} AND EXISTS ${src_dir}/CMakeLists.txt)
+        message(DEBUG "adding subdirectory: ${OPAE_EXTERNAL_PROJECT_ADD_PROJECT_NAME}")
         if(${OPAE_EXTERNAL_PROJECT_ADD_EXCLUDE_FROM_ALL})
             add_subdirectory(${src_dir} ${bin_dir} EXCLUDE_FROM_ALL)
         else(${OPAE_EXTERNAL_PROJECT_ADD_EXCLUDE_FROM_ALL})
             add_subdirectory(${src_dir} ${bin_dir})
         endif(${OPAE_EXTERNAL_PROJECT_ADD_EXCLUDE_FROM_ALL})
+    else(NOT ${OPAE_EXTERNAL_PROJECT_ADD_NO_ADD_SUBDIRECTORY} AND EXISTS ${src_dir}/CMakeLists.txt)
+        message(DEBUG "NOT adding subdirectory: ${OPAE_EXTERNAL_PROJECT_ADD_PROJECT_NAME}")
     endif(NOT ${OPAE_EXTERNAL_PROJECT_ADD_NO_ADD_SUBDIRECTORY} AND EXISTS ${src_dir}/CMakeLists.txt)
 
 endmacro(opae_external_project_add)
+
+macro(opae_target_depends_external target external)
+    add_dependencies(${target} ${external}-fetch)
+endmacro(opae_target_depends_external target external)
