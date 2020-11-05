@@ -92,6 +92,8 @@ macro(opae_external_project_add)
                 message(FATAL_ERROR "Build step for ${OPAE_EXTERNAL_PROJECT_ADD_PROJECT_NAME} failed: ${result}")
             endif(result)
         endif()
+        add_custom_target(${OPAE_EXTERNAL_PROJECT_ADD_PROJECT_NAME}-fetch
+        )
     endif (${OPAE_EXTERNAL_PROJECT_ADD_DEFER})
 
     set(src_dir
