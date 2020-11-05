@@ -42,7 +42,6 @@
 
 #include <stdio.h>
 #include <stdint.h>
-#include <pthread.h>
 
 #define OPAE_UIO_PATH_MAX 256
 
