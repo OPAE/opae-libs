@@ -40,18 +40,18 @@
 #ifdef __SHORT_FILE__
 #undef __SHORT_FILE__
 #endif // __SHORT_FILE__
-#define __SHORT_FILE__                                         \
+#define __SHORT_FILE__                                     \
 	({                                                     \
 	const char *file = __FILE__;                           \
 	const char *p = file;                                  \
-while (*p)                                                     \
-	++p;                                                   \
-while ((p > file) && ('/' != *p) && ('\\' != *p))              \
-	--p;                                                   \
-if (p > file)                                                  \
-	++p;                                                   \
+	while (*p)                                             \
+		++p;                                               \
+	while ((p > file) && ('/' != *p) && ('\\' != *p))      \
+		--p;                                               \
+	if (p > file)                                          \
+		++p;                                               \
 	p;                                                     \
-})
+	})
 
 #ifdef OPAE_MSG
 #undef OPAE_MSG
