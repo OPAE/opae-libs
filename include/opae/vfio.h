@@ -136,7 +136,7 @@ struct opae_vfio {
 	char *cont_pciaddr;				/**< PCIe address, eg 0000:00:00.0 */
 	int cont_fd;					/**< Container file descriptor. */
 	struct opae_vfio_iova_range *cont_ranges;	/**< List of IOVA ranges. */
-	struct mem_alloc vfio_alloc;			/**< Allocator for IOVA space. */
+	struct mem_alloc iova_alloc;			/**< Allocator for IOVA space. */
 	struct opae_vfio_group group;			/**< The VFIO device group. */
 	struct opae_vfio_device device;			/**< The VFIO device. */
 	struct opae_vfio_buffer *cont_buffers;		/**< List of allocated DMA buffers. */
