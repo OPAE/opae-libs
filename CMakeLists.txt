@@ -121,23 +121,30 @@ if(OPAE_BUILD_SIM)
     mark_as_advanced(OPAE_SIM_TAG)
 endif(OPAE_BUILD_SIM)
 
+if (OPAE_BUILD_PLUGIN_VFIO AND NOT OPAE_BUILD_LIBOPAEVFIO)
+    message(STATUS
+        "Enabling vfio plugin automatically enables libopaevfio")
+    set(OPAE_BUILD_LIBOPAEVFIO ON)
+endif (OPAE_BUILD_PLUGIN_VFIO AND NOT OPAE_BUILD_LIBOPAEVFIO)
 
-try_compile(VFIO_CHECK
-    ${CMAKE_BINARY_DIR}
-    ${CMAKE_SOURCE_DIR}/libopaevfio/vfiocheck.c
-    OUTPUT_VARIABLE TRY_COMPILE_OUTPUT
-)
+if (OPAE_BUILD_LIBOPAEVFIO)
+    try_compile(VFIO_CHECK
+        ${CMAKE_BINARY_DIR}
+        ${CMAKE_SOURCE_DIR}/libopaevfio/vfiocheck.c
+        OUTPUT_VARIABLE TRY_COMPILE_OUTPUT
+    )
 
-if (VFIO_CHECK)
-    set(PLATFORM_SUPPORTS_VFIO TRUE CACHE BOOL "Platform supports vfio driver")
-else(VFIO_CHECK)
-    set(PLATFORM_SUPPORTS_VFIO FALSE CACHE BOOL "Platform supports vfio driver")
-    message(WARNING
-        "Could not compile VFIO.
-        This most likely means that kernel( version >= 4.6) headers aren't installed.
-        See errors in platform_vfio_errors.txt")
-    file(WRITE ${CMAKE_BINARY_DIR}/platform_vfio_errors.txt ${TRY_COMPILE_OUTPUT})
-endif(VFIO_CHECK)
+    if (VFIO_CHECK)
+        set(PLATFORM_SUPPORTS_VFIO TRUE CACHE BOOL "Platform supports vfio driver")
+    else(VFIO_CHECK)
+        set(PLATFORM_SUPPORTS_VFIO FALSE CACHE BOOL "Platform supports vfio driver")
+        message(WARNING
+            "Could not compile VFIO.
+            This most likely means that kernel( version >= 4.6) headers aren't installed.
+            See errors in platform_vfio_errors.txt")
+        file(WRITE ${CMAKE_BINARY_DIR}/platform_vfio_errors.txt ${TRY_COMPILE_OUTPUT})
+    endif(VFIO_CHECK)
+endif (OPAE_BUILD_LIBOPAEVFIO)
 
 ############################################################################
 ## Add Subdirectories ######################################################
