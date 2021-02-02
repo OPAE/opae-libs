@@ -135,9 +135,11 @@ if (OPAE_BUILD_LIBOPAEVFIO)
     )
 
     if (VFIO_CHECK)
-        set(PLATFORM_SUPPORTS_VFIO TRUE CACHE BOOL "Platform supports vfio driver")
+        set(PLATFORM_SUPPORTS_VFIO TRUE CACHE BOOL "Platform supports vfio driver" FORCE)
+        message(STATUS
+            "Compatible VFIO headers found")
     else(VFIO_CHECK)
-        set(PLATFORM_SUPPORTS_VFIO FALSE CACHE BOOL "Platform supports vfio driver")
+        set(PLATFORM_SUPPORTS_VFIO FALSE CACHE BOOL "Platform supports vfio driver" FORCE)
         message(WARNING
             "Could not compile VFIO.
             This most likely means that kernel( version >= 4.6) headers aren't installed.
