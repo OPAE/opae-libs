@@ -28,7 +28,7 @@
 check_cxx_compiler_flag("-Wno-sign-compare" CXX_SUPPORTS_NO_SIGN_COMPARE)
 
 set(OPAE_TEST_LIBRARIES test_system fpga_db
-    CACHE LIST "OPAE test libs." FORCE)
+    CACHE INTERNAL "OPAE test libs." FORCE)
 
 function(opae_load_gtest)
     message(STATUS "Trying to fetch gtest through git...")
@@ -77,7 +77,7 @@ function(opae_load_gtest)
     set(GTEST_LIBRARIES "libgtest"
         CACHE PATH "GTest test lib." FORCE)
     set(GTEST_BOTH_LIBRARIES libgtest_main libgtest
-        CACHE LIST "GTest both libs." FORCE) 
+        CACHE INTERNAL "GTest both libs." FORCE)
     set(GTEST_FOUND TRUE CACHE BOOL "GTest found?" FORCE)
 endfunction()
 
