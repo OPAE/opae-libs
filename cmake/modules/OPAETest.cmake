@@ -99,7 +99,8 @@ function(opae_test_add)
         PROPERTIES
             CXX_STANDARD 11
             CXX_STANDARD_REQUIRED YES
-            CXX_EXTENSIONS NO)
+            CXX_EXTENSIONS NO
+            ENABLE_EXPORTS ON)
     target_compile_definitions(${OPAE_TEST_ADD_TARGET}
         PRIVATE
             HAVE_CONFIG_H=1)
