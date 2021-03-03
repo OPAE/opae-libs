@@ -1,4 +1,4 @@
-// Copyright(c) 2020, Intel Corporation
+// Copyright(c) 2020-2021, Intel Corporation
 //
 // Redistribution  and  use  in source  and  binary  forms,  with  or  without
 // modification, are permitted provided that the following conditions are met:
@@ -253,7 +253,7 @@ STATIC int opae_uio_init(struct opae_uio *u, const char *dfl_device)
 
 	// Use glob to discover the uio device name.
 	if (snprintf(path_expr, sizeof(path_expr),
-		     "/sys/bus/dfl/devices/%s/uio_pdrv_genirq.*.auto/uio/uio*",
+		     "/sys/bus/dfl/devices/%s/uio/uio*",
 		     dfl_device) < 0) {
 		ERR("snprintf() failed\n");
 		return 1;
