@@ -301,12 +301,20 @@ STATIC int opae_uio_init(struct opae_uio *u, const char *dfl_device)
 			res = 5;
 			goto out_glob_free;
 		}
+
+		break;
+	}
+
+	if (!glob_fmts[i]) {
+		ERR("failed to find UIO device for %s\n", dfl_device);
+		res = 6;
+		goto out_glob_free;
 	}
 
 	u->device_fd = open(u->device_path, O_RDWR);
 	if (u->device_fd < 0) {
 		ERR("failed to open(\"%s\")\n", u->device_path);
-		res = 6;
+		res = 7;
 		goto out_destroy;
 	}
 
@@ -314,7 +322,7 @@ STATIC int opae_uio_init(struct opae_uio *u, const char *dfl_device)
 	if (snprintf(path_expr, sizeof(path_expr),
 		     "/sys/class/uio/%s/maps", p + 1) < 0) {
 		ERR("snprintf() failed\n");
-		res = 7;
+		res = 8;
 		goto out_destroy;
 	}
 
