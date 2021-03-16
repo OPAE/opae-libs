@@ -32,6 +32,7 @@ import os
 import re
 import yaml
 
+from collections import OrderedDict
 from contextlib import contextmanager
 
 cpp_field_tmpl = '{spaces}{pod} f_{name} : {width};'
@@ -149,10 +150,50 @@ class ofs_driver_writer(object):
     def __init__(self, data):
         self.data = data
 
+    def api_functions(self, code):
+        functions = OrderedDict()
+        try:
+            tree = ast.parse(code)
+        except SyntaxError as err:
+            print(f'sytax error: {err.text}, line: {err.lineno}')
+        else:
+            lines = code.split('\n')
+            for node in tree.body:
+                if isinstance(node, ast.FunctionDef):
+                    fn = {}
+                    args = []
+                    body = self.get_body_text(node.body, lines)
+                    if body:
+                        fn['body'] = body
+                    if node.returns:
+                        fn['return'] = node.returns.id
+                    for a in node.args.args:
+                        name = a.arg
+                        ann = a.annotation
+                        sub = ''
+                        ptr = ''
+                        if isinstance(ann, ast.Call) and ann.func.id == 'ptr':
+                            _type = f'{ann.args[0].id}'
+                            ptr = '*'
+                        elif isinstance(ann, ast.Subscript):
+                            _type = ann.value.id
+                            sub = f'[{ann.slice.value.value}]'
+                        else:
+                            _type = ann.id
+                        args.append(f'{_type} {ptr}{name}{sub}')
+                    if args:
+                        fn['args'] = args
+                    functions[node.name] = fn
+
+        return functions
+
     def write_header(self, output, language='c'):
         self.name = self.data['name']
         self.registers = self.data['registers']
-        self.functions = self.data.get('functions', {})
+        api = self.data.get('api', '')
+        self.functions = self.data.get('functions', self.api_functions(api))
+        if not self.functions:
+            return
         filepath = os.path.join(output, f'{self.name}.h')
         # with open(os.path.join(args.output, f'{name}.h'), 'w') as fp:
         with ofs_header_writer.open(filepath, 'w') as writer:
@@ -278,6 +319,17 @@ class ofs_driver_writer(object):
             line = line.replace(py_syntax, c_syntax)
         return line
 
+    def get_body_text(self, body, lines):
+        text = io.StringIO()
+        first = body[0]
+        beg = first.lineno-1
+        for line in lines[beg:]:
+            if line[:first.col_offset].strip() == '':
+                text.write(f'{line[first.col_offset:]}\n')
+            else:
+                break
+        return text.getvalue()
+
     def write_scoped_body(self, fp, body, indent=1):
         spaces = '  '*indent
         body = re.sub(r'#(.*)', r'__cmt__("\1")', body)
@@ -300,15 +352,8 @@ class ofs_driver_writer(object):
                     test = self.c_convert(body, s.test)
                     keyword = 'if' if isinstance(s, ast.If) else 'while'
                 fp.write(f'{spaces}{keyword} ({test}) {{\n')
-                inner = io.StringIO()
-                first = s.body[0]
-                beg = first.lineno-1
-                for line in lines[beg:]:
-                    if line[:first.col_offset].strip() == '':
-                        inner.write(f'{line[first.col_offset:]}\n')
-                    else:
-                        break
-                self.write_scoped_body(fp, inner.getvalue(), indent+1)
+                inner = self.get_body_text(s.body, lines)
+                self.write_scoped_body(fp, inner, indent+1)
                 fp.write(f'{spaces}}}\n')
             else:
                 line = self.c_convert(body, s)
@@ -363,7 +408,7 @@ class ofs_driver_writer(object):
                 impls.append((k, v))
             self.write_function(fp, k, v or {}, prototype=True)
         fp.write('\n\n// *****  function implementations ******//\n')
-        for k, v in sorted(impls):
+        for k, v in impls:
             self.write_function(fp, k, v or {})
 
 
@@ -409,6 +454,10 @@ def make_headers(args):
             print(f'{name}.h')
         elif args.driver is None or args.driver == name:
             writer = ofs_driver_writer(driver)
+            writer.write_header(args.output, args.language)
+    else:
+        if 'name' in data and 'registers' in data:
+            writer = ofs_driver_writer(data)
             writer.write_header(args.output, args.language)
 
 
