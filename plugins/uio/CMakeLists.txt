@@ -1,4 +1,4 @@
-## Copyright(c) 2017-2021, Intel Corporation
+## Copyright(c) 2021, Intel Corporation
 ##
 ## Redistribution  and  use  in source  and  binary  forms,  with  or  without
 ## modification, are permitted provided that the following conditions are met:
@@ -24,23 +24,31 @@
 ## ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,  EVEN IF ADVISED OF THE
 ## POSSIBILITY OF SUCH DAMAGE.
 
-add_subdirectory(xfpga)
-add_subdirectory(xfpga/metrics/bmc)
+set(SRC
+  enum.c
+  mmio.c
+  open.c
+  plugin.c
+  properties.c
+  reset.c
+  token.c
+)
 
-if (OPAE_BUILD_PLUGIN_VFIO AND PLATFORM_SUPPORTS_VFIO)
-    if (OPAE_BUILD_LIBOPAEVFIO)
-        add_subdirectory(vfio)
-    else()
-        message(WARNING
-            "Must enable 'OPAE_BUILD_LIBOPAEVFIO' to build vfio plugin")
-    endif()
-endif()
+set(CMAKE_C_FLAGS "-std=gnu99 ${CMAKE_C_FLAGS}")
 
-if (OPAE_BUILD_PLUGIN_UIO)
-    if (OPAE_BUILD_LIBOPAEUIO)
-        add_subdirectory(uio)
-    else()
-        message(WARNING
-            "Must enable 'OPAE_BUILD_LIBOPAEUIO' to build uio plugin")
-    endif()
-endif()
+opae_add_module_library(TARGET opae-u
+    SOURCE ${SRC}
+    LIBS
+        dl
+        ${CMAKE_THREAD_LIBS_INIT}
+        opae-c
+        opaeuio
+        ${libjson-c_LIBRARIES}
+        ${libuuid_LIBRARIES}
+    COMPONENT opaeuio
+)
+
+target_include_directories(opae-u PRIVATE
+    ${OPAE_LIBS_ROOT}/libopae-c
+    ${libuuid_INCLUDE}
+)

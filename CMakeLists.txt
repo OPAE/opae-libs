@@ -109,6 +109,9 @@ mark_as_advanced(OPAE_BUILD_PLUGIN_VFIO)
 option(OPAE_BUILD_LIBOPAEUIO "Enable building of the opaeuio library" ON)
 mark_as_advanced(OPAE_BUILD_LIBOPAEUIO)
 
+option(OPAE_BUILD_PLUGIN_UIO "Enable building of the uio plugin module" ON)
+mark_as_advanced(OPAE_BUILD_PLUGIN_UIO)
+
 option(OPAE_PRESERVE_REPOS "Disable refresh of external repos" OFF)
 mark_as_advanced(OPAE_PRESERVE_REPOS)
 
@@ -151,6 +154,12 @@ if (OPAE_BUILD_LIBOPAEVFIO)
         file(WRITE ${CMAKE_BINARY_DIR}/platform_vfio_errors.txt ${TRY_COMPILE_OUTPUT})
     endif(VFIO_CHECK)
 endif (OPAE_BUILD_LIBOPAEVFIO)
+
+if (OPAE_BUILD_PLUGIN_UIO AND NOT OPAE_BUILD_LIBOPAEUIO)
+    message(STATUS
+        "Enabling uio plugin automatically enables libopaeuio")
+    set(OPAE_BUILD_LIBOPAEUIO ON)
+endif (OPAE_BUILD_PLUGIN_UIO AND NOT OPAE_BUILD_LIBOPAEUIO)
 
 ############################################################################
 ## Add Subdirectories ######################################################
