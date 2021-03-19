@@ -25,6 +25,7 @@
 // POSSIBILITY OF SUCH DAMAGE.
 #ifndef OFS_LOG_H
 #define OFS_LOG_H
+#include <string.h>
 #include <errno.h>
 
 #ifdef __SHORT_FILE__
@@ -54,8 +55,8 @@ ofs_print(OFS_LOG_MESSAGE, "%s:%u:%s() : " __fmt "\n", \
 #undef OFS_ERR
 #endif // OFS_ERR
 #define OFS_ERR(__fmt, ...) \
-ofs_print(OFS_LOG_ERROR, "%s:%u:%s() **ERROR** : " __fmt "\n", \
-	  __SHORT_FILE__, __LINE__, __func__, ##__VA_ARGS__)
+ofs_print(OFS_LOG_ERROR, "%s:%u:%s() **ERROR** : [errno=%s] " __fmt "\n", \
+	  __SHORT_FILE__, __LINE__, __func__, strerror(errno), ##__VA_ARGS__)
 
 #ifdef OFS_DBG
 #undef OFS_DBG
