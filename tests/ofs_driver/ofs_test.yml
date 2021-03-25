@@ -21,7 +21,7 @@ registers:
 api: |
   def read_guid(guid: uint8_t[16]):
       sz: size_t = 16
-      ptr: uint8_t_ptr = ofs_addr(id_lo, uint8_t) + sz
+      ptr: uint8_t_ptr = ref(id_lo, uint8_t_ptr) + sz
       i: size_t
       for i in range(sz):
         guid[i] = *--ptr

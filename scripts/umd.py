@@ -46,6 +46,24 @@ class fn_visitor(ast.NodeVisitor):
 
 
 class c_visitor(ast.NodeVisitor):
+    _aliases = {}
+
+    @classmethod
+    def c_alias(cls, fn):
+        def wrapper(self, *args, **kwargs):
+            return fn(self, *args, **kwargs)
+
+        cls._aliases[fn.__name__] = wrapper
+        return wrapper
+
+    def get_alias(self, name):
+        return self._aliases.get(name)
+
+    def get_type(self, name):
+        if name.endswith('_ptr'):
+            return f'{name.replace("_ptr", "*")}'
+        return name
+
     def visit_Add(self, node):
         return '+'
 
@@ -71,12 +89,13 @@ class c_visitor(ast.NodeVisitor):
         return '=='
 
 
-class decl_visitor(ast.NodeVisitor):
+class decl_visitor(c_visitor):
     def __init__(self, target):
         self.target = target
 
     def visit_Name(self, node):
-        return f'{node.id} {self.target}'
+        _type = self.get_type(node.id)
+        return f'{_type} {self.target}'
 
     def visit_Call(self, node):
         if node.func.id == 'ptr':
@@ -90,13 +109,11 @@ class scope_visitor(c_visitor):
     def __init__(self, driver):
         self.driver = driver
 
-    def get_decl(self, ann, target):
-        if isinstance(ann, ast.Name):
-            return f'{ann.id} {target}'
-        if isinstance(ann, ast.Call) and ann.func.id == 'ptr':
-            return f'{ann.args[0].id} *{target}'
-        if isinstance(ann, ast.Subscript):
-            return f'{ann.value.id} {target}[{ann.slice.value.n}]'
+    @c_visitor.c_alias
+    def ref(self, name, cast=None):
+        if cast:
+            return f'({self.get_type(cast)})&({name})'
+        return f'&{name}'
 
     def visit_arguments(self, args):
         return [decl_visitor(a.arg).visit(a.annotation) for a in args.args]
@@ -144,8 +161,11 @@ class scope_visitor(c_visitor):
         return c_code(f'return {self.visit(node.value)}')
 
     def visit_Call(self, node):
-        fn = self.driver.resolve_function(node.func.id)
         args = [self.visit(a) for a in node.args]
+        alias = self.get_alias(node.func.id)
+        if alias:
+            return alias(self, *args)
+        fn = self.driver.resolve_function(node.func.id)
         if fn.startswith(self.driver.name):
             args.insert(0, 'drv')
         args = ', '.join(args)
@@ -176,7 +196,7 @@ class scope_visitor(c_visitor):
 
     def visit_Name(self, node):
         if node.id in self.driver.reg_names:
-            return f'drv->r_{node.id}'
+            return f'drv->r_{node.id}->value'
         return node.id
 
     def visit_Num(self, node):
@@ -184,6 +204,15 @@ class scope_visitor(c_visitor):
 
     def visit_Str(self, node):
         return f'"{node.str}"'
+
+    def visit_Starred(self, node):
+        return f'*{self.visit(node.value)}'
+
+    def visit_USub(self, node):
+        return '-'
+
+    def visit_Subscript(self, node):
+        return f'{node.value.id}[{self.visit(node.slice.value)}]'
 
 
 class c_node(object):
@@ -251,14 +280,14 @@ class c_for(c_block):
             args = self.node.iter.args
             if len(args) == 1:
                 start = 0
-                end = args[0].n
+                end = self.sv.visit(args[0])
             else:
-                start = args[0].n
-                end = args[1].n
+                start = self.sv.visit(args[0])
+                end = self.sv.visit(args[1])
             if len(args) < 3:
-                step = f'{target}++' if end > start else f'{target}--'
+                step = f'{target}++'
             else:
-                step = args[2].n
+                step = self.sv.visit(args[2])
                 if step > 0:
                     step = f'+={step}'
                 else:
