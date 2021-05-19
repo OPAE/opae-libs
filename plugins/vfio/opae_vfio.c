@@ -437,7 +437,7 @@ static fpga_result vfio_reset(const pci_device_t *p, volatile uint8_t *port_base
 {
 	ASSERT_NOT_NULL(p);
 	ASSERT_NOT_NULL(port_base);
-	OPAE_ERR("fpgaReset is not implemented");
+	OPAE_ERR("fpgaReset for vfio is not implemented yet");
 	return FPGA_OK;
 }
 
