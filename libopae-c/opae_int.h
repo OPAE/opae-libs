@@ -1,4 +1,4 @@
-// Copyright(c) 2018-2020, Intel Corporation
+// Copyright(c) 2018-2021, Intel Corporation
 //
 // Redistribution  and  use  in source  and  binary  forms,  with  or  without
 // modification, are permitted provided that the following conditions are met:
@@ -98,6 +98,9 @@ typedef struct _opae_api_adapter_table opae_api_adapter_table;
 typedef struct _opae_wrapped_token {
 	uint32_t magic;
 	fpga_token opae_token;
+	uint32_t ref_count;
+	struct _opae_wrapped_token *prev;
+	struct _opae_wrapped_token *next;
 	opae_api_adapter_table *adapter_table;
 } opae_wrapped_token;
 
@@ -114,11 +117,26 @@ static inline opae_wrapped_token *opae_validate_wrapped_token(fpga_token t)
 	return (wt->magic == OPAE_WRAPPED_TOKEN_MAGIC) ? wt : NULL;
 }
 
+void opae_up_wrapped_token(opae_wrapped_token *wt);
+
+void opae_down_wrapped_token(opae_wrapped_token *wt);
+
 static inline void opae_destroy_wrapped_token(opae_wrapped_token *wt)
 {
-	wt->magic = 0;
-	free(wt);
+	opae_down_wrapped_token(wt);
 }
+
+#ifdef LIBOPAE_DEBUG
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
+uint32_t opae_wrapped_tokens_in_use(void);
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
+#endif // LIBOPAE_DEBUG
 
 //                                   n a h w
 #define OPAE_WRAPPED_HANDLE_MAGIC 0x6e616877
@@ -145,6 +163,7 @@ static inline opae_wrapped_handle *opae_validate_wrapped_handle(fpga_handle h)
 
 static inline void opae_destroy_wrapped_handle(opae_wrapped_handle *wh)
 {
+	opae_down_wrapped_token(wh->wrapped_token);
 	wh->magic = 0;
 	free(wh);
 }
