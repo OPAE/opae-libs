@@ -88,6 +88,10 @@
 	})
 
 
+#ifdef __cplusplus
+extern "C" {
+#endif // __cplusplus
+
 #ifndef __OPAE_ADAPTER_H__
 typedef struct _opae_api_adapter_table opae_api_adapter_table;
 #endif // __OPAE_ADAPTER_H__
@@ -127,15 +131,9 @@ static inline void opae_destroy_wrapped_token(opae_wrapped_token *wt)
 }
 
 #ifdef LIBOPAE_DEBUG
-#ifdef __cplusplus
-extern "C" {
-#endif // __cplusplus
 
 uint32_t opae_wrapped_tokens_in_use(void);
 
-#ifdef __cplusplus
-}
-#endif // __cplusplus
 #endif // LIBOPAE_DEBUG
 
 //                                   n a h w
@@ -234,5 +232,9 @@ static inline void opae_destroy_wrapped_object(opae_wrapped_object *wo)
 	wo->magic = 0;
 	free(wo);
 }
+
+#ifdef __cplusplus
+}
+#endif // __cplusplus
 
 #endif // ___OPAE_OPAE_INT_H__

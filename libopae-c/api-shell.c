@@ -331,7 +331,6 @@ fpga_result __OPAE_API__ fpgaGetPropertiesFromHandle(fpga_handle handle,
 
 		if (wrapped_parent) {
 			p->parent = wrapped_parent;
-			p->flags |= OPAE_PROPERTIES_FLAG_PARENT_ALLOC;
 		} else {
 			OPAE_ERR("malloc failed");
 			res = FPGA_NO_MEMORY;
@@ -393,7 +392,6 @@ fpga_result __OPAE_API__ fpgaGetProperties(fpga_token token,
 
 			if (wrapped_parent) {
 				p->parent = wrapped_parent;
-				p->flags |= OPAE_PROPERTIES_FLAG_PARENT_ALLOC;
 			} else {
 				OPAE_ERR("malloc failed");
 				res = FPGA_NO_MEMORY;
@@ -421,18 +419,18 @@ fpga_result __OPAE_API__ fpgaUpdateProperties(fpga_token token,
 		FPGA_NOT_SUPPORTED);
 
 	// If the input properties already has a parent token
-	// set, then it will be wrapped. If we allocated the wrapper,
-	// Save the wrapper, and reuse it below.
+	// set, then it will be wrapped.
 
 	p = opae_validate_and_lock_properties(prop);
 
 	ASSERT_NOT_NULL(p);
 
-	if (FIELD_VALID(p, FPGA_PROPERTY_PARENT)
-	    && (p->flags & OPAE_PROPERTIES_FLAG_PARENT_ALLOC)) {
+	if (FIELD_VALID(p, FPGA_PROPERTY_PARENT)) {
 		wrapped_parent = opae_validate_wrapped_token(p->parent);
-		if (wrapped_parent)
+		if (wrapped_parent) {
 			p->parent = wrapped_parent->opae_token;
+			opae_destroy_wrapped_token(wrapped_parent);
+		}
 	}
 
 	res = wrapped_token->adapter_table->fpgaUpdateProperties(
@@ -447,28 +445,17 @@ fpga_result __OPAE_API__ fpgaUpdateProperties(fpga_token token,
 	// then it will be a raw token. We need to wrap it.
 
 	if (FIELD_VALID(p, FPGA_PROPERTY_PARENT)) {
-		if (!wrapped_parent) {
-			// We need to allocate a wrapper.
-			wrapped_parent = opae_allocate_wrapped_token(
-				p->parent, wrapped_token->adapter_table);
+		// We need to allocate a wrapper.
+		wrapped_parent = opae_allocate_wrapped_token(
+			p->parent, wrapped_token->adapter_table);
 
-			if (wrapped_parent) {
-				p->parent = wrapped_parent;
-				p->flags |= OPAE_PROPERTIES_FLAG_PARENT_ALLOC;
-			} else {
-				OPAE_ERR("malloc failed");
-				res = FPGA_NO_MEMORY;
-			}
-		} else {
-			// We are re-using the wrapper from above.
-			wrapped_parent->opae_token = p->parent;
-			wrapped_parent->adapter_table =
-				wrapped_token->adapter_table;
+		if (wrapped_parent) {
 			p->parent = wrapped_parent;
-			p->flags |= OPAE_PROPERTIES_FLAG_PARENT_ALLOC;
+		} else {
+			OPAE_ERR("malloc failed");
+			res = FPGA_NO_MEMORY;
 		}
-	} else if (wrapped_parent)
-		opae_destroy_wrapped_token(wrapped_parent);
+	}
 
 	opae_mutex_unlock(err, &p->lock);
 

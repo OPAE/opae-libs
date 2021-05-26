@@ -94,10 +94,9 @@ fpga_result __OPAE_API__ fpgaDestroyProperties(fpga_properties *prop)
 
 	ASSERT_NOT_NULL(p);
 
-	if (FIELD_VALID(p, FPGA_PROPERTY_PARENT) &&
-	    (p->flags & OPAE_PROPERTIES_FLAG_PARENT_ALLOC)) {
-		// The parent token has a wrapper that we allocated.
-		// Free it.
+	if (FIELD_VALID(p, FPGA_PROPERTY_PARENT)) {
+		// If the parent token has a wrapper that we
+		// allocated, then free it.
 		opae_wrapped_token *wrapped_token =
 			opae_validate_wrapped_token(p->parent);
 		if (wrapped_token)
@@ -143,6 +142,13 @@ fpga_result __OPAE_API__ fpgaCloneProperties(fpga_properties src,
 	*clone = *p;
 	clone->lock = save_lock;
 
+	if (FIELD_VALID(p, FPGA_PROPERTY_PARENT)) {
+		opae_wrapped_token *wrapped_token =
+			opae_validate_wrapped_token(p->parent);
+		if (wrapped_token)
+			opae_up_wrapped_token(wrapped_token);
+	}
+
 	*dst = clone;
 
 	opae_mutex_unlock(err, &p->lock);
@@ -157,6 +163,14 @@ fpga_result __OPAE_API__ fpgaClearProperties(fpga_properties props)
 
 	ASSERT_NOT_NULL(p);
 
+	if (FIELD_VALID(p, FPGA_PROPERTY_PARENT)) {
+		opae_wrapped_token *wrapped_token =
+			opae_validate_wrapped_token(p->parent);
+		if (wrapped_token) {
+			opae_down_wrapped_token(wrapped_token);
+			p->parent = NULL;
+		}
+	}
 	p->valid_fields = 0;
 
 	opae_mutex_unlock(err, &p->lock);
@@ -196,6 +210,7 @@ fpga_result __OPAE_API__ fpgaPropertiesSetParent(fpga_properties prop,
 {
 	int err;
 	struct _fpga_properties *p;
+	opae_wrapped_token *wrapped_token;
 
 	ASSERT_NOT_NULL(parent);
 
@@ -203,20 +218,17 @@ fpga_result __OPAE_API__ fpgaPropertiesSetParent(fpga_properties prop,
 
 	ASSERT_NOT_NULL(p);
 
-	if (FIELD_VALID(p, FPGA_PROPERTY_PARENT) &&
-	    (p->flags & OPAE_PROPERTIES_FLAG_PARENT_ALLOC)) {
-		// We have a wrapped parent token that we allocated.
-		// Free it.
-		opae_wrapped_token *wrapped_token =
-			opae_validate_wrapped_token(p->parent);
+	if (FIELD_VALID(p, FPGA_PROPERTY_PARENT)) {
+		// If we have a wrapped parent token that we
+		// allocated, then free it.
+		wrapped_token = opae_validate_wrapped_token(p->parent);
 		if (wrapped_token)
 			opae_destroy_wrapped_token(wrapped_token);
 	}
 
-	// When explicitly setting a parent token,
-	// the caller assumes responsibility for freeing
-	// that token.
-	p->flags &= ~OPAE_PROPERTIES_FLAG_PARENT_ALLOC;
+	wrapped_token = opae_validate_wrapped_token(parent);
+	if (wrapped_token)
+		opae_up_wrapped_token(wrapped_token);
 
 	p->parent = parent;
 	SET_FIELD_VALID(p, FPGA_PROPERTY_PARENT);
