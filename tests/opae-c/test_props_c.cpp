@@ -1,4 +1,4 @@
-// Copyright(c) 2017-2018, Intel Corporation
+// Copyright(c) 2017-2021, Intel Corporation
 //
 // Redistribution  and  use  in source  and  binary  forms,  with  or  without
 // modification, are permitted provided that the following conditions are met:
@@ -85,6 +85,9 @@ class properties_c_p : public ::testing::TestWithParam<std::string> {
     }
     fpgaFinalize();
     system_->finalize();
+#ifdef LIBOPAE_DEBUG
+    EXPECT_EQ(opae_wrapped_tokens_in_use(), 0);
+#endif // LIBOPAE_DEBUG
   }
 
   std::array<fpga_token, 2> tokens_device_;
@@ -126,6 +129,11 @@ TEST_P(properties_c_p, get_parent01) {
   auto _prop = (_fpga_properties*)prop;
   SET_FIELD_VALID(_prop, FPGA_PROPERTY_PARENT);
   _prop->parent = toks[0];
+  // Wrapped tokens are ref counted now, so the call to
+  // fpgaDestroyProperties(&prop) below will decrement
+  // the wrapped token's ref count. Bump it up one here
+  // to match.
+  opae_up_wrapped_token((opae_wrapped_token *)_prop->parent);
 
   // now get the parent token from the prop structure
   EXPECT_EQ(fpgaPropertiesGetParent(prop, &parent), FPGA_OK);
@@ -201,6 +209,7 @@ TEST_P(properties_c_p, set_parent01) {
 
   // now get the parent token from the prop structure
   EXPECT_EQ(fpgaPropertiesSetParent(prop, toks[0]), FPGA_OK);
+
   // now get the parent token from the prop structure
   EXPECT_EQ(fpgaPropertiesGetParent(prop, &parent), FPGA_OK);
   // GetParent clones the token so compare object_id of the two
