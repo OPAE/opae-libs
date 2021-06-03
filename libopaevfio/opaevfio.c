@@ -780,7 +780,6 @@ STATIC char *opae_vfio_group_for(const char *pciaddr)
 	return strdup(path);
 }
 
-
 STATIC int opae_vfio_init(struct opae_vfio *v,
 			  const char *pciaddr,
 			  const char *token)
@@ -861,9 +860,7 @@ STATIC int opae_vfio_init(struct opae_vfio *v,
 	if (res)
 		goto out_destroy_container;
 
-
 	v->cont_ranges = opae_vfio_iova_discover(v);
-
 
 	if (pthread_mutexattr_destroy(&mattr)) {
 		ERR("pthread_mutexattr_destroy()\n");
