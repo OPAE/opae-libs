@@ -171,6 +171,7 @@ fpga_result __OPAE_API__ fpgaClearProperties(fpga_properties props)
 			p->parent = NULL;
 		}
 	}
+
 	p->valid_fields = 0;
 
 	opae_mutex_unlock(err, &p->lock);

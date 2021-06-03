@@ -520,7 +520,7 @@ fpga_result __OPAE_API__ fpgaUpdateProperties(fpga_token token,
 		opae_mutex_unlock(err, &p->lock);
 		return res;
 	}
-	
+
 	wrapped_parent = opae_get_parent_token(wrapped_token);
 	if (wrapped_parent) {
 		SET_FIELD_VALID(p, FPGA_PROPERTY_PARENT);
