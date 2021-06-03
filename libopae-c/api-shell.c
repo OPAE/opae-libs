@@ -408,7 +408,6 @@ fpga_result __OPAE_API__ fpgaGetPropertiesFromHandle(fpga_handle handle,
 
 	ASSERT_NOT_NULL(wrapped_handle);
 	ASSERT_NOT_NULL(prop);
-
 	ASSERT_NOT_NULL_RESULT(
 		wrapped_handle->adapter_table->fpgaGetPropertiesFromHandle,
 		FPGA_NOT_SUPPORTED);
