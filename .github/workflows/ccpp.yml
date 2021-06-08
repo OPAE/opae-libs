@@ -33,7 +33,7 @@ jobs:
       if: ${{ matrix.build-type == 'Coverage' }}
       run: cmake --build .build -- lcov-zero
     - name: test
-      if: contains(list('Coverage', 'Debug'), matrix.build-type)
+      if: contains(fromJson('["Coverage", "Debug"]'), matrix.build-type)
       working-directory: ${{ github.workspace }}/.build
       run: ctest --timeout 180
       env:
