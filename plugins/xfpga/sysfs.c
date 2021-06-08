@@ -92,8 +92,8 @@ static sysfs_formats sysfs_path_table[OPAE_KERNEL_DRIVERS] = {
 	 .sysfs_fme_perf_glob = "*perf",
 	 .sysfs_port_err = "errors/errors",
 	 .sysfs_port_err_clear = "errors/errors",
-	 .sysfs_bmc_glob = "avmmi-bmc.*/bmc_info",
-	 .sysfs_max10_glob = "dfl*/*spi*/spi_master/spi*/spi*.*"
+	 .sysfs_bmc_glob = "**/avmmi-bmc.*/bmc_info",
+	 .sysfs_max10_glob = "**/spi_master/spi*/spi*.*"
 	},
 	// intel driver sysfs formats
 	{.sysfs_class_path = "/sys/class/fpga",
@@ -109,8 +109,8 @@ static sysfs_formats sysfs_path_table[OPAE_KERNEL_DRIVERS] = {
 	 .sysfs_fme_perf_glob = "*perf",
 	 .sysfs_port_err = "errors/errors",
 	 .sysfs_port_err_clear = "errors/clear",
-	 .sysfs_bmc_glob = "avmmi-bmc.*/bmc_info",
-	 .sysfs_max10_glob = "spi-*/spi_master/spi*/spi*.*"
+	 .sysfs_bmc_glob = "**/avmmi-bmc.*/bmc_info",
+	 .sysfs_max10_glob = "**/spi_master/spi*/spi*.*"
 	} };
 
 // RE_MATCH_STRING is index 0 in a regex match array
@@ -868,16 +868,41 @@ fpga_result sysfs_get_bmc_path(fpga_token token, char *sysfs_bmc)
 	fpga_result res = FPGA_OK;
 	struct _fpga_token *_token = (struct _fpga_token *)token;
 	ASSERT_NOT_NULL(_token);
+	glob_t pglob;
+	char sysfspath[SYSFS_PATH_MAX] = { 0, };
+	const char *sysfs_bmc_glob_path2 = "avmmi-bmc.*/bmc_info";
 
 	if (sysfs_bmc == NULL) {
 		OPAE_ERR("Invalid input parameters");
 		return FPGA_INVALID_PARAM;
 	}
-
-	res = cat_token_sysfs_path(sysfs_bmc, token, SYSFS_FORMAT(sysfs_bmc_glob));
-	if (res != FPGA_OK) {
-		return res;
+	if (snprintf(sysfspath, sizeof(sysfspath),
+		"%s/%s", _token->sysfspath, SYSFS_FORMAT(sysfs_bmc_glob)) < 0) {
+		OPAE_ERR("snprintf failed");
+		return FPGA_EXCEPTION;
 	}
+
+	res = glob(sysfspath, GLOB_NOSORT, NULL, &pglob);
+	if (res != FPGA_OK) {
+		globfree(&pglob);
+		if (snprintf(sysfspath, sizeof(sysfspath),
+		     "%s/%s", _token->sysfspath, sysfs_bmc_glob_path2) < 0) {
+		     OPAE_ERR("snprintf failed");
+		     return FPGA_EXCEPTION;
+		}
+		res = glob(sysfspath, GLOB_NOSORT, NULL, &pglob);
+		if (res != FPGA_OK) {
+		     OPAE_ERR("Failed pattern match %s: %s", sysfspath, strerror(errno));
+		     globfree(&pglob);
+		     return FPGA_NOT_FOUND;
+		}
+	}
+	if (snprintf(sysfs_bmc, SYSFS_PATH_MAX,
+		"%s", pglob.gl_pathv[0]) < 0) {
+		OPAE_ERR("snprintf failed");
+		return FPGA_EXCEPTION;
+	}
+	globfree(&pglob);
 
 	return opae_glob_path(sysfs_bmc, SYSFS_PATH_MAX - 1);
 }
@@ -887,16 +912,42 @@ fpga_result sysfs_get_max10_path(fpga_token token, char *sysfs_max10)
 	fpga_result res = FPGA_OK;
 	struct _fpga_token *_token = (struct _fpga_token *)token;
 	ASSERT_NOT_NULL(_token);
+	glob_t pglob;
+	char sysfspath[SYSFS_PATH_MAX] = { 0, };
+	const char *sysfs_max10_glob_path2 = "dfl*/*/spi_master/spi*/spi*.*";
 
 	if (sysfs_max10 == NULL) {
 		OPAE_ERR("Invalid input parameters");
 		return FPGA_INVALID_PARAM;
 	}
 
-	res = cat_token_sysfs_path(sysfs_max10, token, SYSFS_FORMAT(sysfs_max10_glob));
+	if (snprintf(sysfspath, sizeof(sysfspath),
+		"%s/%s", _token->sysfspath, SYSFS_FORMAT(sysfs_max10_glob)) < 0) {
+		OPAE_ERR("snprintf failed");
+		return FPGA_EXCEPTION;
+	}
+	res = glob(sysfspath, GLOB_NOSORT, NULL, &pglob);
 	if (res != FPGA_OK) {
+		globfree(&pglob);
+		if (snprintf(sysfspath, sizeof(sysfspath),
+		     "%s/%s", _token->sysfspath, sysfs_max10_glob_path2) < 0) {
+		     OPAE_ERR("snprintf failed");
+		     return FPGA_EXCEPTION;
+		}
+		res = glob(sysfspath, GLOB_NOSORT, NULL, &pglob);
+		if (res != FPGA_OK) {
+		     OPAE_ERR("Failed pattern match %s: %s", sysfspath, strerror(errno));
+		     globfree(&pglob);
+		     return FPGA_NOT_FOUND;
+		}
 		return res;
 	}
+	if (snprintf(sysfs_max10, SYSFS_PATH_MAX,
+		"%s", pglob.gl_pathv[0]) < 0) {
+		OPAE_ERR("snprintf failed");
+		return FPGA_EXCEPTION;
+	}
+	globfree(&pglob);
 
 	return opae_glob_path(sysfs_max10, SYSFS_PATH_MAX - 1);
 }

@@ -165,6 +165,8 @@ fpga_result  dfl_enum_max10_metrics_info(struct _fpga_handle *_handle,
 	char metric_units[SYSFS_PATH_MAX]          = { 0, };
 	glob_t pglob;
 	size_t len;
+	const char *max10_sysfs_path2 = "dfl*/spi_master/spi*/spi*/*/hwmon/hwmon*";
+	const char *max10_sensor_sysfs_path2 = "dfl*/spi_master/spi*/spi*/*/hwmon/hwmon*/*_label";
 
 	if (_handle == NULL ||
 		vector == NULL ||
@@ -190,7 +192,17 @@ fpga_result  dfl_enum_max10_metrics_info(struct _fpga_handle *_handle,
 	if ((gres) || (1 != pglob.gl_pathc)) {
 		OPAE_ERR("Failed pattern match %s: %s", sysfspath, strerror(errno));
 		globfree(&pglob);
-		return FPGA_NOT_FOUND;
+		if (snprintf(sysfspath, sizeof(sysfspath),
+			"%s/%s", _token->sysfspath, max10_sysfs_path2) < 0) {
+			OPAE_ERR("snprintf failed");
+			return FPGA_EXCEPTION;
+		}
+		int gres = glob(sysfspath, GLOB_NOSORT, NULL, &pglob);
+		if ((gres) || (1 != pglob.gl_pathc)) {
+			OPAE_ERR("Failed pattern match %s: %s", sysfspath, strerror(errno));
+			globfree(&pglob);
+			return FPGA_NOT_FOUND;
+		}
 	}
 
 	len = strnlen(pglob.gl_pathv[0], sizeof(group_sysfs) - 1);
@@ -209,7 +221,17 @@ fpga_result  dfl_enum_max10_metrics_info(struct _fpga_handle *_handle,
 	if (gres) {
 		OPAE_ERR("Failed pattern match %s: %s", sysfspath, strerror(errno));
 		globfree(&pglob);
-		return FPGA_NOT_FOUND;
+		if (snprintf(sysfspath, sizeof(sysfspath),
+			"%s/%s", _token->sysfspath, max10_sensor_sysfs_path2) < 0) {
+			OPAE_ERR("snprintf failed");
+			return FPGA_EXCEPTION;
+		}
+		int gres = glob(sysfspath, GLOB_NOSORT, NULL, &pglob);
+		if (gres) {
+			OPAE_ERR("Failed pattern match %s: %s", sysfspath, strerror(errno));
+			globfree(&pglob);
+			return FPGA_NOT_FOUND;
+		}
 	}
 
 
