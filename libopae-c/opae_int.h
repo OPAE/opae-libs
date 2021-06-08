@@ -121,13 +121,14 @@ static inline opae_wrapped_token *opae_validate_wrapped_token(fpga_token t)
 	return (wt->magic == OPAE_WRAPPED_TOKEN_MAGIC) ? wt : NULL;
 }
 
-void opae_up_wrapped_token(opae_wrapped_token *wt);
+void opae_upref_wrapped_token(opae_wrapped_token *wt);
 
-void opae_down_wrapped_token(opae_wrapped_token *wt);
+fpga_result opae_downref_wrapped_token(opae_wrapped_token *wt);
 
-static inline void opae_destroy_wrapped_token(opae_wrapped_token *wt)
+static inline fpga_result
+opae_destroy_wrapped_token(opae_wrapped_token *wt)
 {
-	opae_down_wrapped_token(wt);
+	return opae_downref_wrapped_token(wt);
 }
 
 #ifdef LIBOPAE_DEBUG
@@ -161,7 +162,7 @@ static inline opae_wrapped_handle *opae_validate_wrapped_handle(fpga_handle h)
 
 static inline void opae_destroy_wrapped_handle(opae_wrapped_handle *wh)
 {
-	opae_down_wrapped_token(wh->wrapped_token);
+	opae_downref_wrapped_token(wh->wrapped_token);
 	wh->magic = 0;
 	free(wh);
 }

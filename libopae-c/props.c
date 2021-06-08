@@ -146,7 +146,7 @@ fpga_result __OPAE_API__ fpgaCloneProperties(fpga_properties src,
 		opae_wrapped_token *wrapped_token =
 			opae_validate_wrapped_token(p->parent);
 		if (wrapped_token)
-			opae_up_wrapped_token(wrapped_token);
+			opae_upref_wrapped_token(wrapped_token);
 	}
 
 	*dst = clone;
@@ -167,7 +167,7 @@ fpga_result __OPAE_API__ fpgaClearProperties(fpga_properties props)
 		opae_wrapped_token *wrapped_token =
 			opae_validate_wrapped_token(p->parent);
 		if (wrapped_token) {
-			opae_down_wrapped_token(wrapped_token);
+			opae_downref_wrapped_token(wrapped_token);
 			p->parent = NULL;
 		}
 	}
@@ -192,11 +192,9 @@ fpga_result __OPAE_API__ fpgaPropertiesGetParent(const fpga_properties prop,
 	ASSERT_NOT_NULL(p);
 
 	if (FIELD_VALID(p, FPGA_PROPERTY_PARENT)) {
-		res = fpgaCloneToken(p->parent, parent);
-		if (res != FPGA_OK)
-			OPAE_ERR("cloning token from property");
+		*parent = p->parent;
 	} else {
-		OPAE_MSG("No parent");
+		OPAE_DBG("No parent");
 		res = FPGA_NOT_FOUND;
 	}
 
@@ -228,7 +226,7 @@ fpga_result __OPAE_API__ fpgaPropertiesSetParent(fpga_properties prop,
 
 	wrapped_token = opae_validate_wrapped_token(parent);
 	if (wrapped_token)
-		opae_up_wrapped_token(wrapped_token);
+		opae_upref_wrapped_token(wrapped_token);
 
 	p->parent = parent;
 	SET_FIELD_VALID(p, FPGA_PROPERTY_PARENT);
