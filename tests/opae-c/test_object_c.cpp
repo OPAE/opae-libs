@@ -180,6 +180,57 @@ TEST_P(object_c_p, obj_write64) {
 }
 
 /**
+ * @test       obj_get_obj_at0
+ * @brief      Test: fpgaObjectGetObjectAt
+ * @details    When fpgaObjectGetObjectAt is called with valid parameters,<br>
+ *             the fn opens the underlying object<br>
+ *             and returns FPGA_OK.<br>
+ */
+TEST_P(object_c_p, obj_get_obj_at0) {
+  fpga_object obj = nullptr;
+  fpga_object child_obj = nullptr;
+
+  ASSERT_EQ(fpgaHandleGetObject(accel_,
+			  	"power",
+				&obj,
+				FPGA_OBJECT_RECURSE_ONE),
+		  FPGA_OK);
+
+  EXPECT_EQ(fpgaObjectGetObjectAt(obj, 0, &child_obj), FPGA_OK);
+
+  EXPECT_EQ(fpgaDestroyObject(&child_obj), FPGA_OK);
+  EXPECT_EQ(fpgaDestroyObject(&obj), FPGA_OK);
+}
+
+/**
+ * @test       obj_get_type0
+ * @brief      Test: fpgaObjectGetType
+ * @details    When fpgaObjectGetType is called with valid parameters,<br>
+ *             the fn opens the underlying object<br>
+ *             and returns FPGA_OK.<br>
+ */
+TEST_P(object_c_p, obj_get_type0) {
+  fpga_object obj = nullptr;
+  fpga_object ctrl_obj = nullptr;
+  enum fpga_sysobject_type type;
+
+  ASSERT_EQ(fpgaHandleGetObject(accel_, "power", &obj, 0),
+		  FPGA_OK);
+
+  EXPECT_EQ(fpgaObjectGetType(obj, &type), FPGA_OK);
+  EXPECT_EQ(type, FPGA_OBJECT_CONTAINER);
+
+  ASSERT_EQ(fpgaObjectGetObject(obj, "control", &ctrl_obj, 0),
+		  FPGA_OK);
+
+  EXPECT_EQ(fpgaObjectGetType(ctrl_obj, &type), FPGA_OK);
+  EXPECT_EQ(type, FPGA_OBJECT_ATTRIBUTE);
+
+  EXPECT_EQ(fpgaDestroyObject(&ctrl_obj), FPGA_OK);
+  EXPECT_EQ(fpgaDestroyObject(&obj), FPGA_OK);
+}
+
+/**
  * @test       obj_get_obj0
  * @brief      Test: fpgaObjectGetObject
  * @details    When fpgaObjectGetObject is called with valid parameters,<br>
