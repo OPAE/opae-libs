@@ -1,0 +1,2050 @@
+/sys/devices/pci0000:3a:
+  attributes:
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+  device_number: 0
+  device_type: null
+  driver: null
+  parent: null
+  properties: {}
+  subsystem: null
+/sys/devices/pci0000:3a/0000:3a:00.0:
+  attributes:
+    acpi_index: '17'
+    aer_dev_correctable: 'RxErr 0
+
+      BadTLP 0
+
+      BadDLLP 0
+
+      Rollover 0
+
+      Timeout 0
+
+      NonFatalErr 0
+
+      CorrIntErr 0
+
+      HeaderOF 0
+
+      TOTAL_ERR_COR 0'
+    aer_dev_fatal: 'Undefined 0
+
+      DLP 0
+
+      SDES 0
+
+      TLP 0
+
+      FCP 0
+
+      CmpltTO 0
+
+      CmpltAbrt 0
+
+      UnxCmplt 0
+
+      RxOF 0
+
+      MalfTLP 0
+
+      ECRC 0
+
+      UnsupReq 0
+
+      ACSViol 0
+
+      UncorrIntErr 0
+
+      BlockedTLP 0
+
+      AtomicOpBlocked 0
+
+      TLPBlockedErr 0
+
+      PoisonTLPBlocked 0
+
+      TOTAL_ERR_FATAL 0'
+    aer_dev_nonfatal: 'Undefined 0
+
+      DLP 0
+
+      SDES 0
+
+      TLP 0
+
+      FCP 0
+
+      CmpltTO 0
+
+      CmpltAbrt 0
+
+      UnxCmplt 0
+
+      RxOF 0
+
+      MalfTLP 0
+
+      ECRC 0
+
+      UnsupReq 0
+
+      ACSViol 0
+
+      UncorrIntErr 0
+
+      BlockedTLP 0
+
+      AtomicOpBlocked 0
+
+      TLPBlockedErr 0
+
+      PoisonTLPBlocked 0
+
+      TOTAL_ERR_NONFATAL 0'
+    aer_rootport_total_err_cor: '0'
+    aer_rootport_total_err_fatal: '0'
+    aer_rootport_total_err_nonfatal: '0'
+    ari_enabled: '0'
+    broken_parity_status: '0'
+    class: '0x060400'
+    consistent_dma_mask_bits: '32'
+    current_link_speed: 8.0 GT/s PCIe
+    current_link_width: '16'
+    d3cold_allowed: '1'
+    device: '0x2030'
+    dma_mask_bits: '32'
+    driver: pcieport
+    driver_override: (null)
+    enable: '1'
+    irq: '29'
+    label: SLOT 1
+    local_cpulist: 0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30
+    local_cpus: '55555555'
+    max_link_speed: 8.0 GT/s PCIe
+    max_link_width: '16'
+    modalias: pci:v00008086d00002030sv00008086sd00000000bc06sc04i00
+    msi_bus: '1'
+    msi_irqs/29: msi
+    numa_node: '0'
+    power/autosuspend_delay_ms: '100'
+    power/control: auto
+    power/runtime_active_time: '1306574557'
+    power/runtime_status: active
+    power/runtime_suspended_time: '0'
+    power/wakeup: enabled
+    power/wakeup_abort_count: '0'
+    power/wakeup_active: '0'
+    power/wakeup_active_count: '0'
+    power/wakeup_count: '0'
+    power/wakeup_expire_count: '0'
+    power/wakeup_last_time_ms: '0'
+    power/wakeup_max_time_ms: '0'
+    power/wakeup_total_time_ms: '0'
+    power_state: D0
+    revision: '0x04'
+    secondary_bus_number: '59'
+    subordinate_bus_number: '68'
+    subsystem: pci
+    subsystem_device: '0x0000'
+    subsystem_vendor: '0x8086'
+    uevent: 'DRIVER=pcieport
+
+      PCI_CLASS=60400
+
+      PCI_ID=8086:2030
+
+      PCI_SUBSYS_ID=8086:0000
+
+      PCI_SLOT_NAME=0000:3a:00.0
+
+      MODALIAS=pci:v00008086d00002030sv00008086sd00000000bc06sc04i00'
+    vendor: '0x8086'
+  device_number: 0
+  device_type: null
+  driver: pcieport
+  parent: /sys/devices/pci0000:3a
+  properties:
+    DEVPATH: /devices/pci0000:3a/0000:3a:00.0
+    DRIVER: pcieport
+    ID_MODEL_FROM_DATABASE: Sky Lake-E PCI Express Root Port A
+    ID_PCI_CLASS_FROM_DATABASE: Bridge
+    ID_PCI_INTERFACE_FROM_DATABASE: Normal decode
+    ID_PCI_SUBCLASS_FROM_DATABASE: PCI bridge
+    ID_VENDOR_FROM_DATABASE: Intel Corporation
+    MODALIAS: pci:v00008086d00002030sv00008086sd00000000bc06sc04i00
+    PCI_CLASS: '60400'
+    PCI_ID: 8086:2030
+    PCI_SLOT_NAME: 0000:3a:00.0
+    PCI_SUBSYS_ID: 8086:0000
+    SUBSYSTEM: pci
+    USEC_INITIALIZED: '8415324'
+  subsystem: pci
+/sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0:
+  attributes:
+    aer_dev_correctable: 'RxErr 0
+
+      BadTLP 0
+
+      BadDLLP 0
+
+      Rollover 0
+
+      Timeout 0
+
+      NonFatalErr 0
+
+      CorrIntErr 0
+
+      HeaderOF 0
+
+      TOTAL_ERR_COR 0'
+    aer_dev_fatal: 'Undefined 0
+
+      DLP 0
+
+      SDES 0
+
+      TLP 0
+
+      FCP 0
+
+      CmpltTO 0
+
+      CmpltAbrt 0
+
+      UnxCmplt 0
+
+      RxOF 0
+
+      MalfTLP 0
+
+      ECRC 0
+
+      UnsupReq 0
+
+      ACSViol 0
+
+      UncorrIntErr 0
+
+      BlockedTLP 0
+
+      AtomicOpBlocked 0
+
+      TLPBlockedErr 0
+
+      PoisonTLPBlocked 0
+
+      TOTAL_ERR_FATAL 0'
+    aer_dev_nonfatal: 'Undefined 0
+
+      DLP 0
+
+      SDES 0
+
+      TLP 0
+
+      FCP 0
+
+      CmpltTO 0
+
+      CmpltAbrt 0
+
+      UnxCmplt 0
+
+      RxOF 0
+
+      MalfTLP 0
+
+      ECRC 0
+
+      UnsupReq 0
+
+      ACSViol 0
+
+      UncorrIntErr 0
+
+      BlockedTLP 0
+
+      AtomicOpBlocked 0
+
+      TLPBlockedErr 0
+
+      PoisonTLPBlocked 0
+
+      TOTAL_ERR_NONFATAL 0'
+    ari_enabled: '0'
+    broken_parity_status: '0'
+    class: '0x060400'
+    consistent_dma_mask_bits: '32'
+    current_link_speed: 8.0 GT/s PCIe
+    current_link_width: '16'
+    d3cold_allowed: '1'
+    device: '0x8747'
+    dma_mask_bits: '32'
+    driver: pcieport
+    driver_override: (null)
+    enable: '1'
+    irq: '30'
+    local_cpulist: 0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30
+    local_cpus: '55555555'
+    max_link_speed: 8.0 GT/s PCIe
+    max_link_width: '16'
+    modalias: pci:v000010B5d00008747sv000010B5sd00008747bc06sc04i00
+    msi_bus: '1'
+    numa_node: '0'
+    power/autosuspend_delay_ms: '100'
+    power/control: auto
+    power/runtime_active_time: '1306574555'
+    power/runtime_status: active
+    power/runtime_suspended_time: '0'
+    power/wakeup: disabled
+    power_state: D0
+    revision: '0xca'
+    secondary_bus_number: '60'
+    subordinate_bus_number: '68'
+    subsystem: pci
+    subsystem_device: '0x8747'
+    subsystem_vendor: '0x10b5'
+    uevent: 'DRIVER=pcieport
+
+      PCI_CLASS=60400
+
+      PCI_ID=10B5:8747
+
+      PCI_SUBSYS_ID=10B5:8747
+
+      PCI_SLOT_NAME=0000:3b:00.0
+
+      MODALIAS=pci:v000010B5d00008747sv000010B5sd00008747bc06sc04i00'
+    vendor: '0x10b5'
+  device_number: 0
+  device_type: null
+  driver: pcieport
+  parent: /sys/devices/pci0000:3a/0000:3a:00.0
+  properties:
+    DEVPATH: /devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0
+    DRIVER: pcieport
+    ID_MODEL_FROM_DATABASE: PEX 8747 48-Lane, 5-Port PCI Express Gen 3 (8.0 GT/s)
+      Switch
+    ID_PCI_CLASS_FROM_DATABASE: Bridge
+    ID_PCI_INTERFACE_FROM_DATABASE: Normal decode
+    ID_PCI_SUBCLASS_FROM_DATABASE: PCI bridge
+    ID_VENDOR_FROM_DATABASE: PLX Technology, Inc.
+    MODALIAS: pci:v000010B5d00008747sv000010B5sd00008747bc06sc04i00
+    PCI_CLASS: '60400'
+    PCI_ID: 10B5:8747
+    PCI_SLOT_NAME: 0000:3b:00.0
+    PCI_SUBSYS_ID: 10B5:8747
+    SUBSYSTEM: pci
+    USEC_INITIALIZED: '8417708'
+  subsystem: pci
+/sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0:
+  attributes:
+    aer_dev_correctable: 'RxErr 0
+
+      BadTLP 0
+
+      BadDLLP 0
+
+      Rollover 0
+
+      Timeout 0
+
+      NonFatalErr 0
+
+      CorrIntErr 0
+
+      HeaderOF 0
+
+      TOTAL_ERR_COR 0'
+    aer_dev_fatal: 'Undefined 0
+
+      DLP 0
+
+      SDES 0
+
+      TLP 0
+
+      FCP 0
+
+      CmpltTO 0
+
+      CmpltAbrt 0
+
+      UnxCmplt 0
+
+      RxOF 0
+
+      MalfTLP 0
+
+      ECRC 0
+
+      UnsupReq 0
+
+      ACSViol 0
+
+      UncorrIntErr 0
+
+      BlockedTLP 0
+
+      AtomicOpBlocked 0
+
+      TLPBlockedErr 0
+
+      PoisonTLPBlocked 0
+
+      TOTAL_ERR_FATAL 0'
+    aer_dev_nonfatal: 'Undefined 0
+
+      DLP 0
+
+      SDES 0
+
+      TLP 0
+
+      FCP 0
+
+      CmpltTO 0
+
+      CmpltAbrt 0
+
+      UnxCmplt 0
+
+      RxOF 0
+
+      MalfTLP 0
+
+      ECRC 0
+
+      UnsupReq 0
+
+      ACSViol 0
+
+      UncorrIntErr 0
+
+      BlockedTLP 0
+
+      AtomicOpBlocked 0
+
+      TLPBlockedErr 0
+
+      PoisonTLPBlocked 0
+
+      TOTAL_ERR_NONFATAL 0'
+    ari_enabled: '0'
+    broken_parity_status: '0'
+    class: '0x060400'
+    consistent_dma_mask_bits: '32'
+    current_link_speed: 8.0 GT/s PCIe
+    current_link_width: '8'
+    d3cold_allowed: '1'
+    device: '0x8747'
+    dma_mask_bits: '32'
+    driver: pcieport
+    driver_override: (null)
+    enable: '1'
+    irq: '33'
+    local_cpulist: 0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30
+    local_cpus: '55555555'
+    max_link_speed: 8.0 GT/s PCIe
+    max_link_width: '8'
+    modalias: pci:v000010B5d00008747sv000010B5sd00008747bc06sc04i00
+    msi_bus: '1'
+    msi_irqs/33: msi
+    numa_node: '0'
+    power/control: 'on'
+    power/runtime_active_time: '1306574553'
+    power/runtime_status: active
+    power/runtime_suspended_time: '0'
+    power/wakeup: disabled
+    power_state: D0
+    revision: '0xca'
+    secondary_bus_number: '63'
+    subordinate_bus_number: '64'
+    subsystem: pci
+    subsystem_device: '0x8747'
+    subsystem_vendor: '0x10b5'
+    uevent: 'DRIVER=pcieport
+
+      PCI_CLASS=60400
+
+      PCI_ID=10B5:8747
+
+      PCI_SUBSYS_ID=10B5:8747
+
+      PCI_SLOT_NAME=0000:3c:09.0
+
+      MODALIAS=pci:v000010B5d00008747sv000010B5sd00008747bc06sc04i00'
+    vendor: '0x10b5'
+  device_number: 0
+  device_type: null
+  driver: pcieport
+  parent: /sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0
+  properties:
+    DEVPATH: /devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0
+    DRIVER: pcieport
+    ID_MODEL_FROM_DATABASE: PEX 8747 48-Lane, 5-Port PCI Express Gen 3 (8.0 GT/s)
+      Switch
+    ID_PCI_CLASS_FROM_DATABASE: Bridge
+    ID_PCI_INTERFACE_FROM_DATABASE: Normal decode
+    ID_PCI_SUBCLASS_FROM_DATABASE: PCI bridge
+    ID_VENDOR_FROM_DATABASE: PLX Technology, Inc.
+    MODALIAS: pci:v000010B5d00008747sv000010B5sd00008747bc06sc04i00
+    PCI_CLASS: '60400'
+    PCI_ID: 10B5:8747
+    PCI_SLOT_NAME: 0000:3c:09.0
+    PCI_SUBSYS_ID: 10B5:8747
+    SUBSYSTEM: pci
+    USEC_INITIALIZED: '8420735'
+  subsystem: pci
+/sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0:
+  attributes:
+    aer_dev_correctable: 'RxErr 0
+
+      BadTLP 0
+
+      BadDLLP 0
+
+      Rollover 0
+
+      Timeout 0
+
+      NonFatalErr 0
+
+      CorrIntErr 0
+
+      HeaderOF 0
+
+      TOTAL_ERR_COR 0'
+    aer_dev_fatal: 'Undefined 0
+
+      DLP 0
+
+      SDES 0
+
+      TLP 0
+
+      FCP 0
+
+      CmpltTO 0
+
+      CmpltAbrt 0
+
+      UnxCmplt 0
+
+      RxOF 0
+
+      MalfTLP 0
+
+      ECRC 0
+
+      UnsupReq 0
+
+      ACSViol 0
+
+      UncorrIntErr 0
+
+      BlockedTLP 0
+
+      AtomicOpBlocked 0
+
+      TLPBlockedErr 0
+
+      PoisonTLPBlocked 0
+
+      TOTAL_ERR_FATAL 0'
+    aer_dev_nonfatal: 'Undefined 0
+
+      DLP 0
+
+      SDES 0
+
+      TLP 0
+
+      FCP 0
+
+      CmpltTO 0
+
+      CmpltAbrt 0
+
+      UnxCmplt 0
+
+      RxOF 0
+
+      MalfTLP 0
+
+      ECRC 0
+
+      UnsupReq 0
+
+      ACSViol 0
+
+      UncorrIntErr 0
+
+      BlockedTLP 0
+
+      AtomicOpBlocked 0
+
+      TLPBlockedErr 0
+
+      PoisonTLPBlocked 0
+
+      TOTAL_ERR_NONFATAL 0'
+    ari_enabled: '1'
+    broken_parity_status: '0'
+    class: '0x120000'
+    consistent_dma_mask_bits: '64'
+    current_link_speed: 8.0 GT/s PCIe
+    current_link_width: '8'
+    d3cold_allowed: '1'
+    device: '0x0b30'
+    dma_mask_bits: '64'
+    driver: dfl-pci
+    driver_override: (null)
+    enable: '1'
+    irq: '32'
+    local_cpulist: 0,2,4,6,8,10,12,14,16,18,20,22,24,26,28,30
+    local_cpus: '55555555'
+    max_link_speed: 8.0 GT/s PCIe
+    max_link_width: '8'
+    modalias: pci:v00008086d00000B30sv00008086sd00000000bc12sc00i00
+    msi_bus: '1'
+    msi_irqs/529: msix
+    msi_irqs/530: msix
+    msi_irqs/531: msix
+    msi_irqs/532: msix
+    msi_irqs/533: msix
+    msi_irqs/534: msix
+    msi_irqs/535: msix
+    numa_node: '0'
+    power/control: 'on'
+    power/runtime_active_time: '1306574551'
+    power/runtime_status: active
+    power/runtime_suspended_time: '0'
+    power/wakeup: disabled
+    power_state: D0
+    revision: '0x00'
+    sriov_drivers_autoprobe: '1'
+    sriov_numvfs: '0'
+    sriov_offset: '1'
+    sriov_stride: '1'
+    sriov_totalvfs: '1'
+    sriov_vf_device: b31
+    subsystem: pci
+    subsystem_device: '0x0000'
+    subsystem_vendor: '0x8086'
+    uevent: 'DRIVER=dfl-pci
+
+      PCI_CLASS=120000
+
+      PCI_ID=8086:0B30
+
+      PCI_SUBSYS_ID=8086:0000
+
+      PCI_SLOT_NAME=0000:3f:00.0
+
+      MODALIAS=pci:v00008086d00000B30sv00008086sd00000000bc12sc00i00'
+    vendor: '0x8086'
+  device_number: 0
+  device_type: null
+  driver: dfl-pci
+  parent: /sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0
+  properties:
+    DEVPATH: /devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0
+    DRIVER: dfl-pci
+    ID_PCI_CLASS_FROM_DATABASE: Processing accelerators
+    ID_PCI_SUBCLASS_FROM_DATABASE: Processing accelerators
+    ID_VENDOR_FROM_DATABASE: Intel Corporation
+    MODALIAS: pci:v00008086d00000B30sv00008086sd00000000bc12sc00i00
+    PCI_CLASS: '120000'
+    PCI_ID: 8086:0B30
+    PCI_SLOT_NAME: 0000:3f:00.0
+    PCI_SUBSYS_ID: 8086:0000
+    SUBSYSTEM: pci
+    USEC_INITIALIZED: '8426976'
+  subsystem: pci
+/sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0:
+  attributes:
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    subsystem: fpga_region
+  device_number: 0
+  device_type: null
+  driver: null
+  parent: /sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0
+  properties:
+    DEVPATH: /devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0
+    SUBSYSTEM: fpga_region
+  subsystem: fpga_region
+/sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0:
+  attributes:
+    bitstream_id: '0x2300011001030f'
+    bitstream_metadata: '0x5fd82c1500000006'
+    cache_size: '0'
+    dev: '237:0'
+    driver: dfl-fme
+    driver_override: (null)
+    errors/catfatal_errors: '0x0'
+    errors/first_error: '0x0'
+    errors/fme_errors: '0x0'
+    errors/inject_errors: '0x0'
+    errors/next_error: '0x0'
+    errors/nonfatal_errors: '0x0'
+    errors/pcie0_errors: '0x0'
+    errors/pcie1_errors: '0x0'
+    fabric_version: '0'
+    modalias: platform:dfl-fme
+    numa_node: '0'
+    ports_num: '1'
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    socket_id: '0'
+    subsystem: platform
+    uevent: 'MAJOR=237
+
+      MINOR=0
+
+      DEVNAME=dfl-fme.0
+
+      DRIVER=dfl-fme
+
+      MODALIAS=platform:dfl-fme'
+  device_number: 60672
+  device_type: null
+  driver: dfl-fme
+  parent: /sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0
+  properties:
+    DEVNAME: /dev/dfl-fme.0
+    DEVPATH: /devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0
+    DRIVER: dfl-fme
+    ID_PATH: pci-0000:3f:00.0-platform-dfl-fme.0
+    ID_PATH_TAG: pci-0000_3f_00_0-platform-dfl-fme_0
+    MAJOR: '237'
+    MINOR: '0'
+    MODALIAS: platform:dfl-fme
+    SUBSYSTEM: platform
+    USEC_INITIALIZED: '8657809'
+  subsystem: platform
+? /sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/dfl-fme-bridge.1.auto
+: attributes:
+    driver: dfl-fme-bridge
+    driver_override: (null)
+    modalias: platform:dfl-fme-bridge
+    numa_node: '0'
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    subsystem: platform
+    uevent: 'DRIVER=dfl-fme-bridge
+
+      MODALIAS=platform:dfl-fme-bridge'
+  device_number: 0
+  device_type: null
+  driver: dfl-fme-bridge
+  parent: /sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0
+  properties:
+    DEVPATH: /devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/dfl-fme-bridge.1.auto
+    DRIVER: dfl-fme-bridge
+    ID_PATH: pci-0000:3f:00.0-platform-dfl-fme-bridge.1.auto
+    ID_PATH_TAG: pci-0000_3f_00_0-platform-dfl-fme-bridge_1_auto
+    MODALIAS: platform:dfl-fme-bridge
+    SUBSYSTEM: platform
+    USEC_INITIALIZED: '8755141'
+  subsystem: platform
+? /sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/dfl-fme-bridge.1.auto/fpga_bridge/br0
+: attributes:
+    name: DFL FPGA FME Bridge
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    state: enabled
+    subsystem: fpga_bridge
+  device_number: 0
+  device_type: null
+  driver: null
+  parent: /sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/dfl-fme-bridge.1.auto
+  properties:
+    DEVPATH: /devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/dfl-fme-bridge.1.auto/fpga_bridge/br0
+    SUBSYSTEM: fpga_bridge
+  subsystem: fpga_bridge
+/sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/dfl-fme-mgr.0:
+  attributes:
+    driver: dfl-fme-mgr
+    driver_override: (null)
+    modalias: platform:dfl-fme-mgr
+    numa_node: '0'
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    subsystem: platform
+    uevent: 'DRIVER=dfl-fme-mgr
+
+      MODALIAS=platform:dfl-fme-mgr'
+  device_number: 0
+  device_type: null
+  driver: dfl-fme-mgr
+  parent: /sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0
+  properties:
+    DEVPATH: /devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/dfl-fme-mgr.0
+    DRIVER: dfl-fme-mgr
+    ID_PATH: pci-0000:3f:00.0-platform-dfl-fme-mgr.0
+    ID_PATH_TAG: pci-0000_3f_00_0-platform-dfl-fme-mgr_0
+    MODALIAS: platform:dfl-fme-mgr
+    SUBSYSTEM: platform
+    USEC_INITIALIZED: '8754427'
+  subsystem: platform
+? /sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/dfl-fme-mgr.0/fpga_manager/fpga0
+: attributes:
+    name: DFL FME FPGA Manager
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    state: unknown
+    subsystem: fpga_manager
+  device_number: 0
+  device_type: null
+  driver: null
+  parent: /sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/dfl-fme-mgr.0
+  properties:
+    DEVPATH: /devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/dfl-fme-mgr.0/fpga_manager/fpga0
+    SUBSYSTEM: fpga_manager
+  subsystem: fpga_manager
+/sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/dfl-fme-region.1:
+  attributes:
+    driver: dfl-fme-region
+    driver_override: (null)
+    modalias: platform:dfl-fme-region
+    numa_node: '0'
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    subsystem: platform
+    uevent: 'DRIVER=dfl-fme-region
+
+      MODALIAS=platform:dfl-fme-region'
+  device_number: 0
+  device_type: null
+  driver: dfl-fme-region
+  parent: /sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0
+  properties:
+    DEVPATH: /devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/dfl-fme-region.1
+    DRIVER: dfl-fme-region
+    ID_PATH: pci-0000:3f:00.0-platform-dfl-fme-region.1
+    ID_PATH_TAG: pci-0000_3f_00_0-platform-dfl-fme-region_1
+    MODALIAS: platform:dfl-fme-region
+    SUBSYSTEM: platform
+    USEC_INITIALIZED: '8767218'
+  subsystem: platform
+? /sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/dfl-fme-region.1/fpga_region/region2
+: attributes:
+    compat_id: f3c9941350814aadbced07eb84a6d0bb
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    subsystem: fpga_region
+  device_number: 0
+  device_type: null
+  driver: null
+  parent: /sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/dfl-fme-region.1
+  properties:
+    DEVPATH: /devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/dfl-fme-region.1/fpga_region/region2
+    SUBSYSTEM: fpga_region
+  subsystem: fpga_region
+/sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/dfl_dev.0:
+  attributes:
+    feature_id: '0xd'
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    subsystem: dfl
+    type: '0x0'
+    uevent: MODALIAS=dfl:t0f00D
+  device_number: 0
+  device_type: null
+  driver: null
+  parent: /sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0
+  properties:
+    DEVPATH: /devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/dfl_dev.0
+    MODALIAS: dfl:t0f00D
+    SUBSYSTEM: dfl
+  subsystem: dfl
+/sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/dfl_dev.1:
+  attributes:
+    feature_id: '0x10'
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    subsystem: dfl
+    type: '0x0'
+    uevent: MODALIAS=dfl:t0f010
+  device_number: 0
+  device_type: null
+  driver: null
+  parent: /sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0
+  properties:
+    DEVPATH: /devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/dfl_dev.1
+    MODALIAS: dfl:t0f010
+    SUBSYSTEM: dfl
+  subsystem: dfl
+/sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/dfl_dev.2:
+  attributes:
+    feature_id: '0x10'
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    subsystem: dfl
+    type: '0x0'
+    uevent: MODALIAS=dfl:t0f010
+  device_number: 0
+  device_type: null
+  driver: null
+  parent: /sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0
+  properties:
+    DEVPATH: /devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/dfl_dev.2
+    MODALIAS: dfl:t0f010
+    SUBSYSTEM: dfl
+  subsystem: dfl
+/sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/dfl_dev.3:
+  attributes:
+    feature_id: '0x9'
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    subsystem: dfl
+    type: '0x0'
+    uevent: MODALIAS=dfl:t0f009
+  device_number: 0
+  device_type: null
+  driver: null
+  parent: /sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0
+  properties:
+    DEVPATH: /devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/dfl_dev.3
+    MODALIAS: dfl:t0f009
+    SUBSYSTEM: dfl
+  subsystem: dfl
+/sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/dfl_dev.4:
+  attributes:
+    feature_id: '0xf'
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    subsystem: dfl
+    type: '0x0'
+    uevent: MODALIAS=dfl:t0f00F
+  device_number: 0
+  device_type: null
+  driver: null
+  parent: /sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0
+  properties:
+    DEVPATH: /devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/dfl_dev.4
+    MODALIAS: dfl:t0f00F
+    SUBSYSTEM: dfl
+  subsystem: dfl
+/sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/hwmon/hwmon1:
+  attributes:
+    name: dfl_fme_thermal
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    subsystem: hwmon
+    temp1_input: '58000'
+  device_number: 0
+  device_type: null
+  driver: null
+  parent: /sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0
+  properties:
+    DEVPATH: /devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-fme.0/hwmon/hwmon1
+    SUBSYSTEM: hwmon
+  subsystem: hwmon
+/sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-port.0:
+  attributes:
+    afu_id: 9aeffe5f84570612c000c9660d824272
+    ap1_event: '0'
+    ap2_event: '0'
+    dev: '236:0'
+    driver: dfl-port
+    driver_override: (null)
+    errors/errors: '0x0'
+    errors/first_error: '0x0'
+    errors/first_malformed_req: '0x00000000000000000000000000000000'
+    id: '0'
+    ltr: '1'
+    modalias: platform:dfl-port
+    numa_node: '0'
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    power_state: '0x0'
+    subsystem: platform
+    uevent: 'MAJOR=236
+
+      MINOR=0
+
+      DEVNAME=dfl-port.0
+
+      DRIVER=dfl-port
+
+      MODALIAS=platform:dfl-port'
+    userclk_freqcntrsts: '0x0'
+    userclk_freqsts: '0x0'
+  device_number: 60416
+  device_type: null
+  driver: dfl-port
+  parent: /sys/devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0
+  properties:
+    DEVNAME: /dev/dfl-port.0
+    DEVPATH: /devices/pci0000:3a/0000:3a:00.0/0000:3b:00.0/0000:3c:09.0/0000:3f:00.0/fpga_region/region0/dfl-port.0
+    DRIVER: dfl-port
+    ID_PATH: pci-0000:3f:00.0-platform-dfl-port.0
+    ID_PATH_TAG: pci-0000_3f_00_0-platform-dfl-port_0
+    MAJOR: '236'
+    MINOR: '0'
+    MODALIAS: platform:dfl-port
+    SUBSYSTEM: platform
+    USEC_INITIALIZED: '8657463'
+  subsystem: platform
+/sys/devices/pci0000:d7:
+  attributes:
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+  device_number: 0
+  device_type: null
+  driver: null
+  parent: null
+  properties: {}
+  subsystem: null
+/sys/devices/pci0000:d7/0000:d7:00.0:
+  attributes:
+    acpi_index: '24'
+    aer_dev_correctable: 'RxErr 0
+
+      BadTLP 0
+
+      BadDLLP 0
+
+      Rollover 0
+
+      Timeout 0
+
+      NonFatalErr 0
+
+      CorrIntErr 0
+
+      HeaderOF 0
+
+      TOTAL_ERR_COR 0'
+    aer_dev_fatal: 'Undefined 0
+
+      DLP 0
+
+      SDES 0
+
+      TLP 0
+
+      FCP 0
+
+      CmpltTO 0
+
+      CmpltAbrt 0
+
+      UnxCmplt 0
+
+      RxOF 0
+
+      MalfTLP 0
+
+      ECRC 0
+
+      UnsupReq 0
+
+      ACSViol 0
+
+      UncorrIntErr 0
+
+      BlockedTLP 0
+
+      AtomicOpBlocked 0
+
+      TLPBlockedErr 0
+
+      PoisonTLPBlocked 0
+
+      TOTAL_ERR_FATAL 0'
+    aer_dev_nonfatal: 'Undefined 0
+
+      DLP 0
+
+      SDES 0
+
+      TLP 0
+
+      FCP 0
+
+      CmpltTO 0
+
+      CmpltAbrt 0
+
+      UnxCmplt 0
+
+      RxOF 0
+
+      MalfTLP 0
+
+      ECRC 0
+
+      UnsupReq 0
+
+      ACSViol 0
+
+      UncorrIntErr 0
+
+      BlockedTLP 0
+
+      AtomicOpBlocked 0
+
+      TLPBlockedErr 0
+
+      PoisonTLPBlocked 0
+
+      TOTAL_ERR_NONFATAL 0'
+    aer_rootport_total_err_cor: '0'
+    aer_rootport_total_err_fatal: '0'
+    aer_rootport_total_err_nonfatal: '0'
+    ari_enabled: '0'
+    broken_parity_status: '0'
+    class: '0x060400'
+    consistent_dma_mask_bits: '32'
+    current_link_speed: 8.0 GT/s PCIe
+    current_link_width: '16'
+    d3cold_allowed: '1'
+    device: '0x2030'
+    dma_mask_bits: '32'
+    driver: pcieport
+    driver_override: (null)
+    enable: '1'
+    irq: '39'
+    label: SLOT 8
+    local_cpulist: 1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31
+    local_cpus: aaaaaaaa
+    max_link_speed: 8.0 GT/s PCIe
+    max_link_width: '16'
+    modalias: pci:v00008086d00002030sv00008086sd00000000bc06sc04i00
+    msi_bus: '1'
+    msi_irqs/39: msi
+    numa_node: '1'
+    power/autosuspend_delay_ms: '100'
+    power/control: auto
+    power/runtime_active_time: '1306574548'
+    power/runtime_status: active
+    power/runtime_suspended_time: '0'
+    power/wakeup: enabled
+    power/wakeup_abort_count: '0'
+    power/wakeup_active: '0'
+    power/wakeup_active_count: '0'
+    power/wakeup_count: '0'
+    power/wakeup_expire_count: '0'
+    power/wakeup_last_time_ms: '0'
+    power/wakeup_max_time_ms: '0'
+    power/wakeup_total_time_ms: '0'
+    power_state: D0
+    revision: '0x04'
+    secondary_bus_number: '216'
+    subordinate_bus_number: '225'
+    subsystem: pci
+    subsystem_device: '0x0000'
+    subsystem_vendor: '0x8086'
+    uevent: 'DRIVER=pcieport
+
+      PCI_CLASS=60400
+
+      PCI_ID=8086:2030
+
+      PCI_SUBSYS_ID=8086:0000
+
+      PCI_SLOT_NAME=0000:d7:00.0
+
+      MODALIAS=pci:v00008086d00002030sv00008086sd00000000bc06sc04i00'
+    vendor: '0x8086'
+  device_number: 0
+  device_type: null
+  driver: pcieport
+  parent: /sys/devices/pci0000:d7
+  properties:
+    DEVPATH: /devices/pci0000:d7/0000:d7:00.0
+    DRIVER: pcieport
+    ID_MODEL_FROM_DATABASE: Sky Lake-E PCI Express Root Port A
+    ID_PCI_CLASS_FROM_DATABASE: Bridge
+    ID_PCI_INTERFACE_FROM_DATABASE: Normal decode
+    ID_PCI_SUBCLASS_FROM_DATABASE: PCI bridge
+    ID_VENDOR_FROM_DATABASE: Intel Corporation
+    MODALIAS: pci:v00008086d00002030sv00008086sd00000000bc06sc04i00
+    PCI_CLASS: '60400'
+    PCI_ID: 8086:2030
+    PCI_SLOT_NAME: 0000:d7:00.0
+    PCI_SUBSYS_ID: 8086:0000
+    SUBSYSTEM: pci
+    USEC_INITIALIZED: '8458488'
+  subsystem: pci
+/sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0:
+  attributes:
+    aer_dev_correctable: 'RxErr 0
+
+      BadTLP 0
+
+      BadDLLP 0
+
+      Rollover 0
+
+      Timeout 0
+
+      NonFatalErr 0
+
+      CorrIntErr 0
+
+      HeaderOF 0
+
+      TOTAL_ERR_COR 0'
+    aer_dev_fatal: 'Undefined 0
+
+      DLP 0
+
+      SDES 0
+
+      TLP 0
+
+      FCP 0
+
+      CmpltTO 0
+
+      CmpltAbrt 0
+
+      UnxCmplt 0
+
+      RxOF 0
+
+      MalfTLP 0
+
+      ECRC 0
+
+      UnsupReq 0
+
+      ACSViol 0
+
+      UncorrIntErr 0
+
+      BlockedTLP 0
+
+      AtomicOpBlocked 0
+
+      TLPBlockedErr 0
+
+      PoisonTLPBlocked 0
+
+      TOTAL_ERR_FATAL 0'
+    aer_dev_nonfatal: 'Undefined 0
+
+      DLP 0
+
+      SDES 0
+
+      TLP 0
+
+      FCP 0
+
+      CmpltTO 0
+
+      CmpltAbrt 0
+
+      UnxCmplt 0
+
+      RxOF 0
+
+      MalfTLP 0
+
+      ECRC 0
+
+      UnsupReq 0
+
+      ACSViol 0
+
+      UncorrIntErr 0
+
+      BlockedTLP 0
+
+      AtomicOpBlocked 0
+
+      TLPBlockedErr 0
+
+      PoisonTLPBlocked 0
+
+      TOTAL_ERR_NONFATAL 0'
+    ari_enabled: '0'
+    broken_parity_status: '0'
+    class: '0x060400'
+    consistent_dma_mask_bits: '32'
+    current_link_speed: 8.0 GT/s PCIe
+    current_link_width: '16'
+    d3cold_allowed: '1'
+    device: '0x8747'
+    dma_mask_bits: '32'
+    driver: pcieport
+    driver_override: (null)
+    enable: '1'
+    irq: '40'
+    local_cpulist: 1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31
+    local_cpus: aaaaaaaa
+    max_link_speed: 8.0 GT/s PCIe
+    max_link_width: '16'
+    modalias: pci:v000010B5d00008747sv000010B5sd00008747bc06sc04i00
+    msi_bus: '1'
+    numa_node: '1'
+    power/autosuspend_delay_ms: '100'
+    power/control: auto
+    power/runtime_active_time: '1306574548'
+    power/runtime_status: active
+    power/runtime_suspended_time: '0'
+    power/wakeup: disabled
+    power_state: D0
+    revision: '0xca'
+    secondary_bus_number: '217'
+    subordinate_bus_number: '225'
+    subsystem: pci
+    subsystem_device: '0x8747'
+    subsystem_vendor: '0x10b5'
+    uevent: 'DRIVER=pcieport
+
+      PCI_CLASS=60400
+
+      PCI_ID=10B5:8747
+
+      PCI_SUBSYS_ID=10B5:8747
+
+      PCI_SLOT_NAME=0000:d8:00.0
+
+      MODALIAS=pci:v000010B5d00008747sv000010B5sd00008747bc06sc04i00'
+    vendor: '0x10b5'
+  device_number: 0
+  device_type: null
+  driver: pcieport
+  parent: /sys/devices/pci0000:d7/0000:d7:00.0
+  properties:
+    DEVPATH: /devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0
+    DRIVER: pcieport
+    ID_MODEL_FROM_DATABASE: PEX 8747 48-Lane, 5-Port PCI Express Gen 3 (8.0 GT/s)
+      Switch
+    ID_PCI_CLASS_FROM_DATABASE: Bridge
+    ID_PCI_INTERFACE_FROM_DATABASE: Normal decode
+    ID_PCI_SUBCLASS_FROM_DATABASE: PCI bridge
+    ID_VENDOR_FROM_DATABASE: PLX Technology, Inc.
+    MODALIAS: pci:v000010B5d00008747sv000010B5sd00008747bc06sc04i00
+    PCI_CLASS: '60400'
+    PCI_ID: 10B5:8747
+    PCI_SLOT_NAME: 0000:d8:00.0
+    PCI_SUBSYS_ID: 10B5:8747
+    SUBSYSTEM: pci
+    USEC_INITIALIZED: '8461258'
+  subsystem: pci
+/sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0:
+  attributes:
+    aer_dev_correctable: 'RxErr 0
+
+      BadTLP 0
+
+      BadDLLP 0
+
+      Rollover 0
+
+      Timeout 0
+
+      NonFatalErr 0
+
+      CorrIntErr 0
+
+      HeaderOF 0
+
+      TOTAL_ERR_COR 0'
+    aer_dev_fatal: 'Undefined 0
+
+      DLP 0
+
+      SDES 0
+
+      TLP 0
+
+      FCP 0
+
+      CmpltTO 0
+
+      CmpltAbrt 0
+
+      UnxCmplt 0
+
+      RxOF 0
+
+      MalfTLP 0
+
+      ECRC 0
+
+      UnsupReq 0
+
+      ACSViol 0
+
+      UncorrIntErr 0
+
+      BlockedTLP 0
+
+      AtomicOpBlocked 0
+
+      TLPBlockedErr 0
+
+      PoisonTLPBlocked 0
+
+      TOTAL_ERR_FATAL 0'
+    aer_dev_nonfatal: 'Undefined 0
+
+      DLP 0
+
+      SDES 0
+
+      TLP 0
+
+      FCP 0
+
+      CmpltTO 0
+
+      CmpltAbrt 0
+
+      UnxCmplt 0
+
+      RxOF 0
+
+      MalfTLP 0
+
+      ECRC 0
+
+      UnsupReq 0
+
+      ACSViol 0
+
+      UncorrIntErr 0
+
+      BlockedTLP 0
+
+      AtomicOpBlocked 0
+
+      TLPBlockedErr 0
+
+      PoisonTLPBlocked 0
+
+      TOTAL_ERR_NONFATAL 0'
+    ari_enabled: '0'
+    broken_parity_status: '0'
+    class: '0x060400'
+    consistent_dma_mask_bits: '32'
+    current_link_speed: 8.0 GT/s PCIe
+    current_link_width: '8'
+    d3cold_allowed: '1'
+    device: '0x8747'
+    dma_mask_bits: '32'
+    driver: pcieport
+    driver_override: (null)
+    enable: '1'
+    irq: '43'
+    local_cpulist: 1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31
+    local_cpus: aaaaaaaa
+    max_link_speed: 8.0 GT/s PCIe
+    max_link_width: '8'
+    modalias: pci:v000010B5d00008747sv000010B5sd00008747bc06sc04i00
+    msi_bus: '1'
+    msi_irqs/43: msi
+    numa_node: '1'
+    power/control: 'on'
+    power/runtime_active_time: '1306574545'
+    power/runtime_status: active
+    power/runtime_suspended_time: '0'
+    power/wakeup: disabled
+    power_state: D0
+    revision: '0xca'
+    secondary_bus_number: '220'
+    subordinate_bus_number: '221'
+    subsystem: pci
+    subsystem_device: '0x8747'
+    subsystem_vendor: '0x10b5'
+    uevent: 'DRIVER=pcieport
+
+      PCI_CLASS=60400
+
+      PCI_ID=10B5:8747
+
+      PCI_SUBSYS_ID=10B5:8747
+
+      PCI_SLOT_NAME=0000:d9:09.0
+
+      MODALIAS=pci:v000010B5d00008747sv000010B5sd00008747bc06sc04i00'
+    vendor: '0x10b5'
+  device_number: 0
+  device_type: null
+  driver: pcieport
+  parent: /sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0
+  properties:
+    DEVPATH: /devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0
+    DRIVER: pcieport
+    ID_MODEL_FROM_DATABASE: PEX 8747 48-Lane, 5-Port PCI Express Gen 3 (8.0 GT/s)
+      Switch
+    ID_PCI_CLASS_FROM_DATABASE: Bridge
+    ID_PCI_INTERFACE_FROM_DATABASE: Normal decode
+    ID_PCI_SUBCLASS_FROM_DATABASE: PCI bridge
+    ID_VENDOR_FROM_DATABASE: PLX Technology, Inc.
+    MODALIAS: pci:v000010B5d00008747sv000010B5sd00008747bc06sc04i00
+    PCI_CLASS: '60400'
+    PCI_ID: 10B5:8747
+    PCI_SLOT_NAME: 0000:d9:09.0
+    PCI_SUBSYS_ID: 10B5:8747
+    SUBSYSTEM: pci
+    USEC_INITIALIZED: '8464844'
+  subsystem: pci
+/sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0:
+  attributes:
+    aer_dev_correctable: 'RxErr 0
+
+      BadTLP 0
+
+      BadDLLP 0
+
+      Rollover 0
+
+      Timeout 0
+
+      NonFatalErr 0
+
+      CorrIntErr 0
+
+      HeaderOF 0
+
+      TOTAL_ERR_COR 0'
+    aer_dev_fatal: 'Undefined 0
+
+      DLP 0
+
+      SDES 0
+
+      TLP 0
+
+      FCP 0
+
+      CmpltTO 0
+
+      CmpltAbrt 0
+
+      UnxCmplt 0
+
+      RxOF 0
+
+      MalfTLP 0
+
+      ECRC 0
+
+      UnsupReq 0
+
+      ACSViol 0
+
+      UncorrIntErr 0
+
+      BlockedTLP 0
+
+      AtomicOpBlocked 0
+
+      TLPBlockedErr 0
+
+      PoisonTLPBlocked 0
+
+      TOTAL_ERR_FATAL 0'
+    aer_dev_nonfatal: 'Undefined 0
+
+      DLP 0
+
+      SDES 0
+
+      TLP 0
+
+      FCP 0
+
+      CmpltTO 0
+
+      CmpltAbrt 0
+
+      UnxCmplt 0
+
+      RxOF 0
+
+      MalfTLP 0
+
+      ECRC 0
+
+      UnsupReq 0
+
+      ACSViol 0
+
+      UncorrIntErr 0
+
+      BlockedTLP 0
+
+      AtomicOpBlocked 0
+
+      TLPBlockedErr 0
+
+      PoisonTLPBlocked 0
+
+      TOTAL_ERR_NONFATAL 0'
+    ari_enabled: '1'
+    broken_parity_status: '0'
+    class: '0x120000'
+    consistent_dma_mask_bits: '64'
+    current_link_speed: 8.0 GT/s PCIe
+    current_link_width: '8'
+    d3cold_allowed: '1'
+    device: '0x0b30'
+    dma_mask_bits: '64'
+    driver: dfl-pci
+    driver_override: (null)
+    enable: '1'
+    irq: '42'
+    local_cpulist: 1,3,5,7,9,11,13,15,17,19,21,23,25,27,29,31
+    local_cpus: aaaaaaaa
+    max_link_speed: 8.0 GT/s PCIe
+    max_link_width: '8'
+    modalias: pci:v00008086d00000B30sv00008086sd00000000bc12sc00i00
+    msi_bus: '1'
+    msi_irqs/536: msix
+    msi_irqs/537: msix
+    msi_irqs/538: msix
+    msi_irqs/539: msix
+    msi_irqs/540: msix
+    msi_irqs/541: msix
+    msi_irqs/542: msix
+    numa_node: '1'
+    power/control: 'on'
+    power/runtime_active_time: '1306574543'
+    power/runtime_status: active
+    power/runtime_suspended_time: '0'
+    power/wakeup: disabled
+    power_state: D0
+    revision: '0x00'
+    sriov_drivers_autoprobe: '1'
+    sriov_numvfs: '0'
+    sriov_offset: '1'
+    sriov_stride: '1'
+    sriov_totalvfs: '1'
+    sriov_vf_device: b31
+    subsystem: pci
+    subsystem_device: '0x0000'
+    subsystem_vendor: '0x8086'
+    uevent: 'DRIVER=dfl-pci
+
+      PCI_CLASS=120000
+
+      PCI_ID=8086:0B30
+
+      PCI_SUBSYS_ID=8086:0000
+
+      PCI_SLOT_NAME=0000:dc:00.0
+
+      MODALIAS=pci:v00008086d00000B30sv00008086sd00000000bc12sc00i00'
+    vendor: '0x8086'
+  device_number: 0
+  device_type: null
+  driver: dfl-pci
+  parent: /sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0
+  properties:
+    DEVPATH: /devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0
+    DRIVER: dfl-pci
+    ID_PCI_CLASS_FROM_DATABASE: Processing accelerators
+    ID_PCI_SUBCLASS_FROM_DATABASE: Processing accelerators
+    ID_VENDOR_FROM_DATABASE: Intel Corporation
+    MODALIAS: pci:v00008086d00000B30sv00008086sd00000000bc12sc00i00
+    PCI_CLASS: '120000'
+    PCI_ID: 8086:0B30
+    PCI_SLOT_NAME: 0000:dc:00.0
+    PCI_SUBSYS_ID: 8086:0000
+    SUBSYSTEM: pci
+    USEC_INITIALIZED: '8476325'
+  subsystem: pci
+/sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1:
+  attributes:
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    subsystem: fpga_region
+  device_number: 0
+  device_type: null
+  driver: null
+  parent: /sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0
+  properties:
+    DEVPATH: /devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1
+    SUBSYSTEM: fpga_region
+  subsystem: fpga_region
+/sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1:
+  attributes:
+    bitstream_id: '0x2392920a010501'
+    bitstream_metadata: '0x2ec079dd00000002'
+    cache_size: '0'
+    dev: '237:1'
+    driver: dfl-fme
+    driver_override: (null)
+    errors/catfatal_errors: '0x400'
+    errors/first_error: '0x0'
+    errors/fme_errors: '0x0'
+    errors/inject_errors: '0x0'
+    errors/next_error: '0x0'
+    errors/nonfatal_errors: '0x0'
+    errors/pcie0_errors: '0x0'
+    errors/pcie1_errors: '0x0'
+    fabric_version: '0'
+    modalias: platform:dfl-fme
+    numa_node: '1'
+    ports_num: '1'
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    socket_id: '0'
+    subsystem: platform
+    uevent: 'MAJOR=237
+
+      MINOR=1
+
+      DEVNAME=dfl-fme.1
+
+      DRIVER=dfl-fme
+
+      MODALIAS=platform:dfl-fme'
+  device_number: 60673
+  device_type: null
+  driver: dfl-fme
+  parent: /sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1
+  properties:
+    DEVNAME: /dev/dfl-fme.1
+    DEVPATH: /devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1
+    DRIVER: dfl-fme
+    ID_PATH: pci-0000:dc:00.0-platform-dfl-fme.1
+    ID_PATH_TAG: pci-0000_dc_00_0-platform-dfl-fme_1
+    MAJOR: '237'
+    MINOR: '1'
+    MODALIAS: platform:dfl-fme
+    SUBSYSTEM: platform
+    USEC_INITIALIZED: '8657295'
+  subsystem: platform
+? /sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/dfl-fme-bridge.2.auto
+: attributes:
+    driver: dfl-fme-bridge
+    driver_override: (null)
+    modalias: platform:dfl-fme-bridge
+    numa_node: '1'
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    subsystem: platform
+    uevent: 'DRIVER=dfl-fme-bridge
+
+      MODALIAS=platform:dfl-fme-bridge'
+  device_number: 0
+  device_type: null
+  driver: dfl-fme-bridge
+  parent: /sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1
+  properties:
+    DEVPATH: /devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/dfl-fme-bridge.2.auto
+    DRIVER: dfl-fme-bridge
+    ID_PATH: pci-0000:dc:00.0-platform-dfl-fme-bridge.2.auto
+    ID_PATH_TAG: pci-0000_dc_00_0-platform-dfl-fme-bridge_2_auto
+    MODALIAS: platform:dfl-fme-bridge
+    SUBSYSTEM: platform
+    USEC_INITIALIZED: '8760316'
+  subsystem: platform
+? /sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/dfl-fme-bridge.2.auto/fpga_bridge/br1
+: attributes:
+    name: DFL FPGA FME Bridge
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    state: enabled
+    subsystem: fpga_bridge
+  device_number: 0
+  device_type: null
+  driver: null
+  parent: /sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/dfl-fme-bridge.2.auto
+  properties:
+    DEVPATH: /devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/dfl-fme-bridge.2.auto/fpga_bridge/br1
+    SUBSYSTEM: fpga_bridge
+  subsystem: fpga_bridge
+/sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/dfl-fme-mgr.1:
+  attributes:
+    driver: dfl-fme-mgr
+    driver_override: (null)
+    modalias: platform:dfl-fme-mgr
+    numa_node: '1'
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    subsystem: platform
+    uevent: 'DRIVER=dfl-fme-mgr
+
+      MODALIAS=platform:dfl-fme-mgr'
+  device_number: 0
+  device_type: null
+  driver: dfl-fme-mgr
+  parent: /sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1
+  properties:
+    DEVPATH: /devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/dfl-fme-mgr.1
+    DRIVER: dfl-fme-mgr
+    ID_PATH: pci-0000:dc:00.0-platform-dfl-fme-mgr.1
+    ID_PATH_TAG: pci-0000_dc_00_0-platform-dfl-fme-mgr_1
+    MODALIAS: platform:dfl-fme-mgr
+    SUBSYSTEM: platform
+    USEC_INITIALIZED: '8762513'
+  subsystem: platform
+? /sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/dfl-fme-mgr.1/fpga_manager/fpga1
+: attributes:
+    name: DFL FME FPGA Manager
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    state: unknown
+    subsystem: fpga_manager
+  device_number: 0
+  device_type: null
+  driver: null
+  parent: /sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/dfl-fme-mgr.1
+  properties:
+    DEVPATH: /devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/dfl-fme-mgr.1/fpga_manager/fpga1
+    SUBSYSTEM: fpga_manager
+  subsystem: fpga_manager
+/sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/dfl-fme-region.2:
+  attributes:
+    driver: dfl-fme-region
+    driver_override: (null)
+    modalias: platform:dfl-fme-region
+    numa_node: '1'
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    subsystem: platform
+    uevent: 'DRIVER=dfl-fme-region
+
+      MODALIAS=platform:dfl-fme-region'
+  device_number: 0
+  device_type: null
+  driver: dfl-fme-region
+  parent: /sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1
+  properties:
+    DEVPATH: /devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/dfl-fme-region.2
+    DRIVER: dfl-fme-region
+    ID_PATH: pci-0000:dc:00.0-platform-dfl-fme-region.2
+    ID_PATH_TAG: pci-0000_dc_00_0-platform-dfl-fme-region_2
+    MODALIAS: platform:dfl-fme-region
+    SUBSYSTEM: platform
+    USEC_INITIALIZED: '8767295'
+  subsystem: platform
+? /sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/dfl-fme-region.2/fpga_region/region3
+: attributes:
+    compat_id: cf9b1c5037c945e98030f921b17d2b3a
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    subsystem: fpga_region
+  device_number: 0
+  device_type: null
+  driver: null
+  parent: /sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/dfl-fme-region.2
+  properties:
+    DEVPATH: /devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/dfl-fme-region.2/fpga_region/region3
+    SUBSYSTEM: fpga_region
+  subsystem: fpga_region
+/sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/dfl_dev.5:
+  attributes:
+    feature_id: '0xd'
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    subsystem: dfl
+    type: '0x0'
+    uevent: MODALIAS=dfl:t0f00D
+  device_number: 0
+  device_type: null
+  driver: null
+  parent: /sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1
+  properties:
+    DEVPATH: /devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/dfl_dev.5
+    MODALIAS: dfl:t0f00D
+    SUBSYSTEM: dfl
+  subsystem: dfl
+/sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/dfl_dev.6:
+  attributes:
+    feature_id: '0x10'
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    subsystem: dfl
+    type: '0x0'
+    uevent: MODALIAS=dfl:t0f010
+  device_number: 0
+  device_type: null
+  driver: null
+  parent: /sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1
+  properties:
+    DEVPATH: /devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/dfl_dev.6
+    MODALIAS: dfl:t0f010
+    SUBSYSTEM: dfl
+  subsystem: dfl
+/sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/dfl_dev.7:
+  attributes:
+    feature_id: '0x10'
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    subsystem: dfl
+    type: '0x0'
+    uevent: MODALIAS=dfl:t0f010
+  device_number: 0
+  device_type: null
+  driver: null
+  parent: /sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1
+  properties:
+    DEVPATH: /devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/dfl_dev.7
+    MODALIAS: dfl:t0f010
+    SUBSYSTEM: dfl
+  subsystem: dfl
+/sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/dfl_dev.8:
+  attributes:
+    feature_id: '0x9'
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    subsystem: dfl
+    type: '0x0'
+    uevent: MODALIAS=dfl:t0f009
+  device_number: 0
+  device_type: null
+  driver: null
+  parent: /sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1
+  properties:
+    DEVPATH: /devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/dfl_dev.8
+    MODALIAS: dfl:t0f009
+    SUBSYSTEM: dfl
+  subsystem: dfl
+/sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/dfl_dev.9:
+  attributes:
+    feature_id: '0xf'
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    subsystem: dfl
+    type: '0x0'
+    uevent: MODALIAS=dfl:t0f00F
+  device_number: 0
+  device_type: null
+  driver: null
+  parent: /sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1
+  properties:
+    DEVPATH: /devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/dfl_dev.9
+    MODALIAS: dfl:t0f00F
+    SUBSYSTEM: dfl
+  subsystem: dfl
+/sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/hwmon/hwmon2:
+  attributes:
+    name: dfl_fme_thermal
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    subsystem: hwmon
+    temp1_input: '42000'
+  device_number: 0
+  device_type: null
+  driver: null
+  parent: /sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1
+  properties:
+    DEVPATH: /devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-fme.1/hwmon/hwmon2
+    SUBSYSTEM: hwmon
+  subsystem: hwmon
+/sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-port.1:
+  attributes:
+    afu_id: 595b9b55cd7e4675aa6d8f6c22fc7eea
+    ap1_event: '0'
+    ap2_event: '0'
+    dev: '236:1'
+    driver: dfl-port
+    driver_override: (null)
+    errors/errors: '0x0'
+    errors/first_error: '0x0'
+    errors/first_malformed_req: '0x00000000000000000000000000000000'
+    id: '0'
+    ltr: '1'
+    modalias: platform:dfl-port
+    numa_node: '1'
+    power/control: auto
+    power/runtime_active_time: '0'
+    power/runtime_status: unsupported
+    power/runtime_suspended_time: '0'
+    power_state: '0x0'
+    subsystem: platform
+    uevent: 'MAJOR=236
+
+      MINOR=1
+
+      DEVNAME=dfl-port.1
+
+      DRIVER=dfl-port
+
+      MODALIAS=platform:dfl-port'
+    userclk_freqcntrsts: '0x0'
+    userclk_freqsts: '0x0'
+  device_number: 60417
+  device_type: null
+  driver: dfl-port
+  parent: /sys/devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1
+  properties:
+    DEVNAME: /dev/dfl-port.1
+    DEVPATH: /devices/pci0000:d7/0000:d7:00.0/0000:d8:00.0/0000:d9:09.0/0000:dc:00.0/fpga_region/region1/dfl-port.1
+    DRIVER: dfl-port
+    ID_PATH: pci-0000:dc:00.0-platform-dfl-port.1
+    ID_PATH_TAG: pci-0000_dc_00_0-platform-dfl-port_1
+    MAJOR: '236'
+    MINOR: '1'
+    MODALIAS: platform:dfl-port
+    SUBSYSTEM: platform
+    USEC_INITIALIZED: '8657496'
+  subsystem: platform
