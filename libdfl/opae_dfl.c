@@ -27,6 +27,7 @@
 #include <dirent.h>
 #include <glob.h>
 #include <fnmatch.h>
+#include <pthread.h>
 #include <regex.h>
 #include <sys/sysmacros.h>
 #include <unistd.h>
@@ -61,6 +62,8 @@
 #define UDEV_SYSATTR_NUMA_NODE "numa_node"
 #define UDEV_PROPERTY_DRIVER "DRIVER"
 
+/* mutex to protect udev ctx data structure */
+pthread_mutex_t _udev_ctx_lock = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
 struct udev *_udev_ctx;
 
 #define PARSE_MATCH_INT(_p, _m, _v, _b, _l)                                    \
@@ -73,7 +76,7 @@ struct udev *_udev_ctx;
 		}                                                              \
 	} while (0)
 
-static int parse_pcie_addr(dfl_device *device)
+STATIC int parse_pcie_addr(dfl_device *device)
 {
 	char err[128] = {0};
 	regex_t re;
@@ -91,20 +94,18 @@ static int parse_pcie_addr(dfl_device *device)
 		OPAE_ERR("Error executing regex: %s", err);
 		res = FPGA_EXCEPTION;
 		goto out;
-	} else {
-		PARSE_MATCH_INT(pciaddr, matches[1], device->segment, 16, out);
-		PARSE_MATCH_INT(pciaddr, matches[2], device->bus, 16, out);
-		PARSE_MATCH_INT(pciaddr, matches[3], device->device, 16, out);
-		PARSE_MATCH_INT(pciaddr, matches[4], device->function, 10, out);
 	}
+	PARSE_MATCH_INT(pciaddr, matches[1], device->segment, 16, out);
+	PARSE_MATCH_INT(pciaddr, matches[2], device->bus, 16, out);
+	PARSE_MATCH_INT(pciaddr, matches[3], device->device, 16, out);
+	PARSE_MATCH_INT(pciaddr, matches[4], device->function, 10, out);
 	res = FPGA_OK;
-
 out:
 	regfree(&re);
 	return res;
 }
 
-
+// TODO: remove this as this shouldn't be needed
 void udev_print_list(struct udev_list_entry *le)
 {
 	while (le) {
@@ -117,8 +118,15 @@ void udev_print_list(struct udev_list_entry *le)
 
 int dfl_initialize(void)
 {
-	if(!_udev_ctx)
-		_udev_ctx = udev_new();
+	if(!_udev_ctx){
+		if (pthread_mutex_lock(&_udev_ctx_lock)) {
+			OPAE_ERR("Could not lock udev ctx mutex");
+		} else {
+			_udev_ctx = udev_new();
+			if (pthread_mutex_unlock(&_udev_ctx_lock))
+				OPAE_MSG("Could not unlock udev ctx mutex");
+		}
+	}
 	return _udev_ctx == NULL ? 1 : 0;
 }
 
@@ -131,6 +139,10 @@ void dfl_finalize(void)
 
 STATIC size_t udev_direct_read_attr(struct udev_device *dev, const char *attr, char **buffer)
 {
+	if (!buffer) {
+		OPAE_ERR("buffer is null");
+		return 0;
+	}
 	char attr_path[PATH_MAX];
 	size_t pg_size = sysconf(_SC_PAGE_SIZE);
 	snprintf(attr_path, sizeof(attr_path), "%s/%s", udev_device_get_syspath(dev), attr);
@@ -146,15 +158,15 @@ STATIC size_t udev_direct_read_attr(struct udev_device *dev, const char *attr, c
 	return 0;
 }
 
-STATIC int udev_direct_read_attr64(struct udev_device *dev,
+STATIC fpga_result udev_direct_read_attr64(struct udev_device *dev,
 				   const char *attr, uint64_t *value)
 {
-	int res = FPGA_EXCEPTION;
+	fpga_result res = FPGA_EXCEPTION;
 	char *buffer = NULL;
 	if (udev_direct_read_attr(dev, attr, &buffer)) {
 		char *endptr = NULL;
 		*value = strtoull(buffer, &endptr, 0);
-		if (endptr > buffer)
+		if (endptr != buffer)
 			res = FPGA_OK;
 		free(buffer);
 	}
@@ -176,7 +188,7 @@ STATIC int udev_direct_read_attr64(struct udev_device *dev,
 //	return res;
 //}
 
-static int udev_parse_attr64(struct udev_device *dev, const char *attr, uint64_t *value)
+STATIC fpga_result udev_parse_attr64(struct udev_device *dev, const char *attr, uint64_t *value)
 {
 	const char *attr_str = udev_device_get_sysattr_value(dev, attr);
 	if (attr_str) {
@@ -225,7 +237,7 @@ STATIC int dfl_device_parse_id(dfl_device *device)
 	return FPGA_OK;
 }
 
-static int dfl_get_errors(dfl_device *dev)
+STATIC fpga_result dfl_get_errors(dfl_device *dev)
 {
 	struct udev_list_entry *attrs =
 		udev_device_get_sysattr_list_entry(dev->dev);
@@ -249,11 +261,11 @@ static int dfl_get_errors(dfl_device *dev)
 					dev->errors = err;
 				}
 			} else {
-				printf("error allocating memory for error struct\n");
+				OPAE_ERR("error allocating memory for error struct\n");
 			}
 		}
 	}
-	return 0;
+	return FPGA_OK;
 }
 
 
@@ -448,7 +460,7 @@ int dfl_parse_guid(const char *guid_str, fpga_guid guid)
 	return i;
 }
 
-int dfl_device_get_compat_id(dfl_device *d, fpga_guid guid)
+fpga_result dfl_device_get_compat_id(dfl_device *d, fpga_guid guid)
 {
 	if (d->type != FPGA_DEVICE) {
 		return FPGA_INVALID_PARAM;
@@ -496,7 +508,7 @@ out_free:
 	return res;
 }
 
-int dfl_device_get_afu_id(dfl_device *d, fpga_guid guid)
+fpga_result dfl_device_get_afu_id(dfl_device *d, fpga_guid guid)
 {
 	if (d->type != FPGA_ACCELERATOR) {
 		return FPGA_INVALID_PARAM;
@@ -513,14 +525,14 @@ dev_t dfl_device_get_devnum(dfl_device *dev)
 	return udev_device_get_devnum(dev->dev);
 }
 
-int dfl_device_get_ports_num(dfl_device *dev, uint32_t *value)
+fpga_result dfl_device_get_ports_num(dfl_device *dev, uint32_t *value)
 {
 	if (dev->type == FPGA_DEVICE)
 		return udev_parse_attr32(dev->dev, DFL_PORTS_NUM, value);
 	return FPGA_INVALID_PARAM;
 }
 
-int dfl_device_get_bbs_id(dfl_device *dev, uint64_t *bbs_id)
+fpga_result dfl_device_get_bbs_id(dfl_device *dev, uint64_t *bbs_id)
 {
 	if (dev->type == FPGA_DEVICE)
 		return udev_parse_attr64(dev->dev, DFL_BITSTREAM_ID, bbs_id);

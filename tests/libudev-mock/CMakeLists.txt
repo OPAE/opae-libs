@@ -23,8 +23,9 @@
 ## CONTRACT,  STRICT LIABILITY,  OR TORT  (INCLUDING NEGLIGENCE  OR OTHERWISE)
 ## ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,  EVEN IF ADVISED OF THE
 ## POSSIBILITY OF SUCH DAMAGE.
-add_library(udev SHARED
-    udev-mock.cpp
+opae_add_shared_library(
+    TARGET udev
+    SOURCE udev-mock.cpp
 )
 
 target_compile_options(udev
