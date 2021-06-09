@@ -6,7 +6,9 @@ on:
       - '.github/workflows/trigger-update.yml'
     branches: [master]
   pull_request:
-    branches: [master]
+    branches:
+      - master
+      - 'feature/libdfl'
     paths-ignore:
       - '.github/workflows/trigger-update.yml'
 jobs:
