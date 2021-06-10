@@ -1,4 +1,4 @@
-## Copyright(c) 2017-2020, Intel Corporation
+## Copyright(c) 2021, Intel Corporation
 ##
 ## Redistribution  and  use  in source  and  binary  forms,  with  or  without
 ## modification, are permitted provided that the following conditions are met:
@@ -23,31 +23,22 @@
 ## CONTRACT,  STRICT LIABILITY,  OR TORT  (INCLUDING NEGLIGENCE  OR OTHERWISE)
 ## ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,  EVEN IF ADVISED OF THE
 ## POSSIBILITY OF SUCH DAMAGE.
+include_directories(
+    ${CMAKE_SOURCE_DIR}/tests/libudev-mock
+)
+opae_test_add_static_lib(TARGET dfl-static
+    SOURCE
+        ${OPAE_LIBS_ROOT}/libdfl/opae_dfl.c
+    LIBS
+        udev
+        opae-c
+)
+opae_test_add(
+    TARGET test_libdfl
+    SOURCE test_libdfl.cpp
+    LIBS dfl-static
+)
 
-cmake_minimum_required (VERSION 3.10)
-project(tests)
-
-if(${GTest_FOUND})
-    message(STATUS Found GTest)
-else()
-    opae_load_gtest()
-endif()
-
-# Disable some warnings that fire during gtest compilation
-check_cxx_compiler_flag("-Wno-sign-compare" CXX_SUPPORTS_NO_SIGN_COMPARE)
-if(CXX_SUPPORTS_NO_SIGN_COMPARE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare")
-endif()
-
-add_subdirectory(bitstream)
-add_subdirectory(opae-c)
-add_subdirectory(opae-cxx)
-add_subdirectory(pyopae)
-add_subdirectory(xfpga)
-add_subdirectory(libudev-mock)
-add_subdirectory(libdfl)
-
-if (OPAE_BUILD_LIBOFS)
-    add_subdirectory(libofs)
-    add_subdirectory(ofs_driver)
-endif (OPAE_BUILD_LIBOFS)
+configure_file(${CMAKE_CURRENT_SOURCE_DIR}/n3000-x2.yaml
+               ${CMAKE_BINARY_DIR}/n3000-x2.yaml
+               COPYONLY)

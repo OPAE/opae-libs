@@ -1,4 +1,4 @@
-## Copyright(c) 2017-2020, Intel Corporation
+## Copyright(c) 2021, Intel Corporation
 ##
 ## Redistribution  and  use  in source  and  binary  forms,  with  or  without
 ## modification, are permitted provided that the following conditions are met:
@@ -23,31 +23,14 @@
 ## CONTRACT,  STRICT LIABILITY,  OR TORT  (INCLUDING NEGLIGENCE  OR OTHERWISE)
 ## ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,  EVEN IF ADVISED OF THE
 ## POSSIBILITY OF SUCH DAMAGE.
+opae_add_shared_library(
+    TARGET udev
+    SOURCE udev-mock.cpp
+)
 
-cmake_minimum_required (VERSION 3.10)
-project(tests)
+target_compile_options(udev
+    PRIVATE -Wno-unused
+)
+target_link_libraries(udev yaml-cpp)
+set_property(TARGET udev PROPERTY CXX_STANDARD 11)
 
-if(${GTest_FOUND})
-    message(STATUS Found GTest)
-else()
-    opae_load_gtest()
-endif()
-
-# Disable some warnings that fire during gtest compilation
-check_cxx_compiler_flag("-Wno-sign-compare" CXX_SUPPORTS_NO_SIGN_COMPARE)
-if(CXX_SUPPORTS_NO_SIGN_COMPARE)
-    set(CMAKE_CXX_FLAGS "${CMAKE_CXX_FLAGS} -Wno-sign-compare")
-endif()
-
-add_subdirectory(bitstream)
-add_subdirectory(opae-c)
-add_subdirectory(opae-cxx)
-add_subdirectory(pyopae)
-add_subdirectory(xfpga)
-add_subdirectory(libudev-mock)
-add_subdirectory(libdfl)
-
-if (OPAE_BUILD_LIBOFS)
-    add_subdirectory(libofs)
-    add_subdirectory(ofs_driver)
-endif (OPAE_BUILD_LIBOFS)
