@@ -147,15 +147,19 @@ STATIC size_t udev_direct_read_attr(struct udev_device *dev, const char *attr, c
 	size_t pg_size = sysconf(_SC_PAGE_SIZE);
 	snprintf(attr_path, sizeof(attr_path), "%s/%s", udev_device_get_syspath(dev), attr);
 	FILE *fp = fopen(attr_path, "r");
+	size_t bytes_read = 0;
 	if (fp) {
 		*buffer = calloc(pg_size, sizeof(uint8_t));
-		size_t n = fread(*buffer, 1, pg_size, fp);
+		if (!*buffer) {
+			OPAE_ERR("could not allocate buffer");
+		} else {
+			bytes_read = fread(*buffer, 1, pg_size, fp);
+		}
 		fclose(fp);
-		if (n)
-			return n;
-		free(*buffer);
+		if (!bytes_read)
+			free(*buffer);
 	}
-	return 0;
+	return bytes_read;
 }
 
 STATIC fpga_result udev_direct_read_attr64(struct udev_device *dev,
