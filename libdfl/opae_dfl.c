@@ -156,7 +156,7 @@ STATIC size_t udev_direct_read_attr(struct udev_device *dev, const char *attr, c
 			bytes_read = fread(*buffer, 1, pg_size, fp);
 		}
 		fclose(fp);
-		if (!bytes_read)
+		if (!bytes_read && *buffer)
 			free(*buffer);
 	}
 	return bytes_read;
