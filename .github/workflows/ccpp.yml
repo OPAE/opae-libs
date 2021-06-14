@@ -28,7 +28,7 @@ jobs:
     - name: set hugepages
       run: sudo sysctl -w vm.nr_hugepages=8
     - name: test
-      run: cd ${{ github.workspace }}/.build && ctest --timeout 180
+      run: cd ${{ github.workspace }}/.build && ctest --timeout 180 --rerun-failed --output-on-failure
       env:
         OPAE_EXPLICIT_INITIALIZE: 1
         LD_LIBRARY_PATH: ${{ github.workspace }}/.build/lib
