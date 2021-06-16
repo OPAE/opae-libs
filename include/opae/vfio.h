@@ -100,7 +100,7 @@ struct opae_vfio_device_region {
 /**
  * Interrupt info
  *
- * Describes an interruput capability.
+ * Describes an interrupt capability.
  */
 struct opae_vfio_device_irq {
 	uint32_t flags;				/**< Flags. See struct vfio_irq_info. */
