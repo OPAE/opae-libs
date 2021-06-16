@@ -1293,3 +1293,44 @@ out_unlock:
 	return res;
 }
 
+fpga_result vfio_fpgaCreateEventHandle(fpga_event_handle *event_handle)
+{
+	(void)event_handle;
+	return FPGA_OK;
+}
+
+fpga_result vfio_fpgaDestroyEventHandle(fpga_event_handle *event_handle)
+{
+	(void)event_handle;
+	return FPGA_OK;
+}
+
+fpga_result vfio_fpgaGetOSObjectFromEventHandle(const fpga_event_handle eh,
+						int *fd)
+{
+	(void)eh;
+	(void)fd;
+	return FPGA_OK;
+}
+
+fpga_result vfio_fpgaRegisterEvent(fpga_handle handle,
+				   fpga_event_type event_type,
+				   fpga_event_handle event_handle,
+				   uint32_t flags)
+{
+	(void)handle;
+	(void)event_type;
+	(void)event_handle;
+	(void)flags;
+	return FPGA_OK;
+}
+
+fpga_result vfio_fpgaUnregisterEvent(fpga_handle handle,
+				     fpga_event_type event_type,
+				     fpga_event_handle event_handle)
+{
+	(void)handle;
+	(void)event_type;
+	(void)event_handle;
+	return FPGA_OK;
+}
