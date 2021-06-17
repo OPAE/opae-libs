@@ -1518,7 +1518,8 @@ STATIC fpga_result unregister_event(vfio_handle *_h,
 	case FPGA_EVENT_ERROR:
 
 		if (opae_vfio_irq_disable(_h->vfio_pair->device,
-					  VFIO_PCI_MSIX_IRQ_INDEX)) {
+					  VFIO_PCI_MSIX_IRQ_INDEX,
+					  _veh->flags)) {
 			OPAE_ERR("Couldn't disable MSIX IRQ %u : %s",
 				 _veh->flags, strerror(errno));
 			return FPGA_EXCEPTION;

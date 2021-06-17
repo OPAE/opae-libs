@@ -379,7 +379,8 @@ int opae_vfio_irq_mask(struct opae_vfio *v,
 		       uint32_t index);
 
 int opae_vfio_irq_disable(struct opae_vfio *v,
-			  uint32_t index);
+			  uint32_t index,
+			  uint32_t subindex);
 
 /**
  * Release and close a VFIO device
