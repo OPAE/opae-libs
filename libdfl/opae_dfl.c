@@ -23,6 +23,10 @@
 // CONTRACT,  STRICT LIABILITY,  OR TORT  (INCLUDING NEGLIGENCE  OR OTHERWISE)
 // ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,  EVEN IF ADVISED OF THE
 // POSSIBILITY OF SUCH DAMAGE.
+#ifdef HAVE_CONFIG_H
+#include <config.h>
+#endif // HAVE_CONFIG_H
+
 #define _GNU_SOURCE
 #include <dirent.h>
 #include <glob.h>
@@ -32,7 +36,6 @@
 #include <sys/sysmacros.h>
 #include <unistd.h>
 #undef _GNU_SOURCE
-#include <config.h>
 
 #include <opae/dfl.h>
 #include <opae/fpga.h>
@@ -62,9 +65,27 @@
 #define UDEV_SYSATTR_NUMA_NODE "numa_node"
 #define UDEV_PROPERTY_DRIVER "DRIVER"
 
+#define dfl_mutex_lock(__res, __mtx_ptr)                          \
+        ({                                                        \
+                (__res) = pthread_mutex_lock(__mtx_ptr);          \
+                if (__res)                                        \
+                        OPAE_ERR("pthread_mutex_lock failed: %s", \
+                                 strerror(errno));                \
+                __res;                                            \
+        })
+
+#define dfl_mutex_unlock(__res, __mtx_ptr)                          \
+        ({                                                          \
+                (__res) = pthread_mutex_unlock(__mtx_ptr);          \
+                if (__res)                                          \
+                        OPAE_ERR("pthread_mutex_unlock failed: %s", \
+                                 strerror(errno));                  \
+                __res;                                              \
+        })
+
 /* mutex to protect udev ctx data structure */
-pthread_mutex_t _udev_ctx_lock = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
-struct udev *_udev_ctx;
+STATIC pthread_mutex_t _udev_ctx_lock = PTHREAD_RECURSIVE_MUTEX_INITIALIZER_NP;
+STATIC struct udev *_udev_ctx;
 
 #define PARSE_MATCH_INT(_p, _m, _v, _b, _l)                                    \
 	do {                                                                   \
@@ -118,23 +139,33 @@ void udev_print_list(struct udev_list_entry *le)
 
 int dfl_initialize(void)
 {
-	if(!_udev_ctx){
-		if (pthread_mutex_lock(&_udev_ctx_lock)) {
-			OPAE_ERR("Could not lock udev ctx mutex");
-		} else {
-			_udev_ctx = udev_new();
-			if (pthread_mutex_unlock(&_udev_ctx_lock))
-				OPAE_MSG("Could not unlock udev ctx mutex");
-		}
+	int err;
+	int res = 0;
+
+	dfl_mutex_lock(err, &_udev_ctx_lock);
+
+	if (!_udev_ctx) {
+		_udev_ctx = udev_new();
+		if (!_udev_ctx)
+			res = 1;
 	}
-	return _udev_ctx == NULL ? 1 : 0;
+
+	dfl_mutex_unlock(err, &_udev_ctx_lock);
+
+	return res;
 }
 
 void dfl_finalize(void)
 {
+	int err;
+
+	dfl_mutex_lock(err, &_udev_ctx_lock);
+
 	if (_udev_ctx)
 		udev_unref(_udev_ctx);
 	_udev_ctx = NULL;
+
+	dfl_mutex_unlock(err, &_udev_ctx_lock);
 }
 
 STATIC size_t udev_direct_read_attr(struct udev_device *dev, const char *attr, char **buffer)
@@ -275,31 +306,48 @@ STATIC fpga_result dfl_get_errors(dfl_device *dev)
 
 dfl_device *dfl_device_new(const char *path)
 {
-	dfl_device *dfl = (dfl_device*)malloc(sizeof(dfl_device));
+	int err;
+	dfl_device *dfl = NULL;
+	const char *sysname;
+	struct udev_device *parent;
+	const char *driver;
+	const char *subsystem;
+
+	dfl = (dfl_device *)calloc(1, sizeof(dfl_device));
 	if (!dfl) {
+		OPAE_ERR("out of memory");
 		return NULL;
 	}
+
+	dfl_mutex_lock(err, &_udev_ctx_lock);
+
 	dfl->dev = udev_device_new_from_syspath(_udev_ctx, path);
 	if (!dfl->dev) {
 		OPAE_ERR("error new udev: %s", path);
-		goto out_err;
+		free(dfl);
+		dfl_mutex_unlock(err, &_udev_ctx_lock);
+		return NULL;
 	}
+
+	dfl_mutex_unlock(err, &_udev_ctx_lock);
+
 	dfl->num_errors = 0;
 	dfl->errors = NULL;
-	const char *sysname = udev_device_get_sysname(dfl->dev);
+	sysname = udev_device_get_sysname(dfl->dev);
+
 	if (!fnmatch(DFL_FME_PATTERN, sysname, 0))
 		dfl->type = FPGA_DEVICE;
 	else if (!fnmatch(DFL_PORT_PATTERN, sysname, 0))
 		dfl->type = FPGA_ACCELERATOR;
 	else {
 		OPAE_ERR("unrecognized object type: %s", sysname);
-		goto out_err;
+		goto err_unref_dfl_dev;
 	}
 
-	struct udev_device *parent = udev_device_get_parent(dfl->dev);
-	const char *driver = udev_device_get_driver(parent);
-	const char *subsystem = udev_device_get_subsystem(parent);
-	while(parent) {
+	parent = udev_device_get_parent(dfl->dev);
+	driver = udev_device_get_driver(parent);
+	subsystem = udev_device_get_subsystem(parent);
+	while (parent) {
 		if (subsystem &&
 		    !strncmp(subsystem, DFL_FPGA_REGION, DFL_FPGA_REGION_SZ)) {
 			dfl->region = parent;
@@ -313,38 +361,43 @@ dfl_device *dfl_device_new(const char *path)
 	}
 
 	if (!dfl->pci || !dfl->region) {
-		goto out_err;
+		OPAE_ERR("finding device/region");
+		goto err_unref_dfl_dev;
 	}
 
-	if (parse_pcie_addr(dfl)){
-		goto out_err;
+	if (parse_pcie_addr(dfl)) {
+		OPAE_ERR("parsing PCIe address");
+		goto err_unref_dfl_dev;
 	}
 
-	if (dfl_device_parse_id(dfl)){
-		goto out_err;
+	if (dfl_device_parse_id(dfl)) {
+		OPAE_ERR("parsing VID/DID");
+		goto err_unref_dfl_dev;
 	}
 
 	if (udev_parse_attr32(dfl->dev,
 			      UDEV_SYSATTR_NUMA_NODE, &dfl->numa_node)) {
-		goto out_err;
+		OPAE_ERR("determining NUMA node");
+		goto err_unref_dfl_dev;
 	}
 
 	if (dfl_get_errors(dfl)) {
-		goto out_err;
+		OPAE_ERR("parsing error information");
+		goto err_unref_dfl_dev;
 	}
 
 	dev_t devnum = dfl_device_get_devnum(dfl);
 	dfl->object_id = ((major(devnum) & 0xFFF) << 20) | (minor(devnum) & 0xFFFFF);
-	dfl->next = NULL;
+
 	return dfl;
-out_err:
-	if (dfl->dev)
-		udev_device_unref(dfl->dev);
+
+err_unref_dfl_dev:
+	udev_device_unref(dfl->dev);
 	free(dfl);
 	return NULL;
 }
 
-dfl_device *dfl_device_add(dfl_device *e, const char *path)
+STATIC dfl_device *dfl_device_add(dfl_device *e, const char *path)
 {
 	dfl_device *dfl = dfl_device_new(path);
 	if (!dfl) {
@@ -359,18 +412,27 @@ dfl_device *dfl_device_add(dfl_device *e, const char *path)
 	return dfl;
 }
 
-
-dfl_device *dfl_device_enum()
+dfl_device *dfl_device_enum(void)
 {
+	int err;
 	dfl_device *d = NULL;
-	struct udev_list_entry *devices = NULL, *le = NULL;
-	struct udev_enumerate *ue = udev_enumerate_new(_udev_ctx);
+	struct udev_list_entry *devices = NULL;
+	struct udev_list_entry *le = NULL;
+	struct udev_enumerate *ue = NULL;
+
+	dfl_mutex_lock(err, &_udev_ctx_lock);
+
+	ue = udev_enumerate_new(_udev_ctx);
+	if (!ue)
+		goto out_unref;
+
 	udev_enumerate_add_match_property(ue, UDEV_PROPERTY_DRIVER, DFL_FME);
 	udev_enumerate_add_match_property(ue, UDEV_PROPERTY_DRIVER, DFL_PORT);
 	udev_enumerate_scan_devices(ue);
+
 	devices = udev_enumerate_get_list_entry(ue);
 	if (!devices)
-		goto out_free;
+		goto out_unref;
 
 	udev_list_entry_foreach(le, devices) {
 		const char *le_name = udev_list_entry_get_name(le);
@@ -381,8 +443,11 @@ dfl_device *dfl_device_enum()
 		}
 
 	}
-out_free:
-	udev_enumerate_unref(ue);
+
+out_unref:
+	if (ue)
+		udev_enumerate_unref(ue);
+	dfl_mutex_unlock(err, &_udev_ctx_lock);
 	return d;
 }
 
@@ -466,30 +531,51 @@ int dfl_parse_guid(const char *guid_str, fpga_guid guid)
 
 fpga_result dfl_device_get_compat_id(dfl_device *d, fpga_guid guid)
 {
-	if (d->type != FPGA_DEVICE) {
+	int err;
+	int res = FPGA_OK;
+	struct udev_list_entry *devices = NULL;
+	struct udev_list_entry *le = NULL;
+	struct udev_device *dev = NULL;
+	struct udev_enumerate *ue = NULL;
+	const char *pci_path = NULL;
+	const char *guid_str = NULL;
+	const char *le_name = NULL;
+	const char *this_region = NULL;
+
+	if (!d || !guid) {
+		OPAE_ERR("NULL param");
 		return FPGA_INVALID_PARAM;
 	}
 
-	int res = FPGA_OK;
-	struct udev_list_entry *devices, *le = NULL;
-	struct udev_device *dev = NULL;
-	struct udev_enumerate *ue = udev_enumerate_new(_udev_ctx);
+	if (d->type != FPGA_DEVICE) {
+		OPAE_ERR("function requires an FPGA_DEVICE");
+		return FPGA_INVALID_PARAM;
+	}
+
+	dfl_mutex_lock(err, &_udev_ctx_lock);
+
+	ue = udev_enumerate_new(_udev_ctx);
 	if (!ue) {
+		OPAE_ERR("udev_enumerate_new() failed");
+		dfl_mutex_unlock(err, &_udev_ctx_lock);
 		return FPGA_EXCEPTION;
 	}
+
 	udev_enumerate_add_match_subsystem(ue, DFL_FPGA_REGION);
 	udev_enumerate_scan_devices(ue);
 	devices = udev_enumerate_get_list_entry(ue);
+
 	if (!devices) {
 		res = FPGA_NOT_FOUND;
 		goto out_free;
 	}
-	const char *pci_path = udev_device_get_syspath(d->pci);
-	const char *guid_str = NULL, *le_name = NULL;
-	const char *this_region = udev_device_get_syspath(d->region);
+
+	pci_path = udev_device_get_syspath(d->pci);
+	this_region = udev_device_get_syspath(d->region);
 
 	udev_list_entry_foreach(le, devices) {
 		le_name = udev_list_entry_get_name(le);
+
 		if (strcmp(le_name, this_region) &&
 		    strstr(le_name, pci_path) == le_name) {
 			dev = udev_device_new_from_syspath(_udev_ctx, le_name);
@@ -498,17 +584,20 @@ fpga_result dfl_device_get_compat_id(dfl_device *d, fpga_guid guid)
 				res = FPGA_NOT_FOUND;
 				goto out_free;
 			}
-			if (!dfl_parse_guid(guid_str, guid)){
+			if (!dfl_parse_guid(guid_str, guid)) {
 				res = FPGA_EXCEPTION;
 				goto out_free;
 			}
 			break;
 		}
-
 	}
+
 out_free:
-	if (dev) udev_device_unref(dev);
-	udev_enumerate_unref(ue);
+	if (dev)
+		udev_device_unref(dev);
+	if (ue)
+		udev_enumerate_unref(ue);
+	dfl_mutex_unlock(err, &_udev_ctx_lock);
 	return res;
 }
 

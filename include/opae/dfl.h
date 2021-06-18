@@ -61,7 +61,7 @@ typedef struct _dfl_device
 int dfl_initialize(void);
 void dfl_finalize(void);
 int dfl_parse_guid(const char *guid_str, fpga_guid guid);
-dfl_device *dfl_device_enum();
+dfl_device *dfl_device_enum(void);
 dfl_device *dfl_device_clone(dfl_device *e);
 void dfl_device_destroy(dfl_device *e);
 const char *dfl_device_get_pci_addr(dfl_device *e);
