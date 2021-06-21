@@ -30,8 +30,8 @@
 #include "gtest/gtest.h"
 
 extern "C" {
-size_t udev_direct_read_attr(struct udev_device *dev, const char *attr, char **buffer);
-int udev_direct_read_attr64(struct udev_device *dev, const char *attr, uint64_t *value);
+size_t dfl_direct_read_attr(struct udev_device *dev, const char *attr, char **buffer);
+int dfl_direct_read_attr64(struct udev_device *dev, const char *attr, uint64_t *value);
 }
 
 class libdfl : public ::testing::Test
@@ -71,7 +71,7 @@ TEST_F(libdfl, dfl_device_enum)
   }
 }
 
-TEST_F(libdfl, udev_direct_read_attr)
+TEST_F(libdfl, dfl_direct_read_attr)
 {
   char *buffer = nullptr;
   std::string bitstream_id("bitstream_id");
@@ -79,7 +79,7 @@ TEST_F(libdfl, udev_direct_read_attr)
   for (dfl_device *e = devices_; e; e = e->next) {
     if (e->type == FPGA_DEVICE){
       mock_->write_attr(e->dev, bitstream_id, bitstream_id_value);
-      auto sz = udev_direct_read_attr(e->dev, bitstream_id.c_str(), &buffer);
+      auto sz = dfl_direct_read_attr(e->dev, bitstream_id.c_str(), &buffer);
       ASSERT_TRUE(sz) << "Buffer not created";
       // write_attr will append a \n so let's trim it
       *(buffer + --sz) = '\0';
@@ -91,7 +91,7 @@ TEST_F(libdfl, udev_direct_read_attr)
 }
 
 
-TEST_F(libdfl, udev_direct_read_attr64)
+TEST_F(libdfl, dfl_direct_read_attr64)
 {
   std::string bitstream_id("bitstream_id");
   std::string bitstream_id_value("0x2300011001030f");
@@ -100,7 +100,7 @@ TEST_F(libdfl, udev_direct_read_attr64)
     if (e->type == FPGA_DEVICE){
       uint64_t value = 0xff;
       mock_->write_attr(e->dev, bitstream_id, bitstream_id_value);
-      ASSERT_EQ(udev_direct_read_attr64(e->dev, bitstream_id.c_str(), &value), FPGA_OK);
+      ASSERT_EQ(dfl_direct_read_attr64(e->dev, bitstream_id.c_str(), &value), FPGA_OK);
       EXPECT_EQ(value64, value);
     }
   }

@@ -45,12 +45,12 @@ typedef struct _dfl_device
 	struct udev_device *region;
 	struct udev_device *pci;
 	fpga_objtype type;
-	uint32_t segment;
+	uint16_t segment;
 	uint8_t bus;
 	uint8_t device;
 	uint8_t function;
-	uint32_t device_id;
-	uint32_t vendor_id;
+	uint16_t vendor_id;
+	uint16_t device_id;
 	uint32_t object_id;
 	uint32_t numa_node;
 	uint32_t num_errors;
