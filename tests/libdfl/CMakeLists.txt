@@ -23,9 +23,7 @@
 ## CONTRACT,  STRICT LIABILITY,  OR TORT  (INCLUDING NEGLIGENCE  OR OTHERWISE)
 ## ARISING IN ANY WAY OUT OF THE USE OF THIS SOFTWARE,  EVEN IF ADVISED OF THE
 ## POSSIBILITY OF SUCH DAMAGE.
-include_directories(
-    ${CMAKE_SOURCE_DIR}/tests/libudev-mock
-)
+
 opae_test_add_static_lib(TARGET dfl-static
     SOURCE
         ${OPAE_LIBS_ROOT}/libdfl/opae_dfl.c
@@ -33,10 +31,16 @@ opae_test_add_static_lib(TARGET dfl-static
         udev
         opae-c
 )
+
 opae_test_add(
     TARGET test_libdfl
     SOURCE test_libdfl.cpp
     LIBS dfl-static
+)
+
+target_include_directories(test_libdfl
+    PRIVATE
+        ${OPAE_LIBS_ROOT}/tests/libudev-mock
 )
 
 configure_file(${CMAKE_CURRENT_SOURCE_DIR}/n3000-x2.yaml

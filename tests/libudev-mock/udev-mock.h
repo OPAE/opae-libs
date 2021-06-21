@@ -27,6 +27,7 @@
 #include <map>
 #include <memory>
 #include <vector>
+#include <string>
 #include <libudev.h>
 
 class udev_device;
