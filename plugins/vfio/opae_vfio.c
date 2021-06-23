@@ -1486,7 +1486,7 @@ fpga_result vfio_fpgaRegisterEvent(fpga_handle handle,
 	_h = handle_check_and_lock(handle);
 	ASSERT_NOT_NULL(_h);
 
-	_veh = event_handle_check_and_lock(handle);
+	_veh = event_handle_check_and_lock(event_handle);
 	if (!_veh)
 		goto out_unlock_handle;
 
@@ -1554,7 +1554,7 @@ fpga_result vfio_fpgaUnregisterEvent(fpga_handle handle,
 	_h = handle_check_and_lock(handle);
 	ASSERT_NOT_NULL(_h);
 
-	_veh = event_handle_check_and_lock(handle);
+	_veh = event_handle_check_and_lock(event_handle);
 	if (!_veh)
 		goto out_unlock_handle;
 
