@@ -825,10 +825,12 @@ int opae_vfio_irq_enable(struct opae_vfio *v,
 			struct vfio_irq_set *i;
 			char buf[sizeof(*i) + sizeof(int32_t)];
 			int32_t *fdptr;
+			int res;
 
 			i = (struct vfio_irq_set *)buf;
 			i->argsz = sizeof(buf);
-			i->flags = VFIO_IRQ_SET_DATA_EVENTFD | VFIO_IRQ_SET_ACTION_TRIGGER;
+			i->flags = VFIO_IRQ_SET_DATA_EVENTFD |
+				   VFIO_IRQ_SET_ACTION_TRIGGER;
 			i->index = index;
 			i->start = subindex;
 			i->count = 1;
@@ -836,9 +838,15 @@ int opae_vfio_irq_enable(struct opae_vfio *v,
 			fdptr = (int32_t *)&i->data;
 			*fdptr = event_fd;
 
-			return ioctl(v->device.device_fd,
-				     VFIO_DEVICE_SET_IRQS,
-				     i);
+			res = ioctl(v->device.device_fd,
+				    VFIO_DEVICE_SET_IRQS,
+				    i);
+
+			if (res < 0)
+				ERR("ioctl(fd, VFIO_DEVICE_SET_IRQS, i)"
+				    " [enable]");
+
+			return res;
 		}
 	}
 
@@ -860,16 +868,24 @@ int opae_vfio_irq_unmask(struct opae_vfio *v,
 		if ((irq->index == index) &&
 		    (irq->flags & VFIO_IRQ_INFO_MASKABLE)) {
 			struct vfio_irq_set i;
+			int res;
 
 			i.argsz = sizeof(i);
-			i.flags = VFIO_IRQ_SET_ACTION_UNMASK | VFIO_IRQ_SET_DATA_NONE;
+			i.flags = VFIO_IRQ_SET_ACTION_UNMASK |
+				  VFIO_IRQ_SET_DATA_NONE;
 			i.index = index;
 			i.start = subindex;
 			i.count = 1;
 
-			return ioctl(v->device.device_fd,
-				     VFIO_DEVICE_SET_IRQS,
-				     &i);
+			res = ioctl(v->device.device_fd,
+				    VFIO_DEVICE_SET_IRQS,
+				    &i);
+
+ 			if (res < 0)
+				ERR("ioctl(fd, VFIO_DEVICE_SET_IRQS, i)"
+				    " [unmask]");
+
+			return res;
 		}
 	}
 
@@ -891,16 +907,24 @@ int opae_vfio_irq_mask(struct opae_vfio *v,
 		if ((irq->index == index) &&
 		    (irq->flags & VFIO_IRQ_INFO_MASKABLE)) {
 			struct vfio_irq_set i;
+			int res;
 
 			i.argsz = sizeof(i);
-			i.flags = VFIO_IRQ_SET_ACTION_MASK | VFIO_IRQ_SET_DATA_NONE;
+			i.flags = VFIO_IRQ_SET_ACTION_MASK |
+				  VFIO_IRQ_SET_DATA_NONE;
 			i.index = index;
 			i.start = subindex;
 			i.count = 1;
 
-			return ioctl(v->device.device_fd,
-				     VFIO_DEVICE_SET_IRQS,
-				     &i);
+			res = ioctl(v->device.device_fd,
+				    VFIO_DEVICE_SET_IRQS,
+				    &i);
+
+			if (res < 0)
+				ERR("ioctl(fd, VFIO_DEVICE_SET_IRQS, i)"
+				    " [mask]");
+
+			return res;
 		}
 	}
 
@@ -924,10 +948,12 @@ int opae_vfio_irq_disable(struct opae_vfio *v,
 			struct vfio_irq_set *i;
 			char buf[sizeof(*i) + sizeof(int32_t)];
 			int32_t *fdptr;
+			int res;
 
 			i = (struct vfio_irq_set *)buf;
 			i->argsz = sizeof(i);
-			i->flags = VFIO_IRQ_SET_DATA_EVENTFD | VFIO_IRQ_SET_ACTION_TRIGGER;
+			i->flags = VFIO_IRQ_SET_DATA_EVENTFD |
+				   VFIO_IRQ_SET_ACTION_TRIGGER;
 			i->index = index;
 			i->start = subindex;
 			i->count = 1;
@@ -935,9 +961,15 @@ int opae_vfio_irq_disable(struct opae_vfio *v,
 			fdptr = (int32_t *)&i->data;
 			*fdptr = -1;
 
-			return ioctl(v->device.device_fd,
-				     VFIO_DEVICE_SET_IRQS,
-				     i);
+			res = ioctl(v->device.device_fd,
+				    VFIO_DEVICE_SET_IRQS,
+				    i);
+
+ 			if (res < 0)
+				ERR("ioctl(fd, VFIO_DEVICE_SET_IRQS, i)"
+				    " [disable]");
+
+			return res;
 		}
 	}
 
