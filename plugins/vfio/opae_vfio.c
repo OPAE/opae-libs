@@ -597,13 +597,6 @@ fpga_result vfio_fpgaOpen(fpga_token token, fpga_handle *handle, int flags)
 	_handle->mmio_base = (volatile uint8_t *)(mmio);
 	_handle->mmio_size = size;
 
-	if (opae_vfio_irq_unmask(_handle->vfio_pair->device,
-				 VFIO_PCI_MSIX_IRQ_INDEX)) {
-		OPAE_ERR("error unmasking MSIX IRQs");
-		res = FPGA_EXCEPTION;
-		goto out_attr_destroy;
-	}
-
 	_handle->flags = 0;
 #if GCC_VERSION >= 40900
 	__builtin_cpu_init();
@@ -636,12 +629,6 @@ fpga_result vfio_fpgaClose(fpga_handle handle)
 		free(h->token);
 	else
 		OPAE_MSG("invalid token in handle");
-
-	if (opae_vfio_irq_mask(h->vfio_pair->device,
-			       VFIO_PCI_MSIX_IRQ_INDEX)) {
-		OPAE_ERR("masking MSIX IRQs");
-		res = FPGA_EXCEPTION;
-	}
 
 	close_vfio_pair(&h->vfio_pair);
 	if (pthread_mutex_unlock(&h->lock) ||
@@ -1452,6 +1439,8 @@ STATIC fpga_result register_event(vfio_handle *_h,
 	switch (event_type) {
 	case FPGA_EVENT_ERROR:
 
+		_veh->flags = flags;
+
 		if (opae_vfio_irq_enable(_h->vfio_pair->device,
 					 VFIO_PCI_MSIX_IRQ_INDEX,
 					 flags,
@@ -1461,7 +1450,12 @@ STATIC fpga_result register_event(vfio_handle *_h,
 			return FPGA_EXCEPTION;
 		}
 
-		_veh->flags = flags;
+		if (opae_vfio_irq_unmask(_h->vfio_pair->device,
+					 VFIO_PCI_MSIX_IRQ_INDEX,
+					 flags)) {
+			OPAE_ERR("error unmasking MSIX IRQs");
+			return FPGA_EXCEPTION;
+		}
 
 		return FPGA_OK;
 	case FPGA_EVENT_INTERRUPT:
@@ -1516,6 +1510,13 @@ STATIC fpga_result unregister_event(vfio_handle *_h,
 {
 	switch (event_type) {
 	case FPGA_EVENT_ERROR:
+
+		if (opae_vfio_irq_mask(_h->vfio_pair->device,
+				       VFIO_PCI_MSIX_IRQ_INDEX,
+				       _veh->flags)) {
+			OPAE_ERR("masking MSIX IRQs");
+			return FPGA_EXCEPTION;
+		}
 
 		if (opae_vfio_irq_disable(_h->vfio_pair->device,
 					  VFIO_PCI_MSIX_IRQ_INDEX,

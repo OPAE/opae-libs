@@ -846,7 +846,8 @@ int opae_vfio_irq_enable(struct opae_vfio *v,
 }
 
 int opae_vfio_irq_unmask(struct opae_vfio *v,
-                         uint32_t index)
+                         uint32_t index,
+			 uint32_t subindex)
 {
 	struct opae_vfio_device_irq *irq;
 
@@ -863,7 +864,7 @@ int opae_vfio_irq_unmask(struct opae_vfio *v,
 			i.argsz = sizeof(i);
 			i.flags = VFIO_IRQ_SET_ACTION_UNMASK | VFIO_IRQ_SET_DATA_NONE;
 			i.index = index;
-			i.start = 0;
+			i.start = subindex;
 			i.count = 1;
 
 			return ioctl(v->device.device_fd,
@@ -876,7 +877,8 @@ int opae_vfio_irq_unmask(struct opae_vfio *v,
 }
 
 int opae_vfio_irq_mask(struct opae_vfio *v,
-                       uint32_t index)
+                       uint32_t index,
+		       uint32_t subindex)
 {
 	struct opae_vfio_device_irq *irq;
 
@@ -893,7 +895,7 @@ int opae_vfio_irq_mask(struct opae_vfio *v,
 			i.argsz = sizeof(i);
 			i.flags = VFIO_IRQ_SET_ACTION_MASK | VFIO_IRQ_SET_DATA_NONE;
 			i.index = index;
-			i.start = 0;
+			i.start = subindex;
 			i.count = 1;
 
 			return ioctl(v->device.device_fd,
