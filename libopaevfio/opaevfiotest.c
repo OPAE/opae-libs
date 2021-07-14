@@ -26,6 +26,10 @@
 
 #include <string.h>
 #include <unistd.h>
+#include <sys/eventfd.h>
+#include <unistd.h>
+#include <poll.h>
+#include <errno.h>
 #include <opae/vfio.h>
 
 #define AFU_OFFSET 0x40000
@@ -234,6 +238,63 @@ void irqinfo(struct opae_vfio *v)
 	}
 }
 
+#define IRQ_VECTOR 0
+#define CSR_RAS_ERROR_INJ 0x4068
+
+void errinj(struct opae_vfio *v)
+{
+	int event_fd;
+	volatile uint8_t *fme = NULL;
+	struct pollfd pfd;
+	int pollres;
+
+	event_fd = eventfd(0, 0);
+	if (event_fd < 0) {
+		printf("whoops eventfd()\n");
+		return;
+	}
+
+	if (opae_vfio_irq_enable(v,
+				 VFIO_PCI_MSIX_IRQ_INDEX,
+				 IRQ_VECTOR,
+				 event_fd)) {
+		printf("whoops opae_vfio_irq_enable\n");
+		return;
+	}
+
+	if (opae_vfio_region_get(v, 0, (uint8_t **)&fme, NULL)) {
+		printf("whoops opae_vfio_region_get\n");
+		return;
+	}
+
+	printf("writing to RAS_ERROR_INJ\n");
+	*(volatile uint64_t *)(fme + CSR_RAS_ERROR_INJ) = 1;
+
+	pfd.fd = event_fd;
+	pfd.events = POLLIN;
+	pfd.revents = 0;
+
+	printf("polling..\n");
+	pollres = poll(&pfd, 1, 10000);
+
+	if (pollres == 0)
+		printf("whoops poll() TIMEOUT\n");
+	else if (pollres < 0)
+		printf("whoops poll() ERROR: %s\n",
+			strerror(errno));
+	else
+		printf("SUCCESS!\n");
+
+	if (opae_vfio_irq_disable(v,
+				  VFIO_PCI_MSIX_IRQ_INDEX,
+				  IRQ_VECTOR)) {
+		printf("whoops opae_vfio_irq_disable\n");
+		return;
+	}
+
+	close(event_fd);
+}
+
 int main(int argc, char *argv[])
 {
 	struct opae_vfio v;
@@ -241,7 +302,7 @@ int main(int argc, char *argv[])
 
 	if (argc < 3) {
 		printf("usage: opaevfiotest 0000:00:00.0 <test>\n");
-		printf("\n\twhere <test> is one of { dfh, buf, nlb0, irqinfo }\n");
+		printf("\n\twhere <test> is one of { dfh, buf, nlb0, irqinfo, errinj }\n");
 		return 1;
 	}
 
@@ -258,6 +319,8 @@ int main(int argc, char *argv[])
 		nlb0(&v);
 	else if (!strcmp(argv[2], "irqinfo"))
 		irqinfo(&v);
+	else if (!strcmp(argv[2], "errinj"))
+		errinj(&v);
 
 	opae_vfio_close(&v);
 
