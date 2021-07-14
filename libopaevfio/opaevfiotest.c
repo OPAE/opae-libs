@@ -239,7 +239,16 @@ void irqinfo(struct opae_vfio *v)
 }
 
 #define IRQ_VECTOR 0
-#define CSR_RAS_ERROR_INJ 0x4068
+#define MBP_ERROR (1ULL << 6)
+
+#define CSR_FME_ERROR_MASK        0x4008
+#define CSR_PCIE0_ERROR_MASK      0x4018
+#define CSR_PCIE1_ERROR_MASK      0x4028
+#define CSR_RAS_NONFAT_ERROR_MASK 0x4048
+#define CSR_RAS_CATFAT_ERROR_MASK 0x4058
+#define CSR_RAS_ERROR_INJ         0x4068
+
+#define MASK_ALL 0xffffffffffffffffULL
 
 void errinj(struct opae_vfio *v)
 {
@@ -267,6 +276,12 @@ void errinj(struct opae_vfio *v)
 		return;
 	}
 
+	*(volatile uint64_t *)(fme + CSR_FME_ERROR_MASK) = MBP_ERROR;
+	*(volatile uint64_t *)(fme + CSR_PCIE0_ERROR_MASK) = 0;
+	*(volatile uint64_t *)(fme + CSR_PCIE1_ERROR_MASK) = 0;
+	*(volatile uint64_t *)(fme + CSR_RAS_NONFAT_ERROR_MASK) = 0;
+	*(volatile uint64_t *)(fme + CSR_RAS_CATFAT_ERROR_MASK) = 0;
+
 	printf("writing to RAS_ERROR_INJ\n");
 	*(volatile uint64_t *)(fme + CSR_RAS_ERROR_INJ) = 1;
 
@@ -284,6 +299,12 @@ void errinj(struct opae_vfio *v)
 			strerror(errno));
 	else
 		printf("SUCCESS!\n");
+
+	*(volatile uint64_t *)(fme + CSR_FME_ERROR_MASK) = MASK_ALL;
+	*(volatile uint64_t *)(fme + CSR_PCIE0_ERROR_MASK) = MASK_ALL;
+	*(volatile uint64_t *)(fme + CSR_PCIE1_ERROR_MASK) = MASK_ALL;
+	*(volatile uint64_t *)(fme + CSR_RAS_NONFAT_ERROR_MASK) = MASK_ALL;
+	*(volatile uint64_t *)(fme + CSR_RAS_CATFAT_ERROR_MASK) = MASK_ALL;
 
 	if (opae_vfio_irq_disable(v,
 				  VFIO_PCI_MSIX_IRQ_INDEX,
