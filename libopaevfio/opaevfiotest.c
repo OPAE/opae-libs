@@ -30,6 +30,7 @@
 #include <unistd.h>
 #include <poll.h>
 #include <errno.h>
+#include <pthread.h>
 #include <opae/vfio.h>
 
 #define AFU_OFFSET 0x40000
@@ -250,12 +251,28 @@ void irqinfo(struct opae_vfio *v)
 
 #define MASK_ALL 0xffffffffffffffffULL
 
+void *errinj_thread(void *arg)
+{
+    volatile uint8_t *fme = (volatile uint8_t *)arg;
+
+    usleep(5000000);
+	printf("writing to RAS_ERROR_INJ to inject error\n");
+	*(volatile uint64_t *)(fme + CSR_RAS_ERROR_INJ) = 1;
+
+    usleep(5000000);
+	printf("writing to RAS_ERROR_INJ to clear error\n");
+	*(volatile uint64_t *)(fme + CSR_RAS_ERROR_INJ) = 0;
+
+    return NULL;
+}
+
 void errinj(struct opae_vfio *v)
 {
 	int event_fd;
 	volatile uint8_t *fme = NULL;
 	struct pollfd pfd;
 	int pollres;
+    pthread_t thr;
 
 	event_fd = eventfd(0, 0);
 	if (event_fd < 0) {
@@ -282,8 +299,7 @@ void errinj(struct opae_vfio *v)
 	*(volatile uint64_t *)(fme + CSR_RAS_NONFAT_ERROR_MASK) = 0;
 	*(volatile uint64_t *)(fme + CSR_RAS_CATFAT_ERROR_MASK) = 0;
 
-	printf("writing to RAS_ERROR_INJ\n");
-	*(volatile uint64_t *)(fme + CSR_RAS_ERROR_INJ) = 1;
+    pthread_create(&thr, NULL, errinj_thread, (void *)fme);
 
 	pfd.fd = event_fd;
 	pfd.events = POLLIN;
@@ -299,6 +315,8 @@ void errinj(struct opae_vfio *v)
 			strerror(errno));
 	else
 		printf("SUCCESS!\n");
+
+    pthread_join(thr, NULL);
 
 	*(volatile uint64_t *)(fme + CSR_FME_ERROR_MASK) = MASK_ALL;
 	*(volatile uint64_t *)(fme + CSR_PCIE0_ERROR_MASK) = MASK_ALL;
