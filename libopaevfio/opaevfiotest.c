@@ -239,7 +239,7 @@ void irqinfo(struct opae_vfio *v)
 	}
 }
 
-#define IRQ_VECTOR 0
+#define IRQ_VECTOR 6
 #define MBP_ERROR (1ULL << 6)
 
 #define CSR_FME_ERROR_MASK        0x4008
