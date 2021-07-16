@@ -253,17 +253,17 @@ void irqinfo(struct opae_vfio *v)
 
 void *errinj_thread(void *arg)
 {
-    volatile uint8_t *fme = (volatile uint8_t *)arg;
+	volatile uint8_t *fme = (volatile uint8_t *)arg;
 
-    usleep(5000000);
+	usleep(5000000);
 	printf("writing to RAS_ERROR_INJ to inject error\n");
 	*(volatile uint64_t *)(fme + CSR_RAS_ERROR_INJ) = 1;
 
-    usleep(5000000);
+	usleep(5000000);
 	printf("writing to RAS_ERROR_INJ to clear error\n");
 	*(volatile uint64_t *)(fme + CSR_RAS_ERROR_INJ) = 0;
 
-    return NULL;
+	return NULL;
 }
 
 void errinj(struct opae_vfio *v)
@@ -272,7 +272,7 @@ void errinj(struct opae_vfio *v)
 	volatile uint8_t *fme = NULL;
 	struct pollfd pfd;
 	int pollres;
-    pthread_t thr;
+	pthread_t thr;
 
 	event_fd = eventfd(0, 0);
 	if (event_fd < 0) {
@@ -299,7 +299,7 @@ void errinj(struct opae_vfio *v)
 	*(volatile uint64_t *)(fme + CSR_RAS_NONFAT_ERROR_MASK) = 0;
 	*(volatile uint64_t *)(fme + CSR_RAS_CATFAT_ERROR_MASK) = 0;
 
-    pthread_create(&thr, NULL, errinj_thread, (void *)fme);
+	pthread_create(&thr, NULL, errinj_thread, (void *)fme);
 
 	pfd.fd = event_fd;
 	pfd.events = POLLIN;
@@ -316,7 +316,7 @@ void errinj(struct opae_vfio *v)
 	else
 		printf("SUCCESS!\n");
 
-    pthread_join(thr, NULL);
+	pthread_join(thr, NULL);
 
 	*(volatile uint64_t *)(fme + CSR_FME_ERROR_MASK) = MASK_ALL;
 	*(volatile uint64_t *)(fme + CSR_PCIE0_ERROR_MASK) = MASK_ALL;
